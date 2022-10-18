@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.genesys.mobile.messenger.sdk.gcmessengersdksample.presentation.custom.LinearContext xmlns:android="http://schemas.android.com/apk/res/android"
+<com.genesys.gcmessengersdksample.presentation.custom.LinearContext xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bot_context"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,5 +18,5 @@
         android:text="@string/add_context"
         android:textColor="@color/white" />
 
-</com.genesys.mobile.messenger.sdk.gcmessengersdksample.presentation.custom.LinearContext>
+</com.genesys.gcmessengersdksample.presentation.custom.LinearContext>
 

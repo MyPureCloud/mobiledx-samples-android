@@ -14,7 +14,7 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <com.genesys.mobile.messenger.sdk.gcmessengersdksample.presentation.custom.FormFieldsContainer
+    <com.genesys.gcmessengersdksample.presentation.custom.FormFieldsContainer
         android:id="@+id/formFieldsContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"

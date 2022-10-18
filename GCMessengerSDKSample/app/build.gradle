@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.genesys.mobile.messenger.sdk.gcmessengersdksample'
+    namespace 'com.genesys.gcmessengersdksample'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.genesys.mobile.messenger.sdk.gcmessengersdksample"
+        applicationId "com.genesys.gcmessengersdksample"
         minSdk 21
         targetSdk 33
         versionCode 1
