@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GCMessengerSDKSample</string>
+    <string name="app_name">Genesys Cloud Mobile Messenger</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
