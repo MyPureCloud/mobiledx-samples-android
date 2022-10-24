@@ -1,26 +1,17 @@
 package com.genesys.gcmessengersdksample.presentation.chat_form
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.genesys.gcmessengersdksample.R
 import com.genesys.gcmessengersdksample.data.defs.DataKeys
-import com.genesys.gcmessengersdksample.data.defs.FieldProps
-import com.genesys.gcmessengersdksample.data.getSelectedText
 import com.genesys.gcmessengersdksample.data.getString
 import com.genesys.gcmessengersdksample.data.repositories.JsonSampleRepository
-import com.genesys.gcmessengersdksample.data.toObject
 import com.genesys.gcmessengersdksample.databinding.FragmentChatFormBinding
-import com.genesys.gcmessengersdksample.presentation.custom.ContextBlock
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import java.util.regex.Pattern
 
@@ -49,8 +40,6 @@ class ChatFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        createForm()
-
         binding.startChat.setOnClickListener {
             collaborateData(DataKeys.StartChat)
         }
@@ -67,67 +56,53 @@ class ChatFormFragment : Fragment() {
 
         val accountData = JsonObject().apply {
             addProperty(DataKeys.Intent, intent)
-        }
 
-        binding.formFieldsContainer.getFormFields().forEachIndexed { index, view ->
+            val validator = getString("validator")?.toPattern()
 
-            viewModel.getFormField(index)?.run {
+            if (!isValid(
+                    binding.deploymentIdEditText,
+                    binding.deploymentIdEditText.text.toString(),
+                    true,
+                    validator
+                )
+            ) return
+            addProperty(DataKeys.DeploymentId, binding.deploymentIdEditText.text.toString())
 
-                when (view) {
+            if (!isValid(
+                    binding.domainNameEditText,
+                    binding.domainNameEditText.text.toString(),
+                    true,
+                    validator
+                )
+            ) return
+            addProperty(DataKeys.Domain, binding.domainNameEditText.text.toString())
 
-                    is EditText -> getString(FieldProps.Key) to view.text.toString()
+            if (!isValid(
+                    binding.tokenStoreKeyEditText,
+                    binding.tokenStoreKeyEditText.text.toString(),
+                    false,
+                    validator
+                )
+            ) return
+            addProperty(DataKeys.TokenStoreKey, binding.tokenStoreKeyEditText.text.toString())
 
-                    is RadioGroup -> getString(FieldProps.Key) to view.getSelectedText()
+            addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
 
-                    is SwitchCompat -> getString(FieldProps.Key) to view.isChecked.toString()
-
-                    is ContextBlock -> {
-                        val context = try {
-                            view.contextHandler.getContext()
-                        } catch (ex: AssertionError) {
-                            null
-                        }
-                        context?.let { getString(FieldProps.Key) to Gson().toJson(it).toString() }
-                    }
-
-                    else -> null
-
-                }?.let {
-
-                    val isRequired = try {
-                        get(FieldProps.Required)?.asBoolean ?: false
-                    } catch (exception: IllegalStateException) { // being thrown by the 'JsonElement' casting
-                        Log.w(TAG, exception.message ?: "Unable to parse field")
-                        false
-                    }
-
-                    val validator = getString(FieldProps.Validator)?.toPattern()
-                    if (!isValid(index, it.second, isRequired, validator)) return
-
-                    accountData.addProperty(it.first, it.second)
-                }
-            }
         }
 
         viewModel.onAccountData(accountData)
-
     }
 
-    private fun createForm() {
-        viewModel.formData.value?.forEach {
-            binding.formFieldsContainer.addFormField(it.toObject(true)!!)
-        }
-    }
 
     private fun isValid(
-        index: Int,
+        index: View,
         value: String?,
         required: Boolean,
         validator: Pattern?
     ): Boolean {
 
         val presentError: ((message: String) -> Unit) = { message ->
-            (binding.formFieldsContainer.getFormFields()[index] as? TextView)?.apply {
+            (index as? TextView)?.apply {
                 this.requestFocus()
                 error = message
             }

@@ -10,7 +10,6 @@ class AccountHandler(var enableContinuity: Boolean = false) : AccountInfoProvide
 
     override fun provide(info: AccountInfo, callback: Completion<AccountInfo>) {
         val account = if (enableContinuity) accounts[info.apiKey] else info
-        // (account as? BoldAccount)?.skipPrechat()
         callback.onComplete(account ?: info)
     }
 

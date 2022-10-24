@@ -32,7 +32,6 @@ import com.genesys.cloud.ui.structure.configuration.ConfigurationsProvider
 import com.genesys.cloud.ui.structure.controller.*
 import com.genesys.cloud.ui.structure.history.ChatElementListener
 import com.genesys.cloud.ui.views.DrawableConfig
-import com.genesys.gcmessengersdksample.data.defs.ChatType
 import com.genesys.gcmessengersdksample.data.defs.DataKeys
 import com.genesys.gcmessengersdksample.data.repositories.JsonSampleRepository
 import com.genesys.gcmessengersdksample.databinding.ActivityMainBinding
@@ -77,15 +76,12 @@ class MainActivity : AppCompatActivity(), ConfigurationsProvider, ChatElementLis
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.updateChatType(ChatType.Messenger)
-        viewModel.createFormFields()
-
-        viewModel.sampleData.observe(this@MainActivity, Observer {
+        viewModel.sampleData.observe(this@MainActivity, Observer { sampleData ->
 
             onAccountDataReady()
 
             viewModel.account?.let { accountInfo ->
-                when (it?.account?.get(DataKeys.Intent)?.asString) {
+                when (sampleData?.account?.get(DataKeys.Intent)?.asString) {
                     DataKeys.TestChatAvailability -> checkAvailability(accountInfo)
                     else -> createChat(accountInfo)
                 }
@@ -112,7 +108,7 @@ class MainActivity : AppCompatActivity(), ConfigurationsProvider, ChatElementLis
 
     override fun onBackPressed() {
         when (supportFragmentManager.backStackEntryCount) {
-            1 -> { //chatController?.destruct()
+            1 -> {
                 selfBack = true
             }
             0 -> {
@@ -130,13 +126,13 @@ class MainActivity : AppCompatActivity(), ConfigurationsProvider, ChatElementLis
         menuInflater.inflate(R.menu.menu_main, menu)
 
         this.endMenu =
-            menu?.findItem(R.id.end_current_chat) // this.destructMenu = menu?.findItem(R.id.destruct_chat)
+            menu?.findItem(R.id.end_current_chat)
 
         if (hasActiveChats) {
             enableMenu(
                 endMenu,
                 true
-            ) // enableMenu(destructMenu, hasChatController() && !chatController.wasDestructed)
+            )
         }
 
         return true
@@ -260,9 +256,6 @@ class MainActivity : AppCompatActivity(), ConfigurationsProvider, ChatElementLis
         ChatAvailability.checkAvailability(accountInfo) {
             toast(
                 this, "Chat availability status returned ${it.isAvailable}",
-//                background = getDrawable(R.drawable.toast)?.apply {
-//                    mutate().setColorFilter(if (it.isAvailable) Color.GREEN else Color.RED, PorterDuff.Mode.MULTIPLY)
-//                }
             )
         }
     }
@@ -280,16 +273,6 @@ class MainActivity : AppCompatActivity(), ConfigurationsProvider, ChatElementLis
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
     }
-
-    fun onAccountReady(account: AccountInfo, chatStartError: (() -> Unit)?) {
-        accountProvider.update(account)
-
-        createChat(account, chatStartError)
-    }
-
-    private fun isFileUrl(url: String): Boolean {
-        return url.startsWith("/")
-    }
     //endregion
 
     //region - ConfigurationsProvider
@@ -301,8 +284,6 @@ class MainActivity : AppCompatActivity(), ConfigurationsProvider, ChatElementLis
     ) {
         settings.applyOther(viewModel.chatSettings)
 
-        //settings.enabled = false
-        // settings.voiceSettings.voiceSupport = VoiceSupport.SpeechRecognition
         settings.requestTimeout = 34500
 
         (settings as? BotChatSettings)?.apply {
@@ -488,7 +469,7 @@ class MainActivity : AppCompatActivity(), ConfigurationsProvider, ChatElementLis
 
         // sample code for handling given link
         try {
-            val intent = if (isFileUrl(url)) {
+            val intent = if (url.startsWith("/")) {
                 val uri = FileProvider.getUriForFile(
                     this,
                     "com.genesys.cloud.internal.BuildConfig.APPLICATION_ID" + ".provider",

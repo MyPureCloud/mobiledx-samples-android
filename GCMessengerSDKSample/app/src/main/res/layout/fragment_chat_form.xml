@@ -14,17 +14,45 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <com.genesys.gcmessengersdksample.presentation.custom.FormFieldsContainer
-        android:id="@+id/formFieldsContainer"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Account Details"
+        android:textColor="@color/black"
+        android:textSize="22sp" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/deploymentIdEditText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:hint="Deployment id" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/domainNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Domain name" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/tokenStoreKeyEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Token store key" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/loggingSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:padding="6sp"
+        android:text="logging"
+        android:textSize="16sp" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:weightSum="2">
+        android:layout_height="match_parent"
+        android:gravity="center|bottom">
 
         <Button
             android:id="@+id/chat_availability"
@@ -49,4 +77,5 @@
             android:textColor="@color/colorPrimary" />
 
     </LinearLayout>
+
 </LinearLayout>

@@ -1,12 +1,9 @@
 package com.genesys.gcmessengersdksample.data.repositories
 
 import android.content.Context
-import com.genesys.gcmessengersdksample.data.defs.ChatType
-import com.genesys.gcmessengersdksample.data.orDefault
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import java.lang.ref.WeakReference
-
 
 class JsonSampleRepository(context: Context) : SampleRepository {
 
@@ -31,29 +28,26 @@ class JsonSampleRepository(context: Context) : SampleRepository {
             }
         }
 
-    private fun getSaved(@ChatType chatType: String): JsonObject? {
-        return wContext.get()?.getSharedPreferences("accounts", 0)?.getString(chatType, null)
+    private fun getSaved(): JsonObject? {
+        val sharedPreferences = wContext.get()?.getSharedPreferences("accounts", 0)
+        return sharedPreferences?.getString("account", null)
             ?.let { Gson().fromJson(it, JsonObject::class.java) }
     }
 
-    override fun getSavedAccount(@ChatType chatType: String): JsonObject {
-        return chatType.takeIf { it != ChatType.ChatSelection }
-            ?.let { getSaved(it).orDefault(chatType) } ?: JsonObject()
+    override fun getSavedAccount(): JsonObject {
+        return getSaved() ?: JsonObject()
     }
 
-    override fun saveAccount(accountData: Any?, @ChatType chatType: String) {
+    override fun saveAccount(accountData: Any?) {
 
         wContext.get()?.getSharedPreferences("accounts", 0)?.let { shared ->
             val editor = shared.edit()
-            editor.putString(
-                chatType,
-                (accountData as? JsonObject).toString()
-            )
+            editor.putString("account", (accountData as? JsonObject).toString())
             editor.apply()
         }
     }
 
-    override fun isRestorable(@ChatType chatType: String): Boolean {
-        return chatType == ChatType.ContinueLast || getSaved(chatType) != null
+    override fun isRestorable(): Boolean {
+        return getSaved() != null
     }
 }
