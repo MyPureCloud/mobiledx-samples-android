@@ -60,17 +60,17 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.uiState.observe(this@MainActivity) { sampleData ->
+        viewModel.uiState.observe(this@MainActivity) { uiState ->
 
             onAccountDataReady()
 
-            sampleData.account?.let { accountRawJson ->
+            uiState.account?.let { accountRawJson ->
 
                 val messengerAccount = accountRawJson.toMessengerAccount()
 
-                if (sampleData.startChat) {
+                if (uiState.startChat) {
                     createChat(messengerAccount)
-                } else if (sampleData.testAvailability) {
+                } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
                 }
             }
