@@ -4,7 +4,6 @@ import android.util.Log
 import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.gcmessengersdksample.data.defs.DataKeys
 import com.genesys.gcmessengersdksample.presentation.chat_form.ChatFormFragment
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 fun JsonObject.toMessengerAccount(): MessengerAccount {
@@ -26,15 +25,3 @@ fun JsonObject.getString(key: String?): String? {
     }
 }
 
-fun Pair<String, String>.isEmpty(): Boolean {
-    return first.isEmpty() || second.isEmpty()
-}
-
-fun JsonElement.toObject(catchEmpty: Boolean = false): JsonObject? {
-    return try {
-        this.asJsonObject
-    } catch (exception: IllegalStateException) { // being thrown by the 'JsonElement' casting
-        Log.w(ChatFormFragment.TAG, exception.message ?: "Unable to parse field")
-        if (catchEmpty) JsonObject() else null
-    }
-}

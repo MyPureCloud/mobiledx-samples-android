@@ -9,11 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.genesys.gcmessengersdksample.R
 import com.genesys.gcmessengersdksample.data.defs.DataKeys
-import com.genesys.gcmessengersdksample.data.getString
 import com.genesys.gcmessengersdksample.data.repositories.JsonSampleRepository
 import com.genesys.gcmessengersdksample.databinding.FragmentChatFormBinding
 import com.google.gson.JsonObject
-import java.util.regex.Pattern
 
 class ChatFormFragment : Fragment() {
 
@@ -39,66 +37,88 @@ class ChatFormFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        observeSavedAccount()
         binding.startChat.setOnClickListener {
-            collaborateData(DataKeys.StartChat)
+            startChat()
         }
-
         binding.chatAvailability.setOnClickListener {
-            collaborateData(DataKeys.TestChatAvailability)
-
+            testChatAvailability()
         }
     }
     //endregion
 
     //region - functionality
-    private fun collaborateData(intent: String) {
+    private fun observeSavedAccount() {
+        viewModel.uiState.observe(viewLifecycleOwner) { sampleData ->
 
-        val accountData = JsonObject().apply {
-            addProperty(DataKeys.Intent, intent)
+            if (sampleData.startChat || sampleData.testAvailability) {
+                return@observe
+            }
 
-            val validator = getString("validator")?.toPattern()
-
-            if (!isValid(
-                    binding.deploymentIdEditText,
-                    binding.deploymentIdEditText.text.toString(),
-                    true,
-                    validator
-                )
-            ) return
-            addProperty(DataKeys.DeploymentId, binding.deploymentIdEditText.text.toString())
-
-            if (!isValid(
-                    binding.domainNameEditText,
-                    binding.domainNameEditText.text.toString(),
-                    true,
-                    validator
-                )
-            ) return
-            addProperty(DataKeys.Domain, binding.domainNameEditText.text.toString())
-
-            if (!isValid(
-                    binding.tokenStoreKeyEditText,
-                    binding.tokenStoreKeyEditText.text.toString(),
-                    false,
-                    validator
-                )
-            ) return
-            addProperty(DataKeys.TokenStoreKey, binding.tokenStoreKeyEditText.text.toString())
-
-            addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
-
+            sampleData.account?.let { accountRawJson ->
+                binding.deploymentIdEditText.setText(accountRawJson[DataKeys.DeploymentId]?.asString)
+                binding.domainNameEditText.setText(accountRawJson[DataKeys.Domain]?.asString)
+                binding.tokenStoreKeyEditText.setText(accountRawJson[DataKeys.TokenStoreKey]?.asString)
+                accountRawJson[DataKeys.Logging]?.let {
+                    binding.loggingSwitch.isEnabled = it.asBoolean
+                }
+            }
         }
-
-        viewModel.onAccountData(accountData)
+        viewModel.loadSavedAccount()
     }
 
+    private fun startChat() {
+        val accountData = createAccountData()
+        accountData?.let { viewModel.startChat(accountData) }
+    }
+
+    private fun testChatAvailability() {
+        val accountData = createAccountData()
+        accountData?.let { viewModel.testChatAvailability(it) }
+    }
+
+    private fun createAccountData(): JsonObject? {
+        val accountData = JsonObject()
+
+        if (!isValid(
+                binding.deploymentIdEditText,
+                binding.deploymentIdEditText.text.toString(),
+                true,
+            )
+        ) return null
+        accountData.addProperty(
+            DataKeys.DeploymentId,
+            binding.deploymentIdEditText.text.toString()
+        )
+
+        if (!isValid(
+                binding.domainNameEditText,
+                binding.domainNameEditText.text.toString(),
+                true
+            )
+        ) return null
+        accountData.addProperty(DataKeys.Domain, binding.domainNameEditText.text.toString())
+
+        if (!isValid(
+                binding.tokenStoreKeyEditText,
+                binding.tokenStoreKeyEditText.text.toString(),
+                false
+            )
+        ) return null
+        accountData.addProperty(
+            DataKeys.TokenStoreKey,
+            binding.tokenStoreKeyEditText.text.toString()
+        )
+
+        accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
+
+        return accountData
+    }
 
     private fun isValid(
         index: View,
         value: String?,
-        required: Boolean,
-        validator: Pattern?
+        required: Boolean
     ): Boolean {
 
         val presentError: ((message: String) -> Unit) = { message ->
@@ -108,25 +128,13 @@ class ChatFormFragment : Fragment() {
             }
         }
 
-        val validatorCheck = {
-
-            validator?.let { // -> If there is a validator, we check that the value passes (empty is valid)
-
-                (value.isNullOrEmpty() || validator.matcher(value).matches()).also {
-                    if (!it) presentError(getString(R.string.validation_error))
-                }
-
-            } ?: true
-
-        }
-
         val requiredCheck = {
             (!(required && value.isNullOrEmpty())).also {
                 if (!it) presentError(getString(R.string.required_error))
             }
         }
 
-        return validatorCheck() && requiredCheck()
+        return requiredCheck()
     }
     //endregion
 
