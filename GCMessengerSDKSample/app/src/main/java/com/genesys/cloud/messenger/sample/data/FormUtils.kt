@@ -1,9 +1,9 @@
-package com.genesys.gcmessengersdksample.data
+package com.genesys.cloud.messenger.sample.data
 
 import android.util.Log
 import com.genesys.cloud.integration.messenger.MessengerAccount
-import com.genesys.gcmessengersdksample.data.defs.DataKeys
-import com.genesys.gcmessengersdksample.presentation.chat_form.ChatFormFragment
+import com.genesys.cloud.messenger.sample.data.defs.DataKeys
+import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.google.gson.JsonObject
 
 fun JsonObject.toMessengerAccount(): MessengerAccount {

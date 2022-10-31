@@ -1,4 +1,4 @@
-package com.genesys.gcmessengersdksample.data.defs;
+package com.genesys.cloud.messenger.sample.data.defs;
 
 
 import androidx.annotation.StringDef;

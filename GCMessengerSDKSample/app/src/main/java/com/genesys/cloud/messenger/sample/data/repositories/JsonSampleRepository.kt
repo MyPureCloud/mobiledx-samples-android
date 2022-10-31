@@ -1,4 +1,4 @@
-package com.genesys.gcmessengersdksample.data.repositories
+package com.genesys.cloud.messenger.sample.data.repositories
 
 import android.content.Context
 import com.google.gson.Gson

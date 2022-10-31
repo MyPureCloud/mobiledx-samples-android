@@ -1,4 +1,4 @@
-package com.genesys.gcmessengersdksample.data
+package com.genesys.cloud.messenger.sample.data
 
 import com.google.gson.JsonObject
 

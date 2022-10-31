@@ -1,4 +1,4 @@
-package com.genesys.gcmessengersdksample
+package com.genesys.cloud.messenger.sample
 
 import android.os.Bundle
 import android.util.Log
@@ -19,12 +19,12 @@ import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
 import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.ui.structure.controller.*
-import com.genesys.gcmessengersdksample.data.repositories.JsonSampleRepository
-import com.genesys.gcmessengersdksample.data.toMessengerAccount
-import com.genesys.gcmessengersdksample.databinding.ActivityMainBinding
-import com.genesys.gcmessengersdksample.presentation.chat_form.ChatFormFragment
-import com.genesys.gcmessengersdksample.presentation.chat_form.SampleFormViewModel
-import com.genesys.gcmessengersdksample.presentation.chat_form.SampleFormViewModelFactory
+import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
+import com.genesys.cloud.messenger.sample.data.toMessengerAccount
+import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
+import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
+import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
+import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,11 +1,11 @@
-package com.genesys.gcmessengersdksample.presentation.chat_form
+package com.genesys.cloud.messenger.sample.chat_form
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.genesys.gcmessengersdksample.data.SampleUIState
-import com.genesys.gcmessengersdksample.data.repositories.SampleRepository
+import com.genesys.cloud.messenger.sample.data.SampleUIState
+import com.genesys.cloud.messenger.sample.data.repositories.SampleRepository
 import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 

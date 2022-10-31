@@ -1,4 +1,4 @@
-package com.genesys.gcmessengersdksample.presentation.chat_form
+package com.genesys.cloud.messenger.sample.chat_form
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.genesys.gcmessengersdksample.R
-import com.genesys.gcmessengersdksample.data.defs.DataKeys
-import com.genesys.gcmessengersdksample.data.repositories.JsonSampleRepository
-import com.genesys.gcmessengersdksample.databinding.FragmentChatFormBinding
+import com.genesys.cloud.messenger.sample.R
+import com.genesys.cloud.messenger.sample.data.defs.DataKeys
+import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
+import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
 import com.google.gson.JsonObject
 
 class ChatFormFragment : Fragment() {

@@ -1,4 +1,4 @@
-package com.genesys.mobile.messenger.sdk.gcmessengersdksample
+package com.genesys.cloud.messenger.sample
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

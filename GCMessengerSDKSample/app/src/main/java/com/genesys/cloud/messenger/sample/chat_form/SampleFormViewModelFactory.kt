@@ -1,8 +1,8 @@
-package com.genesys.gcmessengersdksample.presentation.chat_form
+package com.genesys.cloud.messenger.sample.chat_form
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.genesys.gcmessengersdksample.data.repositories.JsonSampleRepository
+import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 
 class SampleFormViewModelFactory(private val repository: JsonSampleRepository) :
     ViewModelProvider.Factory {

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.genesys.gcmessengersdksample.MainActivity">
+    tools:context="com.genesys.cloud.messenger.sample.MainActivity">
 
     <FrameLayout
         android:id="@+id/content_main"

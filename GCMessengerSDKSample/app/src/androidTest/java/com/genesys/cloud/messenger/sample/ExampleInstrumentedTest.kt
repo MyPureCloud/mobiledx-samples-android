@@ -1,4 +1,4 @@
-package com.genesys.gcmessengersdksample
+package com.genesys.cloud.messenger.sample
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
