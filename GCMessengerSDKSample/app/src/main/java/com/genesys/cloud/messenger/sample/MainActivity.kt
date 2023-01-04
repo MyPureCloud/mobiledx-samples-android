@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -52,7 +53,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private val hasActiveChats get() = chatController?.hasOpenChats() == true
     private var chatController: ChatController? = null
     private var endMenu: MenuItem? = null
-    private var selfBack: Boolean = false
+
+    private var shouldDefaultBack: Boolean = false
+    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            backPressed()
+        }
+    }
+
     //endregion
 
     //region - lifecycle
@@ -80,23 +88,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
         }
 
-        /*TODO:
-          if (BuildCompat.isAtLeastT()) {
-            onBackInvokedDispatcher.registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_OVERLAY
-            ) {
-                // Back is pressed... Finishing the activity
-                backPressed()
-            }
-        } else {
-            onBackPressedDispatcher.addCallback( this@MainActivity ,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        // Back is pressed... Finishing the activity
-                        backPressed()
-                    }
-                })
-        }*/
+        onBackPressedDispatcher.addCallback(this@MainActivity, mOnBackPressedCallback)
 
         if (findChatFragment() == null) {
             val fragment = ChatFormFragment()
@@ -119,7 +111,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     fun backPressed() {
         when (supportFragmentManager.backStackEntryCount) {
             1 -> {
-                selfBack = true
+                shouldDefaultBack = true
             }
             0 -> {
                 chatController?.destruct()
@@ -129,9 +121,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     override fun onBackPressed() {
-        backPressed()
+        val fragmentBack = supportFragmentManager.backStackEntryCount > 0
+        mOnBackPressedCallback.isEnabled = !fragmentBack
+        shouldDefaultBack = fragmentBack
 
-        if (!supportFragmentManager.isStateSaved) super.onBackPressed() //onBackPressedDispatcher.onBackPressed()//
+        onBackPressedDispatcher.onBackPressed()
     }
 
     //endregion
@@ -151,6 +145,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
 
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mOnBackPressedCallback.remove()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -328,10 +327,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.ChatWindowDetached -> {
-                if (!selfBack && supportFragmentManager.backStackEntryCount == 0) {
+                if (!shouldDefaultBack && supportFragmentManager.backStackEntryCount == 0) {
                     finish()
                 }
-                selfBack = false
+                shouldDefaultBack = false
             }
 
             StateEvent.Unavailable -> runMain {
