@@ -1,5 +1,6 @@
 package com.genesys.cloud.messenger.sample
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -18,13 +19,14 @@ import com.genesys.cloud.core.utils.snack
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
 import com.genesys.cloud.integration.core.StateEvent
-import com.genesys.cloud.ui.structure.controller.*
-import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
-import com.genesys.cloud.messenger.sample.data.toMessengerAccount
-import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
 import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
+import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
+import com.genesys.cloud.messenger.sample.data.toMessengerAccount
+import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
+import com.genesys.cloud.ui.structure.controller.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,6 +56,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     //endregion
 
     //region - lifecycle
+
+    @androidx.annotation.OptIn(androidx.core.os.BuildCompat.PrereleaseSdkCheck::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -76,6 +80,24 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
         }
 
+        /*TODO:
+          if (BuildCompat.isAtLeastT()) {
+            onBackInvokedDispatcher.registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_OVERLAY
+            ) {
+                // Back is pressed... Finishing the activity
+                backPressed()
+            }
+        } else {
+            onBackPressedDispatcher.addCallback( this@MainActivity ,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        // Back is pressed... Finishing the activity
+                        backPressed()
+                    }
+                })
+        }*/
+
         if (findChatFragment() == null) {
             val fragment = ChatFormFragment()
             showFragment(fragment, ChatFormFragment.TAG)
@@ -94,7 +116,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         super.onStop()
     }
 
-    override fun onBackPressed() {
+    fun backPressed() {
         when (supportFragmentManager.backStackEntryCount) {
             1 -> {
                 selfBack = true
@@ -104,9 +126,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 finish()
             }
         }
-
-        if (!supportFragmentManager.isStateSaved) super.onBackPressed()
     }
+
+    override fun onBackPressed() {
+        backPressed()
+
+        if (!supportFragmentManager.isStateSaved) super.onBackPressed() //onBackPressedDispatcher.onBackPressed()//
+    }
+
     //endregion
 
     //region - menu
@@ -231,7 +258,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                         ?.popBackStackImmediate(
                             CONVERSATION_FRAGMENT_TAG,
                             0
-                        ) == false && supportFragmentManager.backStackEntryCount >= 1) onBackPressed()
+                        ) == false && supportFragmentManager.backStackEntryCount >= 1) backPressed()
 
             } catch (ex: IllegalStateException) {
                 ex.printStackTrace()
@@ -311,38 +338,48 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 waitingVisibility(false)
                 toast(
                     this,
-                    "${stateEvent.scope} chat ${stateEvent.state}: ${stateEvent.data}",
-                    Toast.LENGTH_SHORT
+                    "Chat ${stateEvent.state}: ${stateEvent.data}",
+                    Toast.LENGTH_LONG
                 )
             }
 
             StateEvent.Idle -> {
                 enableMenu(endMenu, false)
                 removeChatFragment()
+                waitingVisibility(false)
             }
 
-            StateEvent.Reconnected -> {
-                window.decorView.snack(getString(com.genesys.cloud.ui.R.string.async_chat_reconnect))
+            StateEvent.Reconnected -> runMain {
+                window.decorView.snack(getString(R.string.chat_connection_recovered))
             }
 
-            StateEvent.Disconnected -> {
-                runMain {
-                    AlertDialog.Builder(this@MainActivity).apply {
-                        setTitle("Chat got disconnected")
-                        setMessage(
-                            "We were not able to restore chat connection.\nMake sure your device is connected.\nWould you like to continue with the chat or dismiss it?"
-                        )
-                        setCancelable(false)
-                        setPositiveButton("Continue") { dialog, _ ->
-                            chatController?.restoreChat(findChatFragment())
-                            dialog.dismiss()
-                        }
-                        setNegativeButton("Dismiss") { dialog, _ ->
-                            chatController?.endChat()
-                            dialog.dismiss()
-                        }
-                    }.show()
-                }
+            StateEvent.Reconnecting -> runMain {
+                Snackbar.make(window.decorView,
+                    R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE).apply {
+                    setAction(R.string.dismiss) {
+                        chatController?.endChat()
+                    }
+                    this.setBackgroundTint(Color.parseColor("#ff6600"))
+                    this.setActionTextColor(Color.YELLOW)
+                }.show()
+            }
+
+            StateEvent.Disconnected -> runMain {
+                AlertDialog.Builder(this@MainActivity).apply {
+                    setTitle("Chat got disconnected")
+                    setMessage(
+                        "We were not able to restore chat connection.\nMake sure your device is connected.\nWould you like to continue with the chat or dismiss it?"
+                    )
+                    setCancelable(false)
+                    setPositiveButton("Continue") { dialog, _ ->
+                        chatController?.restoreChat(findChatFragment())
+                        dialog.dismiss()
+                    }
+                    setNegativeButton("Dismiss") { dialog, _ ->
+                        chatController?.endChat()
+                        dialog.dismiss()
+                    }
+                }.show()
             }
         }
     }
