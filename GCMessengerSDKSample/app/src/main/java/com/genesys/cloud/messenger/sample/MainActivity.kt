@@ -319,7 +319,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             StateEvent.Started -> {
                 waitingVisibility(false)
                 enableMenu(endMenu, hasActiveChats)
-
             }
 
             StateEvent.ChatWindowLoaded -> {
@@ -331,6 +330,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     finish()
                 }
                 shouldDefaultBack = false
+            }
+
+            StateEvent.Ended -> {
+                // as in case of `Dismiss` press during disconnection
+                if(supportFragmentManager.backStackEntryCount > 0){
+                    onBackPressed()
+                }
             }
 
             StateEvent.Unavailable -> runMain {
