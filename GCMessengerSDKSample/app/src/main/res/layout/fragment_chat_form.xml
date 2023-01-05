@@ -12,32 +12,27 @@
     android:focusableInTouchMode="true"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="15dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Account Details"
         android:textColor="@color/black"
-        android:textSize="22sp" />
+        android:textSize="22sp"
+        android:layout_margin="10dp"/>
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/deploymentIdEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Deployment id" />
+        android:hint= "@string/quick_start_account_form_account_name" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/domainNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Domain name" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/tokenStoreKeyEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Token store key" />
+        android:hint="@string/quick_start_account_form_knowledge_base" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/loggingSwitch"
@@ -45,8 +40,9 @@
         android:layout_height="wrap_content"
         android:enabled="true"
         android:padding="6sp"
-        android:text="logging"
-        android:textSize="16sp" />
+        android:text="@string/quick_start_account_form_logging"
+        android:textSize="16sp"
+        android:layout_marginTop="6dp"/>
 
 
     <LinearLayout

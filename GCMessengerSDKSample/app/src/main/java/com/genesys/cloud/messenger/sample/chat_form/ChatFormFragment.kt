@@ -58,7 +58,6 @@ class ChatFormFragment : Fragment() {
             sampleData.account?.let { accountRawJson ->
                 binding.deploymentIdEditText.setText(accountRawJson[DataKeys.DeploymentId]?.asString)
                 binding.domainNameEditText.setText(accountRawJson[DataKeys.Domain]?.asString)
-                binding.tokenStoreKeyEditText.setText(accountRawJson[DataKeys.TokenStoreKey]?.asString)
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
                 }
@@ -98,17 +97,6 @@ class ChatFormFragment : Fragment() {
             )
         ) return null
         accountData.addProperty(DataKeys.Domain, binding.domainNameEditText.text.toString())
-
-        if (!isValid(
-                binding.tokenStoreKeyEditText,
-                binding.tokenStoreKeyEditText.text.toString(),
-                false
-            )
-        ) return null
-        accountData.addProperty(
-            DataKeys.TokenStoreKey,
-            binding.tokenStoreKeyEditText.text.toString()
-        )
 
         accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
 

@@ -11,7 +11,6 @@ fun JsonObject.toMessengerAccount(): MessengerAccount {
         deploymentId = getString(DataKeys.DeploymentId) ?: "",
         domain = getString(DataKeys.Domain) ?: ""
     ).apply {
-        tokenStoreKey = getString(DataKeys.TokenStoreKey).orEmpty()
         logging = get(DataKeys.Logging)?.asBoolean ?: false
     }
 }
