@@ -148,6 +148,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     override fun onDestroy() {
+        destructChat()
         super.onDestroy()
         mOnBackPressedCallback.remove()
     }
@@ -194,7 +195,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         if (chatController?.wasDestructed != false) {
 
-            chatController = ChatController.Builder(this)
+            chatController = ChatController.Builder(applicationContext)
                 .apply {
                     chatEventListener(this@MainActivity)
                 }.build(account, object : ChatLoadedListener {
