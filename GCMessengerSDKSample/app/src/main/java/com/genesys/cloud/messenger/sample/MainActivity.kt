@@ -148,6 +148,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     override fun onDestroy() {
+        destructChat()
         super.onDestroy()
         mOnBackPressedCallback.remove()
     }
