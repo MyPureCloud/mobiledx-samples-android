@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         if (chatController?.wasDestructed != false) {
 
-            chatController = ChatController.Builder(applicationContext)
+            chatController = ChatController.Builder(this)
                 .apply {
                     chatEventListener(this@MainActivity)
                 }.build(account, object : ChatLoadedListener {
