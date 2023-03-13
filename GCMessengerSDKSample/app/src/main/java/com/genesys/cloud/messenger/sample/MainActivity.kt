@@ -200,6 +200,20 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     chatEventListener(this@MainActivity)
                 }.build(account, object : ChatLoadedListener {
 
+                    private fun restoreExistingChatFragmentOr(actionIfNotFound: () -> Unit) {
+                        val existingChatFragment = findChatFragment()
+                        if (existingChatFragment != null) {
+                            chatController?.restoreChat(existingChatFragment)
+                        } else {
+                            actionIfNotFound()
+                        }
+                    }
+
+                    private fun handleChatStartError(error: NRError) {
+                        chatStartError?.invoke()
+                        onError(error)
+                    }
+
                     override fun onComplete(result: ChatLoadResponse) {
                         Log.d(TAG, "createChat: ChatLoadedListener.complete")
 
@@ -207,30 +221,21 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                             when (error.errorCode) {
                                 // If the error is a conversation creation error
                                 NRError.ConversationCreationError -> {
-                                    val existingChatFragment = findChatFragment()
-                                    if (existingChatFragment != null) {
-                                        // If a chat fragment exists, restore the chat
-                                        chatController?.restoreChat(existingChatFragment)
-                                    } else {
-                                        // If no chat fragment exists, invoke the chat start error callback and log the error
-                                        chatStartError?.invoke()
-                                        onError(error)
+                                    restoreExistingChatFragmentOr {
+                                        // If no chat fragment exists, handle chat start error
+                                        handleChatStartError(error)
                                     }
                                 }
                                 else -> {
-                                    // If the error is not a conversation creation error, invoke the chat start error callback and log the error
-                                    chatStartError?.invoke()
-                                    onError(error)
+                                    // If the error is not a conversation creation error, handle chat start error
+                                    handleChatStartError(error)
                                 }
                             }
                             return
                         }
 
                         // If there's no error in the response, check if an existing chat fragment can be found
-                        val existingChatFragment = findChatFragment()
-                        if (existingChatFragment != null) {
-                            chatController?.restoreChat(existingChatFragment)
-                        } else {
+                        restoreExistingChatFragmentOr {
                             // If no chat fragment exists, open a new conversation fragment
                             openConversationFragment(result.fragment!!)
                         }
