@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -68,6 +70,11 @@ dependencies {
     //region Gson
     implementation 'com.google.code.gson:gson:2.9.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    //endregion
+
+    //region Firebase
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.5'
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
     //endregion
 
     //region Tests
