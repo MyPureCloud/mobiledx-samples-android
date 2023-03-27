@@ -3,7 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-if (file("google-services.json").exists()) {
+def isGoogleServicesFileExists = file("google-services.json").exists()
+
+if (isGoogleServicesFileExists) {
     apply plugin: 'com.google.gms.google-services'
     apply plugin: 'com.google.firebase.crashlytics'
     println("Google Services plugin enabled.")
@@ -78,7 +80,7 @@ dependencies {
     //endregion
 
     //region Firebase
-    if (file("google-services.json").exists()) {
+    if (isGoogleServicesFileExists) {
         implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.5'
         implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
     }
