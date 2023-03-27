@@ -3,6 +3,15 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def isGoogleServicesFileExists = file("google-services.json").exists()
+
+if (isGoogleServicesFileExists) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+    println("Google Services plugin enabled.")
+    println("Crashlytics plugin enabled.")
+}
+
 android {
     namespace 'com.genesys.cloud.messenger.sample'
     compileSdk 33
@@ -68,6 +77,13 @@ dependencies {
     //region Gson
     implementation 'com.google.code.gson:gson:2.9.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    //endregion
+
+    //region Firebase
+    if (isGoogleServicesFileExists) {
+        implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.5'
+        implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
+    }
     //endregion
 
     //region Tests
