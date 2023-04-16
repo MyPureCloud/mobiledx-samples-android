@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.R
 import com.genesys.cloud.messenger.sample.data.defs.DataKeys
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
@@ -44,6 +45,7 @@ class ChatFormFragment : Fragment() {
         binding.chatAvailability.setOnClickListener {
             testChatAvailability()
         }
+        binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
     }
     //endregion
 
