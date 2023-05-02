@@ -41,6 +41,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
     //endregion
 
+    //region - sealed classes
+    sealed class ChatState {
+        object FirstCreation : ChatState()
+        object AfterRotationCreation : ChatState()
+        object AfterActivityRecreation : ChatState()
+    }
+    //endregion
+
     //region - attributes
     private val viewModel: SampleFormViewModel by viewModels {
         SampleFormViewModelFactory(
@@ -90,9 +98,30 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         onBackPressedDispatcher.addCallback(this@MainActivity, mOnBackPressedCallback)
 
-        if (findChatFragment() == null) {
-            val fragment = ChatFormFragment()
-            showFragment(fragment, ChatFormFragment.TAG)
+        val existingChatFragment = findChatFragment()
+
+        val state = when {
+            existingChatFragment == null -> ChatState.FirstCreation
+            viewModel.uiState.value == null -> ChatState.AfterActivityRecreation
+            else -> ChatState.AfterRotationCreation
+        }
+
+        when (state) {
+            ChatState.FirstCreation -> {
+                val fragment = ChatFormFragment()
+                showFragment(fragment, ChatFormFragment.TAG)
+            }
+
+            ChatState.AfterRotationCreation -> {
+                // Do nothing, the uiState observer will be triggered again with the previous data
+            }
+
+            ChatState.AfterActivityRecreation -> {
+                viewModel.loadSavedAccount()
+                viewModel.uiState.value?.account?.let { account ->
+                    viewModel.startChat(account)
+                }
+            }
         }
     }
 
@@ -202,7 +231,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
                     private fun restoreExistingChatFragmentOr(actionIfNotFound: () -> Unit) {
                         val existingChatFragment = findChatFragment()
-                        if (existingChatFragment != null) {
+                        if (existingChatFragment != null && existingChatFragment.isAdded) {
                             chatController?.restoreChat(existingChatFragment)
                         } else {
                             actionIfNotFound()
