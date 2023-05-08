@@ -30,6 +30,7 @@ import com.genesys.cloud.ui.structure.controller.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), ChatEventListener {
@@ -357,6 +358,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     TAG,
                     "!!!!! Chat ${error.scope} can't be created: $message"
                 )
+
+                findChatFragment()?.isVisible?.let {
+                    onBackPressed()
+                }
             }
         }
         toast(this, message, Toast.LENGTH_SHORT)
