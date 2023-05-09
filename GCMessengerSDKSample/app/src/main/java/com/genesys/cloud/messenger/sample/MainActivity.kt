@@ -230,12 +230,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }.build(account, object : ChatLoadedListener {
 
                     private fun restoreExistingChatFragmentOr(actionIfNotFound: () -> Unit) {
-                        val existingChatFragment = findChatFragment()
-                        if (existingChatFragment != null && existingChatFragment.isAdded) {
-                            chatController?.restoreChat(existingChatFragment)
-                        } else {
-                            actionIfNotFound()
-                        }
+
+                        findChatFragment()?.takeIf { it.isAdded }?.let {
+                            chatController?.restoreChat(it)
+                        } ?: actionIfNotFound()
                     }
 
                     private fun handleChatStartError(error: NRError) {
