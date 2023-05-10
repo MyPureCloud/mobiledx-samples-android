@@ -356,7 +356,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     "!!!!! Chat ${error.scope} can't be created: $message"
                 )
 
-                findChatFragment()?.isVisible?.let {
+                if (findChatFragment()?.isVisible == true) {
                     onBackPressed()
                 }
             }
