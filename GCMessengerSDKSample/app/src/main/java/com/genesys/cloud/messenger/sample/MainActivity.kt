@@ -424,13 +424,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
             StateEvent.Disconnected -> runMain {
                 AlertDialog.Builder(this@MainActivity).apply {
-                    setTitle("Chat got disconnected")
+                    setTitle("Chat was disconnected")
                     setMessage(
-                        "We were not able to restore chat connection.\nMake sure your device is connected.\nWould you like to continue with the chat or dismiss it?"
-                    )
+                        "We were not able to restore chat connection.\nMake sure your device is connected.")
                     setCancelable(false)
-                    setPositiveButton("Continue") { dialog, _ ->
-                        chatController?.restoreChat(findChatFragment())
+                    setPositiveButton("Reconnect Chat") { dialog, _ ->
+                        chatController?.reconnectChat()
                         dialog.dismiss()
                     }
                     setNegativeButton("Dismiss") { dialog, _ ->
