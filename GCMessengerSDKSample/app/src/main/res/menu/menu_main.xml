@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/end_current_chat"
+        android:enabled="false"
+        android:orderInCategory="2"
+        android:title="@string/end_current_chat"
+        android:visible="false"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/destruct_chat"
+        android:enabled="false"
+        android:orderInCategory="1"
+        android:title="@string/destruct_chat_controller"
+        android:visible="false"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/upload_file"
+        android:enabled="false"
+        android:orderInCategory="1"
+        android:title="@string/upload_file"
+        android:visible="false"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/clear_history"
+        android:enabled="false"
+        android:orderInCategory="1"
+        android:title="@string/clear_history"
+        android:visible="false"
+        app:showAsAction="collapseActionView" />
+
+</menu>
