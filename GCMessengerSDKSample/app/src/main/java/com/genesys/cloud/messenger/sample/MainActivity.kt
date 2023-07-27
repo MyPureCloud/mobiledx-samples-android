@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private val hasActiveChats get() = chatController?.hasOpenChats() == true
     private var chatController: ChatController? = null
     private var endMenu: MenuItem? = null
+    private var dismissChatSnackBar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -150,6 +151,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     override fun onBackPressed() {
+
+        dismissChatSnackBar?.takeIf { it.isShown }?.dismiss()
+
         val fragmentBack = supportFragmentManager.backStackEntryCount > 0
         mOnBackPressedCallback.isEnabled = !fragmentBack
         shouldDefaultBack = fragmentBack
@@ -412,14 +416,16 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnecting -> runMain {
-                Snackbar.make(window.decorView,
-                    R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE).apply {
+                dismissChatSnackBar = Snackbar.make(
+                    window.decorView,
+                    R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE
+                ).apply {
                     setAction(R.string.dismiss) {
                         chatController?.endChat()
                     }
                     this.setBackgroundTint(Color.parseColor("#ff6600"))
                     this.setActionTextColor(Color.YELLOW)
-                }.show()
+                }.also { it.show() }
             }
 
             StateEvent.Disconnected -> runMain {
