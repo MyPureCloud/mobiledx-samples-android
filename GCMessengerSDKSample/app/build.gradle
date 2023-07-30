@@ -50,9 +50,9 @@ android {
 dependencies {
 
     //region Genesys
-    implementation 'com.genesys.cloud:core:5.0.7.rc3'
-    implementation 'com.genesys.cloud:chatintegration:5.0.7.rc5'
-    implementation 'com.genesys.cloud:ui:5.0.7.rc5'
+    implementation 'com.genesys.cloud:core:5.0.7.rc4'
+    implementation 'com.genesys.cloud:chatintegration:5.0.7.rc6'
+    implementation 'com.genesys.cloud:ui:5.0.7.rc6'
     //endregion
 
     //region android
