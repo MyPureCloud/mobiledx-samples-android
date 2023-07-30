@@ -347,14 +347,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         waitingVisibility(false)
 
-        var message = "!!!! Error:${error.errorCode}: ${error.description ?: error.reason}"
+        val message = "Error: ${error.errorCode}: ${error.description ?: error.reason}"
 
         when (error.errorCode) {
             NRError.ConfigurationsError, NRError.ConversationCreationError -> {
 
-                if (error.reason == NRError.NotEnabled) {
-                    message = getString(R.string.chat_disabled_error)
-                }
                 Log.e(
                     TAG,
                     "!!!!! Chat ${error.scope} can't be created: $message"
