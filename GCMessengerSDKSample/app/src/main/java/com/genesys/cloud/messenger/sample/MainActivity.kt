@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private val hasActiveChats get() = chatController?.hasOpenChats() == true
     private var chatController: ChatController? = null
     private var endMenu: MenuItem? = null
+    private var dismissChatSnackBar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -150,6 +151,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     override fun onBackPressed() {
+
+        dismissChatSnackBar?.takeIf { it.isShown }?.dismiss()
+
         val fragmentBack = supportFragmentManager.backStackEntryCount > 0
         mOnBackPressedCallback.isEnabled = !fragmentBack
         shouldDefaultBack = fragmentBack
@@ -343,14 +347,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         waitingVisibility(false)
 
-        var message = "!!!! Error:${error.errorCode}: ${error.description ?: error.reason}"
+        val message = "Error: ${error.errorCode}: ${error.description ?: error.reason}"
 
         when (error.errorCode) {
             NRError.ConfigurationsError, NRError.ConversationCreationError -> {
 
-                if (error.reason == NRError.NotEnabled) {
-                    message = getString(R.string.chat_disabled_error)
-                }
                 Log.e(
                     TAG,
                     "!!!!! Chat ${error.scope} can't be created: $message"
@@ -412,25 +413,26 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnecting -> runMain {
-                Snackbar.make(window.decorView,
-                    R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE).apply {
+                dismissChatSnackBar = Snackbar.make(
+                    window.decorView,
+                    R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE
+                ).apply {
                     setAction(R.string.dismiss) {
                         chatController?.endChat()
                     }
                     this.setBackgroundTint(Color.parseColor("#ff6600"))
                     this.setActionTextColor(Color.YELLOW)
-                }.show()
+                }.also { it.show() }
             }
 
             StateEvent.Disconnected -> runMain {
                 AlertDialog.Builder(this@MainActivity).apply {
-                    setTitle("Chat got disconnected")
+                    setTitle("Chat was disconnected")
                     setMessage(
-                        "We were not able to restore chat connection.\nMake sure your device is connected.\nWould you like to continue with the chat or dismiss it?"
-                    )
+                        "We were not able to restore chat connection.\nMake sure your device is connected.")
                     setCancelable(false)
-                    setPositiveButton("Continue") { dialog, _ ->
-                        chatController?.restoreChat(findChatFragment())
+                    setPositiveButton("Reconnect Chat") { dialog, _ ->
+                        chatController?.reconnectChat()
                         dialog.dismiss()
                     }
                     setNegativeButton("Dismiss") { dialog, _ ->
