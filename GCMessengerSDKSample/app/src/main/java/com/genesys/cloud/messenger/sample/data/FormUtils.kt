@@ -12,6 +12,7 @@ fun JsonObject.toMessengerAccount(): MessengerAccount {
         domain = getString(DataKeys.Domain) ?: ""
     ).apply {
         logging = get(DataKeys.Logging)?.asBoolean ?: false
+        customAttributes = mapOf("Company" to "Genesys")
     }
 }
 
