@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 @StringDef({
         DataKeys.DeploymentId,
         DataKeys.Domain,
+        DataKeys.CustomAttributes,
         DataKeys.TokenStoreKey,
         DataKeys.Logging,})
 
@@ -18,4 +19,5 @@ public @interface DataKeys {
     String Domain = "domain";
     String DeploymentId = "deploymentId";
     String Logging = "logging";
+    String CustomAttributes = "customAttributes";
 }

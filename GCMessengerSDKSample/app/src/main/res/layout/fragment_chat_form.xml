@@ -35,6 +35,12 @@
         android:layout_height="wrap_content"
         android:hint="@string/quick_start_account_form_knowledge_base" />
 
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/customAttributesEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/quick_start_account_form_custom_attributes" />
+
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/loggingSwitch"
         android:layout_width="match_parent"
