@@ -103,14 +103,17 @@ class ChatFormFragment : Fragment() {
             binding.domainNameEditText.text.toString()
         )
 
-        if (binding.customAttributesEditText.text.toString().isNotEmpty()) {
-
-            val keyValueMap = binding.customAttributesEditText.text.toString().toMap()
+        val customAttributesValue = binding.customAttributesEditText.text.toString()
+        if (customAttributesValue.isNotEmpty()) {
+            val regex = Regex("""^\s*\{(?:\s*"[^"]*"\s*:\s*"[^"]*"\s*(?:,\s*"[^"]*"\s*:\s*"[^"]*"\s*)*)\}\s*$""")
+            val keyValueMap =
+                if (regex.matches(customAttributesValue)) customAttributesValue.toMap()
+                else null
 
             if (keyValueMap != null) {
                 accountData.addProperty(
                     DataKeys.CustomAttributes,
-                    binding.customAttributesEditText.text.toString()
+                    customAttributesValue
                 )
             } else {
                 binding.customAttributesEditText.presentError(getString(R.string.custom_attributes_error))
