@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.R
 import com.genesys.cloud.messenger.sample.data.defs.DataKeys
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
+import com.genesys.cloud.messenger.sample.data.toMap
 import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
 import com.google.gson.JsonObject
 
@@ -60,6 +61,7 @@ class ChatFormFragment : Fragment() {
             sampleData.account?.let { accountRawJson ->
                 binding.deploymentIdEditText.setText(accountRawJson[DataKeys.DeploymentId]?.asString)
                 binding.domainNameEditText.setText(accountRawJson[DataKeys.Domain]?.asString)
+                binding.customAttributesEditText.setText(accountRawJson[DataKeys.CustomAttributes]?.asString)
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
                 }
@@ -81,50 +83,47 @@ class ChatFormFragment : Fragment() {
     private fun createAccountData(): JsonObject? {
         val accountData = JsonObject()
 
-        if (!isValid(
-                binding.deploymentIdEditText,
-                binding.deploymentIdEditText.text.toString(),
-                true,
-            )
-        ) return null
+        if (binding.deploymentIdEditText.text.toString().isEmpty()) {
+            binding.deploymentIdEditText.presentError(getString(R.string.required_error))
+            return null
+        }
+
         accountData.addProperty(
             DataKeys.DeploymentId,
             binding.deploymentIdEditText.text.toString()
         )
 
-        if (!isValid(
-                binding.domainNameEditText,
-                binding.domainNameEditText.text.toString(),
-                true
-            )
-        ) return null
-        accountData.addProperty(DataKeys.Domain, binding.domainNameEditText.text.toString())
+        if (binding.domainNameEditText.text.toString().isEmpty()) {
+            binding.domainNameEditText.presentError(getString(R.string.required_error))
+            return null
+        }
+
+        accountData.addProperty(
+            DataKeys.Domain,
+            binding.domainNameEditText.text.toString()
+        )
+
+        val customAttributesValue = binding.customAttributesEditText.text.toString()
+        if (customAttributesValue.isNotEmpty()) {
+            val regex = Regex("""^\s*\{(?:\s*"[^"]*"\s*:\s*"[^"]*"\s*(?:,\s*"[^"]*"\s*:\s*"[^"]*"\s*)*)\}\s*$""")
+            val keyValueMap =
+                if (regex.matches(customAttributesValue)) customAttributesValue.toMap()
+                else null
+
+            if (keyValueMap != null) {
+                accountData.addProperty(
+                    DataKeys.CustomAttributes,
+                    customAttributesValue
+                )
+            } else {
+                binding.customAttributesEditText.presentError(getString(R.string.custom_attributes_error))
+                return null
+            }
+        }
 
         accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
 
         return accountData
-    }
-
-    private fun isValid(
-        index: View,
-        value: String?,
-        required: Boolean
-    ): Boolean {
-
-        val presentError: ((message: String) -> Unit) = { message ->
-            (index as? TextView)?.apply {
-                this.requestFocus()
-                error = message
-            }
-        }
-
-        val requiredCheck = {
-            (!(required && value.isNullOrEmpty())).also {
-                if (!it) presentError(getString(R.string.required_error))
-            }
-        }
-
-        return requiredCheck()
     }
     //endregion
 
@@ -133,4 +132,9 @@ class ChatFormFragment : Fragment() {
         const val TAG = "ChatForm"
     }
     //endregion
+}
+
+private fun AppCompatEditText.presentError(errorMessage: String) {
+    requestFocus()
+    error = errorMessage
 }

@@ -9,6 +9,7 @@
     <string name="quick_start_account_form_title">DX Messaging Chat Demo</string>
     <string name="quick_start_account_form_account_name">* Deployment Id</string>
     <string name="quick_start_account_form_knowledge_base">* Domain</string>
+    <string name="quick_start_account_form_custom_attributes">* Custom Attributes JSON</string>
     <string name="quick_start_account_form_api_key">Token Store Key</string>
     <string name="quick_start_account_form_server">Server</string>
     <string name="quick_start_account_form_logging">Logging</string>
@@ -27,6 +28,7 @@
     <string name="add_context">Add Context</string>
 
     <string name="required_error">This field is mandatory</string>
+    <string name="custom_attributes_error">Invalid JSON format</string>
     <string name="validation_error">Invalid input</string>
     <string name="start_chat">Start chat</string>
     <string name="chat_availability">Chat availability</string>
