@@ -20,6 +20,7 @@ import com.genesys.cloud.core.utils.snack
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
 import com.genesys.cloud.integration.core.StateEvent
+import com.genesys.cloud.integration.messenger.InternalError
 import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
@@ -395,11 +396,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
             StateEvent.Unavailable -> runMain {
                 waitingVisibility(false)
-                toast(
-                    this,
-                    "Chat ${stateEvent.state}: ${stateEvent.data}",
-                    Toast.LENGTH_LONG
-                )
+                toast(this, InternalError.DeploymentInactiveStatusError.format(), Toast.LENGTH_SHORT)
             }
 
             StateEvent.Idle -> {
