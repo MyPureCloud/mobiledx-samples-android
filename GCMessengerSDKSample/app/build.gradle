@@ -6,8 +6,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 if (isGoogleServicesFileExists) {
-    apply(plugin = "com.google.gms.google-services")
-    apply(plugin = "com.google.firebase.crashlytics")
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
     println("Google Services plugin enabled.")
     println("Crashlytics plugin enabled.")
 }
