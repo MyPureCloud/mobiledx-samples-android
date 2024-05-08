@@ -406,12 +406,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnected -> runMain {
-                window.decorView.snack(getString(R.string.chat_connection_recovered))
+                binding.snackBarLayout.snack(getString(R.string.chat_connection_recovered))
             }
 
             StateEvent.Reconnecting -> runMain {
                 dismissChatSnackBar = Snackbar.make(
-                    window.decorView,
+                    binding.snackBarLayout,
                     R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE
                 ).apply {
                     setAction(R.string.dismiss) {
