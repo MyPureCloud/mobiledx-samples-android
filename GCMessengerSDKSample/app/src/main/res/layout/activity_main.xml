@@ -6,10 +6,23 @@
     android:background="@drawable/bg"
     tools:context="com.genesys.cloud.messenger.sample.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/content_main"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <FrameLayout
+            android:id="@+id/content_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/snack_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
