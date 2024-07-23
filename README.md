@@ -3,7 +3,6 @@
 This repository contains sample Android application demonstrating the use of the GC Mobile Messenger SDK. 
 
 ## Getting Started
-
 To get started with these samples, clone this repository to your local machine:
 
 ```bash
