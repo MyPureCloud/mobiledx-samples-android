@@ -39,7 +39,7 @@
                 android:id="@+id/deploymentIdEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint= "@string/quick_start_account_form_account_name" />
+                android:hint="@string/quick_start_account_form_account_name" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/domainNameEditText"
