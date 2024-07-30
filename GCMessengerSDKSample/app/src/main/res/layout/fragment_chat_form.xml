@@ -35,33 +35,33 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/deploymentIdEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint= "@string/quick_start_account_form_account_name" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/deploymentIdEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint= "@string/quick_start_account_form_account_name" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/domainNameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/quick_start_account_form_knowledge_base" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/domainNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/quick_start_account_form_knowledge_base" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/customAttributesEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/quick_start_account_form_custom_attributes" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/customAttributesEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/quick_start_account_form_custom_attributes" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/loggingSwitch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="true"
-            android:padding="6sp"
-            android:text="@string/quick_start_account_form_logging"
-            android:textSize="16sp"
-            android:layout_marginTop="6dp"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/loggingSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="true"
+                android:padding="6sp"
+                android:text="@string/quick_start_account_form_logging"
+                android:textSize="16sp"
+                android:layout_marginTop="6dp"/>
 
         </LinearLayout>
     </ScrollView>
