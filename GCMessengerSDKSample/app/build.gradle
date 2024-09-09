@@ -1,7 +1,7 @@
 buildscript {
     ext {
         oktaProperties = new Properties()
-        oktaPropertiesFile = new File(rootDir.absolutePath + "/okta.properties")
+        oktaPropertiesFile = new File(rootDir.absolutePath + "/app/okta.properties")
         if (oktaPropertiesFile.exists()) {
             oktaProperties.load(oktaPropertiesFile.newReader())
             println("okta.properties loaded.")
