@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         when (state) {
             ChatState.FirstCreation -> {
-                val fragment = ChatFormFragment()
+                val fragment = createChatFormFragment()
                 showFragment(fragment, ChatFormFragment.TAG)
             }
 
@@ -221,6 +221,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         chatController?.takeUnless { it.wasDestructed }?.run {
             terminateChat()
             destruct()
+        }
+    }
+
+    private fun createChatFormFragment(): ChatFormFragment {
+        return ChatFormFragment().apply {
+            openFragment = { fragment, tag ->
+                showFragment(fragment, tag, true)
+            }
         }
     }
 
