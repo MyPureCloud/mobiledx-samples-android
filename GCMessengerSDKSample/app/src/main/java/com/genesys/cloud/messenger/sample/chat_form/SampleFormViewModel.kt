@@ -14,6 +14,11 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private var _uiState: MutableLiveData<SampleUIState> = MutableLiveData()
     val uiState: LiveData<SampleUIState> = _uiState
 
+    private var _authCode: MutableLiveData<String> = MutableLiveData()
+    val authCode: LiveData<String> = _authCode
+
+    val isAuthenticated: Boolean get() = !authCode.value.isNullOrEmpty()
+
     fun loadSavedAccount() {
         viewModelScope.launch {
             _uiState.value = SampleUIState(
@@ -30,6 +35,10 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
 
     fun testChatAvailability(accountData: JsonObject) {
         processAccountData(accountData, startChat = false, testAvailability = true)
+    }
+
+    fun setAuthCode(authCode: String){
+        _authCode.value = authCode
     }
 
     private fun processAccountData(

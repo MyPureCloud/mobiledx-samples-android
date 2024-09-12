@@ -27,7 +27,7 @@ open class WebFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.web_fragment, container, false)
         webView = view.findViewById(R.id.webView)
-        webView!!.let {
+        webView?.let {
             it.settings.javaScriptEnabled = true
             it.setWebViewClient(provideWebViewClient())
         }
@@ -36,7 +36,7 @@ open class WebFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        webView!!.loadUrl(url!!)
+        webView?.loadUrl(url!!)
     }
 
     open fun provideWebViewClient(): WebViewClient {
@@ -46,7 +46,7 @@ open class WebFragment : Fragment() {
     companion object {
 
         const val TAG = "WebFragment"
-        private const val URL = "param_url"
+        const val URL = "param_url"
 
         @JvmStatic
         fun newInstance(url: String) =
