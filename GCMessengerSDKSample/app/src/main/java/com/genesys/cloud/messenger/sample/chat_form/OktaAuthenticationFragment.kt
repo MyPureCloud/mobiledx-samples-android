@@ -56,7 +56,7 @@ class OktaAuthenticationFragment : WebFragment() {
                 StringBuilder("https://${BuildConfig.OKTA_DOMAIN}/oauth2/default/v1/authorize").apply {
                     append("?client_id=${BuildConfig.CLIENT_ID}")
                     append("&response_type=code")
-                    append("&scope=openid profile offline_access")
+                    append("&scope=openid%20profile%20offline_access")
                     append("&redirect_uri=${BuildConfig.SIGN_IN_REDIRECT_URI}")
                     append("&state=${BuildConfig.OKTA_STATE}")
                     append("&code_verifier=${BuildConfig.CODE_VERIFIER}")
