@@ -34,7 +34,7 @@ class OktaAuthenticationFragment : WebFragment() {
     }
 
     private fun String.authCodeReceived() {
-        viewModel.setAuthCode(this)
+        viewModel.setAuthCode(this, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
         parentFragmentManager.popBackStack()
     }
 

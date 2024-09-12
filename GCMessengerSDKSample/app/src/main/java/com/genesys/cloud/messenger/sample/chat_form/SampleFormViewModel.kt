@@ -14,6 +14,8 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private var _uiState: MutableLiveData<SampleUIState> = MutableLiveData()
     val uiState: LiveData<SampleUIState> = _uiState
 
+    private var redirectUri: String = ""
+    private var codeVerifier: String? = null
     private var _authCode: MutableLiveData<String> = MutableLiveData()
     val authCode: LiveData<String> = _authCode
 
@@ -37,8 +39,10 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         processAccountData(accountData, startChat = false, testAvailability = true)
     }
 
-    fun setAuthCode(authCode: String){
+    fun setAuthCode(authCode: String, redirectUri: String, codeVerifier: String?){
         _authCode.value = authCode
+        this.redirectUri = redirectUri
+        this.codeVerifier = codeVerifier
     }
 
     private fun processAccountData(
