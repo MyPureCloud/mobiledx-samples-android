@@ -14,8 +14,8 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private var _uiState: MutableLiveData<SampleUIState> = MutableLiveData()
     val uiState: LiveData<SampleUIState> = _uiState
 
-    private var redirectUri: String = ""
-    private var codeVerifier: String? = null
+    var redirectUri: String = ""
+    var codeVerifier: String? = null
     private var _authCode: MutableLiveData<String> = MutableLiveData()
     val authCode: LiveData<String> = _authCode
 
