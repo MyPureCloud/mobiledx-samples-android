@@ -74,9 +74,9 @@ android {
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:1.11.0.rc1")
-    implementation("com.genesys.cloud:chatintegration:1.11.0.rc1")
-    implementation("com.genesys.cloud:ui:1.11.0.rc1")
+    implementation("com.genesys.cloud:core:1.11.0.rc001")
+    implementation("com.genesys.cloud:chatintegration:1.11.0.rc001")
+    implementation("com.genesys.cloud:ui:1.11.0.rc001")
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
