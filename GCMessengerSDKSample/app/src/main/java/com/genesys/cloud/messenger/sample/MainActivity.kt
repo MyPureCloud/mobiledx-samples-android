@@ -21,6 +21,7 @@ import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
 import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.integration.messenger.InternalError
+import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
@@ -234,6 +235,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
         waitingVisibility(true)
+
+        if (account is MessengerAccount && viewModel.isAuthenticated){
+            account.setAuthenticationInfo(viewModel.authCode.value!!, viewModel.redirectUri, viewModel.codeVerifier)
+        }
 
         if (chatController?.wasDestructed != false) {
 
