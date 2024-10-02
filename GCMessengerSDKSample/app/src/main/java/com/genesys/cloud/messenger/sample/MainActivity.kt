@@ -19,6 +19,8 @@ import com.genesys.cloud.core.utils.runMain
 import com.genesys.cloud.core.utils.snack
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
+import com.genesys.cloud.integration.core.ChatEvent
+import com.genesys.cloud.integration.core.LogoutSuccessfulEvent
 import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.integration.messenger.InternalError
 import com.genesys.cloud.integration.messenger.MessengerAccount
@@ -379,6 +381,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         toast(this, message, Toast.LENGTH_SHORT)
     }
 
+    override fun handleChatEvent(chatEvent: ChatEvent) {
+        super.handleChatEvent(chatEvent)
+        when (chatEvent) {
+            is LogoutSuccessfulEvent -> logoutSuccessful(chatEvent.reason)
+        }
+    }
+
     override fun onChatStateChanged(stateEvent: StateEvent) {
 
         Log.d(TAG, "${stateEvent.scope} chat in state: ${stateEvent.state}")
@@ -452,6 +461,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }.show()
             }
         }
+    }
+
+    private fun logoutSuccessful(reason: String?) {
+        reason?.let { toast(this, "Logout: $reason", Toast.LENGTH_LONG) }
     }
     //endregion
 }
