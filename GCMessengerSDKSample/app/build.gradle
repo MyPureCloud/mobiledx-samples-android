@@ -33,7 +33,7 @@ android {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
         targetSdk = 33
-        versionCode = 53
+        versionCode = 55
         versionName = "1.11.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -74,9 +74,9 @@ android {
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:1.11.0.rc001")
-    implementation("com.genesys.cloud:chatintegration:1.11.0.rc001")
-    implementation("com.genesys.cloud:ui:1.11.0.rc001")
+    implementation("com.genesys.cloud:core:1.11.0.rc1")
+    implementation("com.genesys.cloud:chatintegration:1.11.0.rc1")
+    implementation("com.genesys.cloud:ui:1.11.0.rc1")
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
