@@ -20,7 +20,8 @@ import com.genesys.cloud.core.utils.snack
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
 import com.genesys.cloud.integration.core.ChatEvent
-import com.genesys.cloud.integration.core.LogoutSuccessfulEvent
+import com.genesys.cloud.integration.core.ConnectionClosedEvent
+import com.genesys.cloud.integration.core.EndedReason
 import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.integration.messenger.InternalError
 import com.genesys.cloud.integration.messenger.MessengerAccount
@@ -384,7 +385,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun handleChatEvent(chatEvent: ChatEvent) {
         super.handleChatEvent(chatEvent)
         when (chatEvent) {
-            is LogoutSuccessfulEvent -> logoutSuccessful(chatEvent.reason)
+            is ConnectionClosedEvent -> onConnectionClosed(chatEvent.reason)
         }
     }
 
@@ -463,8 +464,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
-    private fun logoutSuccessful(reason: String?) {
-        reason?.let { toast(this, "Logout: $reason", Toast.LENGTH_LONG) }
+    private fun onConnectionClosed(reason: EndedReason) {
+        when (reason) {
+            EndedReason.SessionLimitReached -> "You got logged out because session limit was exceeded."
+            else -> "Connection was closed."
+        }.let { message ->
+            toast(this, message, Toast.LENGTH_LONG)
+        }
     }
     //endregion
 }
