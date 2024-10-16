@@ -45,6 +45,12 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         this.codeVerifier = codeVerifier
     }
 
+    fun clearAuthCode(){
+        _authCode.value = null
+        this.redirectUri = ""
+        this.codeVerifier = null
+    }
+
     private fun processAccountData(
         accountData: JsonObject,
         startChat: Boolean,
