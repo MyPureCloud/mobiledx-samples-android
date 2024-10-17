@@ -46,7 +46,7 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     }
 
     fun clearAuthCode(){
-        _authCode.value = null
+        _authCode.value = ""
         this.redirectUri = ""
         this.codeVerifier = null
     }
