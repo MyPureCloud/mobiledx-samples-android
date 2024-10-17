@@ -19,8 +19,6 @@ import com.genesys.cloud.core.utils.runMain
 import com.genesys.cloud.core.utils.snack
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
-import com.genesys.cloud.integration.core.ChatEvent
-import com.genesys.cloud.integration.core.ConnectionClosedEvent
 import com.genesys.cloud.integration.core.EndedReason
 import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.integration.messenger.InternalError
@@ -396,13 +394,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         toast(this, message, Toast.LENGTH_SHORT)
     }
 
-    override fun handleChatEvent(chatEvent: ChatEvent) {
-        super.handleChatEvent(chatEvent)
-        when (chatEvent) {
-            is ConnectionClosedEvent -> onConnectionClosed(chatEvent.reason)
-        }
-    }
-
     override fun onChatStateChanged(stateEvent: StateEvent) {
 
         Log.d(TAG, "${stateEvent.scope} chat in state: ${stateEvent.state}")
@@ -481,7 +472,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private fun onConnectionClosed(reason: EndedReason) {
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
-            EndedReason.LogoutSuccessful -> "Logout successful"
+            EndedReason.Logout -> "Logout successful"
             else -> "Connection was closed."
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
