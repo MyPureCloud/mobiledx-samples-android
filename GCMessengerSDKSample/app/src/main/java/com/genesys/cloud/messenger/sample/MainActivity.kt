@@ -222,7 +222,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun onLogout() {
-        toast(this, "Logout", Toast.LENGTH_LONG)
+        viewModel.clearAuthCode()
+        chatController?.logoutFromAuthenticatedSession()
     }
 
     private fun enableMenu(menuItem: MenuItem?, enable: Boolean) {
@@ -480,6 +481,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private fun onConnectionClosed(reason: EndedReason) {
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
+            EndedReason.LogoutSuccessful -> "Logout successful"
             else -> "Connection was closed."
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
