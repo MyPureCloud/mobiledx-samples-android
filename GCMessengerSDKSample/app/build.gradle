@@ -1,3 +1,16 @@
+buildscript {
+    ext {
+        oktaProperties = new Properties()
+        oktaPropertiesFile = new File(rootDir.absolutePath + "/app/okta.properties")
+        if (oktaPropertiesFile.exists()) {
+            oktaProperties.load(oktaPropertiesFile.newReader())
+            println("okta.properties loaded.")
+        } else {
+            println("okta.properties does not exist in the path and will be ignored.")
+        }
+    }
+}
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.10.2.rc2"
-def sdkVersion = "1.10.2.rc2"
+def projectVersion = "1.11.0.rc4"
+def sdkVersion = "1.11.0.rc4"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -42,6 +55,16 @@ android {
         versionName = projectName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // OKTA
+        buildConfigField "String", "OKTA_DOMAIN", '"' + oktaProperties["oktaDomain"] + '"'
+        buildConfigField "String", "CLIENT_ID", '"' + oktaProperties["clientId"] + '"'
+        buildConfigField "String", "SIGN_IN_REDIRECT_URI", '"' + oktaProperties["signInRedirectUri"] + '"'
+        buildConfigField "String", "SIGN_OUT_REDIRECT_URI", '"' + oktaProperties["signOutRedirectUri"] + '"'
+        buildConfigField "String", "OKTA_STATE", '"' + oktaProperties["oktaState"] + '"'
+        buildConfigField "String", 'CODE_CHALLENGE', '"' + oktaProperties['codeChallenge'] + '"'
+        buildConfigField "String", 'CODE_CHALLENGE_METHOD', '"' + oktaProperties['codeChallengeMethod'] + '"'
+        buildConfigField "String", 'CODE_VERIFIER', '"' + oktaProperties['codeVerifier'] + '"'
     }
 
     buildTypes {
