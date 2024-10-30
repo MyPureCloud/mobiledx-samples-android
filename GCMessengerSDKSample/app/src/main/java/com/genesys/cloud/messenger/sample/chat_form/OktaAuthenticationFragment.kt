@@ -44,14 +44,25 @@ class OktaAuthenticationFragment : WebFragment() {
 
         @JvmStatic
         fun newInstance(): OktaAuthenticationFragment {
-            return OktaAuthenticationFragment().apply {
-                arguments = Bundle().apply {
-                    putString(URL, buildOktaAuthorizeUrl())
+            val oktaAuthorizeUrl = buildOktaAuthorizeUrl()
+            if (oktaAuthorizeUrl == null) {
+                throw IllegalStateException("There are no proper okta.properties provided. Check Readme.md for more information.")
+            } else {
+                return OktaAuthenticationFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(URL, oktaAuthorizeUrl)
+                    }
                 }
             }
         }
 
-        private fun buildOktaAuthorizeUrl(): String {
+        private fun buildOktaAuthorizeUrl(): String? {
+            if (BuildConfig.CLIENT_ID == null
+                || BuildConfig.CLIENT_ID == "null"
+                || BuildConfig.CLIENT_ID == "INSERT_OKTA_DOMAIN"
+            ) {
+                return null
+            }
             val builder =
                 StringBuilder("https://${BuildConfig.OKTA_DOMAIN}/oauth2/default/v1/authorize").apply {
                     append("?client_id=${BuildConfig.CLIENT_ID}")

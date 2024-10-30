@@ -6,7 +6,7 @@ buildscript {
             oktaProperties.load(oktaPropertiesFile.newReader())
             println("okta.properties loaded.")
         } else {
-            throw new GradleException("okta.properties does not exist in the path (${oktaPropertiesFile.absolutePath}) and will be ignored.")
+            println("okta.properties does not exist in the path and will be ignored.")
         }
     }
 }

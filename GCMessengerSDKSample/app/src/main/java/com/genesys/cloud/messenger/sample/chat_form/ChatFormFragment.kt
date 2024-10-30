@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.R
 import com.genesys.cloud.messenger.sample.data.defs.DataKeys
@@ -57,10 +58,14 @@ class ChatFormFragment : Fragment() {
     internal var openFragment: (fragment: Fragment, tag: String) -> Unit = { _, _ -> }
 
     private fun onLoginClicked() {
-        openFragment.invoke(
-            OktaAuthenticationFragment.newInstance(),
-            OktaAuthenticationFragment.TAG
-        )
+        try {
+            openFragment.invoke(
+                OktaAuthenticationFragment.newInstance(),
+                OktaAuthenticationFragment.TAG
+            )
+        } catch (e: IllegalStateException) {
+            toast(requireContext(), e.message ?: "Cannot login.")
+        }
     }
 
     private fun observeSavedAccount() {
