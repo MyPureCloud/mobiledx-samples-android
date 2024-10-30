@@ -18,6 +18,24 @@ plugins {
 
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
+// project version section
+def projectVersion = "1.10.2.rc2"
+def sdkVersion = "1.10.2.rc2"
+
+def parts = projectVersion.split('\\.')
+def major = parts[0].toInteger()
+def minor = parts[1].toInteger()
+def patch = parts[2].toInteger()
+
+def projectCode = (major * 1000000) + (minor * 10000) + (patch * 100)
+def projectName = "${major}.${minor}.${patch}"
+
+if (parts.length > 3) {
+    def preRelease = parts[3].replaceAll('rc', '').toInteger()
+    projectCode += preRelease
+}
+// project version section
+
 if (isGoogleServicesFileExists) {
     apply plugin: 'com.google.gms.google-services'
     apply plugin: 'com.google.firebase.crashlytics'
@@ -27,14 +45,14 @@ if (isGoogleServicesFileExists) {
 
 android {
     namespace = "com.genesys.cloud.messenger.sample"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
-        targetSdk = 33
-        versionCode = 59
-        versionName = "1.11.0"
+        targetSdk = 34
+        versionCode = projectCode
+        versionName = projectName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -74,9 +92,9 @@ android {
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:1.11.0.rc2")
-    implementation("com.genesys.cloud:chatintegration:1.11.0.rc2")
-    implementation("com.genesys.cloud:ui:1.11.0.rc2")
+    implementation("com.genesys.cloud:core:${sdkVersion}")
+    implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
+    implementation("com.genesys.cloud:ui:${sdkVersion}")
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
