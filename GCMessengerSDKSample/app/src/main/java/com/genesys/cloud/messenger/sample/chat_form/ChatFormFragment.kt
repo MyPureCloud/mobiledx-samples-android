@@ -46,11 +46,23 @@ class ChatFormFragment : Fragment() {
         binding.chatAvailability.setOnClickListener {
             testChatAvailability()
         }
+        binding.loginButton.setOnClickListener {
+            onLoginClicked()
+        }
         binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
     }
     //endregion
 
     //region - functionality
+    internal var openFragment: (fragment: Fragment, tag: String) -> Unit = { _, _ -> }
+
+    private fun onLoginClicked() {
+        openFragment.invoke(
+            OktaAuthenticationFragment.newInstance(),
+            OktaAuthenticationFragment.TAG
+        )
+    }
+
     private fun observeSavedAccount() {
         viewModel.uiState.observe(viewLifecycleOwner) { sampleData ->
 

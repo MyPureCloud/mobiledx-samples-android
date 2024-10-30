@@ -19,8 +19,10 @@ import com.genesys.cloud.core.utils.runMain
 import com.genesys.cloud.core.utils.snack
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
+import com.genesys.cloud.integration.core.EndedReason
 import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.integration.messenger.InternalError
+import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private val hasActiveChats get() = chatController?.hasOpenChats() == true
     private var chatController: ChatController? = null
     private var endMenu: MenuItem? = null
+    private var logoutMenu: MenuItem? = null
     private var dismissChatSnackBar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
@@ -98,6 +101,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
         }
 
+        viewModel.authCode.observe(this@MainActivity) {
+            logoutMenu?.isVisible = viewModel.isAuthenticated
+        }
+
         onBackPressedDispatcher.addCallback(this@MainActivity, mOnBackPressedCallback)
 
         val existingChatFragment = findChatFragment()
@@ -110,7 +117,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         when (state) {
             ChatState.FirstCreation -> {
-                val fragment = ChatFormFragment()
+                val fragment = createChatFormFragment()
                 showFragment(fragment, ChatFormFragment.TAG)
             }
 
@@ -168,15 +175,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
-        this.endMenu =
-            menu?.findItem(R.id.end_current_chat)
+        this.endMenu = menu?.findItem(R.id.end_current_chat)
+        this.logoutMenu = menu?.findItem(R.id.logout)
 
         if (hasActiveChats) {
-            enableMenu(
-                endMenu,
-                true
-            )
+            enableMenu(endMenu, true)
         }
+        logoutMenu?.isVisible = viewModel.isAuthenticated
 
         return true
     }
@@ -195,6 +200,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 return true
             }
 
+            R.id.logout -> {
+                onLogout()
+                item.isVisible = viewModel.isAuthenticated
+                return true
+            }
+
             R.id.destruct_chat -> {
                 destructChat()
                 enableMenu(endMenu, false)
@@ -206,6 +217,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
         }
         return false
+    }
+
+    private fun onLogout() {
+        viewModel.clearAuthCode()
+        chatController?.logoutFromAuthenticatedSession()
     }
 
     private fun enableMenu(menuItem: MenuItem?, enable: Boolean) {
@@ -224,8 +240,20 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
+    private fun createChatFormFragment(): ChatFormFragment {
+        return ChatFormFragment().apply {
+            openFragment = { fragment, tag ->
+                showFragment(fragment, tag, true)
+            }
+        }
+    }
+
     private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
         waitingVisibility(true)
+
+        if (account is MessengerAccount && viewModel.isAuthenticated){
+            account.setAuthenticationInfo(viewModel.authCode.value!!, viewModel.redirectUri, viewModel.codeVerifier)
+        }
 
         if (chatController?.wasDestructed != false) {
 
@@ -438,6 +466,16 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     }
                 }.show()
             }
+        }
+    }
+
+    private fun onConnectionClosed(reason: EndedReason) {
+        when (reason) {
+            EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
+            EndedReason.Logout -> "Logout successful"
+            else -> "Connection was closed."
+        }.let { message ->
+            toast(this, message, Toast.LENGTH_LONG)
         }
     }
     //endregion
