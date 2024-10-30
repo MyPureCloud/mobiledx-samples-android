@@ -1,8 +1,8 @@
-# Overview
 
-This repository contains sample Android application demonstrating the use of the GC Mobile Messenger SDK. 
+## Authenticated messaging repository contains sample Android application demonstrating the use of the GC Mobile Messenger SDK. 
 
-## Getting Started
+
+###Authenticated messaging
 To get started with these samples, clone this repository to your local machine:
 
 ```bash
@@ -26,3 +26,8 @@ git clone git@github.com:MyPureCloud/mobiledx-samples-android.git
 
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+# Setup application
+
+## Authenticated messaging
+The app integrates Okta authentication. To use this authentication service, you must configure okta.properties file with the necessary data to the path GCMessengerSDKSample/app. See an example in GCMessengerSDKSample/app/okta.properties.example
