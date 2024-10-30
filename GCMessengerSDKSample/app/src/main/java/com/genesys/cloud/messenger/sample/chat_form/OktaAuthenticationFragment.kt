@@ -46,7 +46,7 @@ class OktaAuthenticationFragment : WebFragment() {
         fun newInstance(): OktaAuthenticationFragment {
             val oktaAuthorizeUrl = buildOktaAuthorizeUrl()
             if (oktaAuthorizeUrl == null) {
-                throw IllegalStateException("There are no proper okta.properties provided. Check Readme.md for more information.")
+                throw IllegalStateException("There are no proper okta.properties provided. See Readme.md.")
             } else {
                 return OktaAuthenticationFragment().apply {
                     arguments = Bundle().apply {
