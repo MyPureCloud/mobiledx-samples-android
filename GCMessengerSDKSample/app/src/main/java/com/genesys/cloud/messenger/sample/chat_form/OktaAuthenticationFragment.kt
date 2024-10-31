@@ -45,34 +45,31 @@ class OktaAuthenticationFragment : WebFragment() {
         @JvmStatic
         fun newInstance(): OktaAuthenticationFragment {
             val oktaAuthorizeUrl = buildOktaAuthorizeUrl()
-            if (oktaAuthorizeUrl == null) {
-                throw IllegalStateException("There are no proper okta.properties provided. See Readme.md.")
-            } else {
-                return OktaAuthenticationFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(URL, oktaAuthorizeUrl)
-                    }
+            return OktaAuthenticationFragment().apply {
+                arguments = Bundle().apply {
+                    putString(URL, oktaAuthorizeUrl)
                 }
             }
         }
 
-        private fun buildOktaAuthorizeUrl(): String? {
-            if (BuildConfig.CLIENT_ID == null
-                || BuildConfig.CLIENT_ID == "null"
-                || BuildConfig.CLIENT_ID == "INSERT_OKTA_DOMAIN"
-            ) {
-                return null
+        private fun notNullOrEmpty(value: String?, property: String): String {
+            if (value.isNullOrEmpty() || value == "null") {
+                throw IllegalStateException("Mandatory property $property is missed, check okta.properties.")
             }
+            return value
+        }
+
+        private fun buildOktaAuthorizeUrl(): String {
             val builder =
-                StringBuilder("https://${BuildConfig.OKTA_DOMAIN}/oauth2/default/v1/authorize").apply {
-                    append("?client_id=${BuildConfig.CLIENT_ID}")
+                StringBuilder("https://${notNullOrEmpty(BuildConfig.OKTA_DOMAIN, "OKTA_DOMAIN")}/oauth2/default/v1/authorize").apply {
+                    append("?client_id=${notNullOrEmpty(BuildConfig.CLIENT_ID, "CLIENT_ID")}")
                     append("&response_type=code")
-                    append("&scope=openid%20profile%20offline_access")
-                    append("&redirect_uri=${BuildConfig.SIGN_IN_REDIRECT_URI}")
-                    append("&state=${BuildConfig.OKTA_STATE}")
-                    append("&code_verifier=${BuildConfig.CODE_VERIFIER}")
-                    append("&code_challenge_method=${BuildConfig.CODE_CHALLENGE_METHOD}")
-                    append("&code_challenge=${BuildConfig.CODE_CHALLENGE}")
+                    append("&scope=openid%20profile%20offline_access") // TODO: add scope from the config
+                    append("&redirect_uri=${notNullOrEmpty(BuildConfig.SIGN_IN_REDIRECT_URI, "SIGN_IN_REDIRECT_URI")}")
+                    append("&state=${notNullOrEmpty(BuildConfig.OKTA_STATE, "OKTA_STATE")}")
+                    append("&code_verifier=${notNullOrEmpty(BuildConfig.CODE_VERIFIER, "CODE_VERIFIER")}")
+                    append("&code_challenge_method=${notNullOrEmpty(BuildConfig.CODE_CHALLENGE_METHOD, "CODE_CHALLENGE_METHOD")}")
+                    append("&code_challenge=${notNullOrEmpty(BuildConfig.CODE_CHALLENGE, "CODE_CHALLENGE")}")
                 }
             return builder.toString()
         }
