@@ -1,6 +1,5 @@
 package com.genesys.cloud.messenger.sample
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -65,7 +64,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private var chatController: ChatController? = null
     private var endMenu: MenuItem? = null
     private var logoutMenu: MenuItem? = null
-    private var dismissChatSnackBar: Snackbar? = null
+    private var reconnectingChatSnackBar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -160,7 +159,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     override fun onBackPressed() {
 
-        dismissChatSnackBar?.takeIf { it.isShown }?.dismiss()
+        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
 
         val fragmentBack = supportFragmentManager.backStackEntryCount > 0
         mOnBackPressedCallback.isEnabled = !fragmentBack
@@ -438,16 +437,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnecting -> runMain {
-                dismissChatSnackBar = Snackbar.make(
+                reconnectingChatSnackBar = Snackbar.make(
                     binding.snackBarLayout,
-                    R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE
-                ).apply {
-                    setAction(R.string.dismiss) {
-                        chatController?.endChat()
-                    }
-                    this.setBackgroundTint(Color.parseColor("#ff6600"))
-                    this.setActionTextColor(Color.YELLOW)
-                }.also { it.show() }
+                    R.string.chat_connection_reconnecting, Snackbar.LENGTH_INDEFINITE
+                ).also { it.show() }
             }
 
             StateEvent.Disconnected -> runMain {
