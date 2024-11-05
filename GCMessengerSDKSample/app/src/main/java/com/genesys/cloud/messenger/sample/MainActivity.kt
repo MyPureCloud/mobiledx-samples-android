@@ -380,15 +380,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         when (error.errorCode) {
             NRError.ConfigurationsError, NRError.ConversationCreationError -> {
-
-                Log.e(
-                    TAG,
-                    "!!!!! Chat ${error.scope} can't be created: $message"
-                )
-
+                Log.e(TAG,"!!!!! Chat ${error.scope} can't be created: $message")
                 if (findChatFragment()?.isVisible == true) {
                     onBackPressed()
                 }
+            }
+            NRError.GeneralError ->{
+                removeChatFragment()
             }
         }
         toast(this, message, Toast.LENGTH_SHORT)
