@@ -385,7 +385,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     onBackPressed()
                 }
             }
-            NRError.GeneralError ->{
+
+            NRError.GeneralError -> {
                 removeChatFragment()
             }
         }
