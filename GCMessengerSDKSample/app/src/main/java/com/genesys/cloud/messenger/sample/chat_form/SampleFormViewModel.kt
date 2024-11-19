@@ -14,6 +14,13 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private var _uiState: MutableLiveData<SampleUIState> = MutableLiveData()
     val uiState: LiveData<SampleUIState> = _uiState
 
+    var redirectUri: String = ""
+    var codeVerifier: String? = null
+    private var _authCode: MutableLiveData<String> = MutableLiveData()
+    val authCode: LiveData<String> = _authCode
+
+    val isAuthenticated: Boolean get() = !authCode.value.isNullOrEmpty()
+
     fun loadSavedAccount() {
         viewModelScope.launch {
             _uiState.value = SampleUIState(
@@ -30,6 +37,18 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
 
     fun testChatAvailability(accountData: JsonObject) {
         processAccountData(accountData, startChat = false, testAvailability = true)
+    }
+
+    fun setAuthCode(authCode: String, redirectUri: String, codeVerifier: String?){
+        _authCode.value = authCode
+        this.redirectUri = redirectUri
+        this.codeVerifier = codeVerifier
+    }
+
+    fun clearAuthCode(){
+        _authCode.value = ""
+        this.redirectUri = ""
+        this.codeVerifier = null
     }
 
     private fun processAccountData(

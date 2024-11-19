@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.R
 import com.genesys.cloud.messenger.sample.data.defs.DataKeys
@@ -46,11 +47,27 @@ class ChatFormFragment : Fragment() {
         binding.chatAvailability.setOnClickListener {
             testChatAvailability()
         }
+        binding.loginButton.setOnClickListener {
+            onLoginClicked()
+        }
         binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
     }
     //endregion
 
     //region - functionality
+    internal var openFragment: (fragment: Fragment, tag: String) -> Unit = { _, _ -> }
+
+    private fun onLoginClicked() {
+        try {
+            openFragment.invoke(
+                OktaAuthenticationFragment.newInstance(),
+                OktaAuthenticationFragment.TAG
+            )
+        } catch (e: IllegalStateException) {
+            toast(requireContext(), e.message ?: "Cannot login.")
+        }
+    }
+
     private fun observeSavedAccount() {
         viewModel.uiState.observe(viewLifecycleOwner) { sampleData ->
 

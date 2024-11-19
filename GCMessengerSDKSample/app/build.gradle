@@ -1,9 +1,40 @@
+buildscript {
+    ext {
+        oktaProperties = new Properties()
+        oktaPropertiesFile = new File(rootDir.absolutePath + "/app/okta.properties")
+        if (oktaPropertiesFile.exists()) {
+            oktaProperties.load(oktaPropertiesFile.newReader())
+            println("okta.properties loaded.")
+        } else {
+            println("okta.properties does not exist in the path and will be ignored.")
+        }
+    }
+}
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
 def isGoogleServicesFileExists = file("google-services.json").exists()
+
+// project version section
+def projectVersion = "1.11.0.rc8"
+def sdkVersion = "1.11.0.rc8"
+
+def parts = projectVersion.split('\\.')
+def major = parts[0].toInteger()
+def minor = parts[1].toInteger()
+def patch = parts[2].toInteger()
+
+def projectCode = (major * 1000000) + (minor * 10000) + (patch * 100)
+def projectName = "${major}.${minor}.${patch}"
+
+if (parts.length > 3) {
+    def preRelease = parts[3].replaceAll('rc', '').toInteger()
+    projectCode += preRelease
+}
+// project version section
 
 if (isGoogleServicesFileExists) {
     apply plugin: 'com.google.gms.google-services'
@@ -20,10 +51,20 @@ android {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
         targetSdk = 34
-        versionCode = 58
-        versionName = "1.10.2"
+        versionCode = projectCode
+        versionName = projectName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // OKTA
+        buildConfigField "String", "OKTA_DOMAIN", '"' + oktaProperties["oktaDomain"] + '"'
+        buildConfigField "String", "CLIENT_ID", '"' + oktaProperties["clientId"] + '"'
+        buildConfigField "String", "SIGN_IN_REDIRECT_URI", '"' + oktaProperties["signInRedirectUri"] + '"'
+        buildConfigField "String", "SIGN_OUT_REDIRECT_URI", '"' + oktaProperties["signOutRedirectUri"] + '"'
+        buildConfigField "String", "OKTA_STATE", '"' + oktaProperties["oktaState"] + '"'
+        buildConfigField "String", 'CODE_CHALLENGE', '"' + oktaProperties['codeChallenge'] + '"'
+        buildConfigField "String", 'CODE_CHALLENGE_METHOD', '"' + oktaProperties['codeChallengeMethod'] + '"'
+        buildConfigField "String", 'CODE_VERIFIER', '"' + oktaProperties['codeVerifier'] + '"'
     }
 
     buildTypes {
@@ -51,9 +92,9 @@ android {
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:1.10.2")
-    implementation("com.genesys.cloud:chatintegration:1.10.2")
-    implementation("com.genesys.cloud:ui:1.10.2")
+    implementation("com.genesys.cloud:core:${sdkVersion}")
+    implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
+    implementation("com.genesys.cloud:ui:${sdkVersion}")
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
