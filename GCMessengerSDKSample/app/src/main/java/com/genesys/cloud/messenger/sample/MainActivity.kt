@@ -1,5 +1,7 @@
 package com.genesys.cloud.messenger.sample
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -10,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.genesys.cloud.core.model.StatementScope
@@ -33,6 +36,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 
 class MainActivity : AppCompatActivity(), ChatEventListener {
 
@@ -460,6 +464,32 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
         }
     }
+
+    override fun onUrlLinkSelected(url: String) {
+        toast(this, "Url link selected: $url", Toast.LENGTH_SHORT)
+
+        try {
+            val intent = if (isFileUrl(url)) {
+                val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", File(url))
+
+                Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "*/*")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            } else {
+                Intent(Intent.ACTION_VIEW).setData(Uri.parse(url))
+            }
+            startActivity(intent)
+
+        } catch (e: Exception) {
+            Log.w(TAG, "failed to activate link on default app: " + e.message)
+        }
+    }
+
+    private fun isFileUrl(url: String): Boolean {
+        return url.startsWith("/")
+    }
+
 
     private fun onConnectionClosed(reason: EndedReason) {
         when (reason) {
