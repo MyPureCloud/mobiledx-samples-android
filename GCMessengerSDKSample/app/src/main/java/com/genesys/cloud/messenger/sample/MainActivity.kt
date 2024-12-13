@@ -1,6 +1,7 @@
 package com.genesys.cloud.messenger.sample
 
-import android.graphics.Color
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -11,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.genesys.cloud.core.model.StatementScope
@@ -34,6 +36,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 
 class MainActivity : AppCompatActivity(), ChatEventListener {
 
@@ -65,7 +68,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private var chatController: ChatController? = null
     private var endMenu: MenuItem? = null
     private var logoutMenu: MenuItem? = null
-    private var dismissChatSnackBar: Snackbar? = null
+    private var reconnectingChatSnackBar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -160,7 +163,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     override fun onBackPressed() {
 
-        dismissChatSnackBar?.takeIf { it.isShown }?.dismiss()
+        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
 
         val fragmentBack = supportFragmentManager.backStackEntryCount > 0
         mOnBackPressedCallback.isEnabled = !fragmentBack
@@ -380,15 +383,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         when (error.errorCode) {
             NRError.ConfigurationsError, NRError.ConversationCreationError -> {
-
-                Log.e(
-                    TAG,
-                    "!!!!! Chat ${error.scope} can't be created: $message"
-                )
-
+                Log.e(TAG,"!!!!! Chat ${error.scope} can't be created: $message")
                 if (findChatFragment()?.isVisible == true) {
                     onBackPressed()
                 }
+            }
+
+            NRError.GeneralError -> {
+                removeChatFragment()
             }
         }
         toast(this, message, Toast.LENGTH_SHORT)
@@ -438,16 +440,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnecting -> runMain {
-                dismissChatSnackBar = Snackbar.make(
+                reconnectingChatSnackBar = Snackbar.make(
                     binding.snackBarLayout,
-                    R.string.chat_connection_lost, Snackbar.LENGTH_INDEFINITE
-                ).apply {
-                    setAction(R.string.dismiss) {
-                        chatController?.endChat()
-                    }
-                    this.setBackgroundTint(Color.parseColor("#ff6600"))
-                    this.setActionTextColor(Color.YELLOW)
-                }.also { it.show() }
+                    R.string.chat_connection_reconnecting, Snackbar.LENGTH_INDEFINITE
+                ).also { it.show() }
             }
 
             StateEvent.Disconnected -> runMain {
@@ -468,6 +464,32 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
         }
     }
+
+    override fun onUrlLinkSelected(url: String) {
+        toast(this, "Url link selected: $url", Toast.LENGTH_SHORT)
+
+        try {
+            val intent = if (isFileUrl(url)) {
+                val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", File(url))
+
+                Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "*/*")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            } else {
+                Intent(Intent.ACTION_VIEW).setData(Uri.parse(url))
+            }
+            startActivity(intent)
+
+        } catch (e: Exception) {
+            Log.w(TAG, "failed to activate link on default app: " + e.message)
+        }
+    }
+
+    private fun isFileUrl(url: String): Boolean {
+        return url.startsWith("/")
+    }
+
 
     private fun onConnectionClosed(reason: EndedReason) {
         when (reason) {
