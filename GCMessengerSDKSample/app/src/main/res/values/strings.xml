@@ -35,6 +35,7 @@
     <string name="chat_availability">Chat availability</string>
     <string name="bot_context_title">Contexts</string>
     <string name="chat_connection_recovered">Chat Reconnected</string>
+    <string name="chat_connection_reconnecting">Chat Reconnecting</string>
     <string name="chat_connection_lost">We detect connectivity issues. Would you like to dismiss the chat?</string>
     <string name="dismiss">Dismiss</string>
 
