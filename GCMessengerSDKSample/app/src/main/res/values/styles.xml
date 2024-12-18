@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SubmitButtonStyle" parent="@style/submit_view">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@color/submit_button_text</item>
+    </style>
+</resources>
