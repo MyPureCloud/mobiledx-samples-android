@@ -421,10 +421,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 shouldDefaultBack = false
             }
 
-            StateEvent.Closed -> {
-                onChatClosed(stateEvent.data.getAs<EndedReason>())
-            }
-
             StateEvent.Ended -> {
                 // as in case of `Dismiss` press during disconnection
                 if(supportFragmentManager.backStackEntryCount > 0){
@@ -499,11 +495,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
 
-    private fun onChatClosed(reason: EndedReason?) {
+    private fun onConnectionClosed(reason: EndedReason) {
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
             EndedReason.Logout -> "Logout successful"
-            else -> "Chat was closed. ($reason)"
+            else -> "Connection was closed."
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
         }
