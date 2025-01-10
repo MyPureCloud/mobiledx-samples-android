@@ -60,7 +60,7 @@ class ChatFormFragment : Fragment() {
     private fun onLoginClicked() {
         try {
             openFragment.invoke(
-                OktaAuthenticationFragment.newInstance(),
+                OktaAuthenticationFragment.newLoginInstance(),
                 OktaAuthenticationFragment.TAG
             )
         } catch (e: IllegalStateException) {
