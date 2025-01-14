@@ -27,6 +27,7 @@ import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.integration.messenger.InternalError
 import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
+import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
@@ -107,6 +108,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         viewModel.authCode.observe(this@MainActivity) {
             logoutMenu?.isVisible = viewModel.isAuthenticated
+            if (!viewModel.isAuthenticated){
+                onLogout()
+            }
         }
 
         onBackPressedDispatcher.addCallback(this@MainActivity, mOnBackPressedCallback)
@@ -205,8 +209,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             R.id.logout -> {
-                onLogout()
-                item.isVisible = viewModel.isAuthenticated
+                showFragment(OktaAuthenticationFragment.newLogoutInstance(),
+                    OktaAuthenticationFragment.TAG, true)
                 return true
             }
 
@@ -224,7 +228,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun onLogout() {
-        viewModel.clearAuthCode()
         chatController?.logoutFromAuthenticatedSession()
     }
 

@@ -20,12 +20,19 @@ class OktaAuthenticationFragment : WebFragment() {
 
     override fun provideWebViewClient(): WebViewClient {
         return object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                if (url == buildOktaLogoutUrl()) {
+                    signoutSuccessful()
+                }
+            }
+
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                request?.url?.getQueryParameter("code")?.apply {
-                    authCodeReceived()
+                request?.url?.getQueryParameter("code")?.let {
+                    authCodeReceived(it)
                     return true
                 }
                 return super.shouldOverrideUrlLoading(view, request)
@@ -33,9 +40,14 @@ class OktaAuthenticationFragment : WebFragment() {
         }
     }
 
-    private fun String.authCodeReceived() {
-        viewModel.setAuthCode(this, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
+    private fun authCodeReceived(authCode: String) {
+        viewModel.setAuthCode(authCode, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
         parentFragmentManager.popBackStack()
+    }
+
+    private fun signoutSuccessful() {
+        viewModel.clearAuthCode()
+        requireFragmentManager().popBackStack()
     }
 
     companion object {
@@ -43,11 +55,21 @@ class OktaAuthenticationFragment : WebFragment() {
         val TAG: String = OktaAuthenticationFragment::class.java.simpleName
 
         @JvmStatic
-        fun newInstance(): OktaAuthenticationFragment {
+        fun newLoginInstance(): OktaAuthenticationFragment {
             val oktaAuthorizeUrl = buildOktaAuthorizeUrl()
             return OktaAuthenticationFragment().apply {
                 arguments = Bundle().apply {
                     putString(URL, oktaAuthorizeUrl)
+                }
+            }
+        }
+
+        @JvmStatic
+        fun newLogoutInstance(): OktaAuthenticationFragment {
+            val oktaLogoutUrl = buildOktaLogoutUrl()
+            return OktaAuthenticationFragment().apply {
+                arguments = Bundle().apply {
+                    putString(URL, oktaLogoutUrl)
                 }
             }
         }
@@ -71,6 +93,12 @@ class OktaAuthenticationFragment : WebFragment() {
                     append("&code_challenge_method=${notNullOrEmpty(BuildConfig.CODE_CHALLENGE_METHOD, "CODE_CHALLENGE_METHOD")}")
                     append("&code_challenge=${notNullOrEmpty(BuildConfig.CODE_CHALLENGE, "CODE_CHALLENGE")}")
                 }
+            return builder.toString()
+        }
+
+        fun buildOktaLogoutUrl(): String{
+            val builder =
+                StringBuilder("https://${notNullOrEmpty(BuildConfig.OKTA_DOMAIN, "OKTA_DOMAIN")}/login/signout")
             return builder.toString()
         }
     }
