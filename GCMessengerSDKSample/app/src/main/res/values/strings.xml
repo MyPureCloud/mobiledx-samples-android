@@ -21,9 +21,6 @@
     <string name="chat_disabled_error">Chat was restricted and can\'t be proceed.</string>
 
     <string name="end_current_chat">End current chat</string>
-    <string name="destruct_chat_controller">Destruct</string>
-    <string name="upload_file">upload file</string>
-    <string name="clear_history">Clear History</string>
 
     <string name="context_name">Context Name</string>
     <string name="context_value">Context Value</string>
