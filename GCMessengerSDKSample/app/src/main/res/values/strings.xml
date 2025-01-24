@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Genesys Cloud Mobile Messenger</string>
     <string name="app_version">Version: %1$s (%2$d)</string>
+    <string name="cancel">Cancel</string>
     <string name="title_details">Account Details</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_home">Home</string>
@@ -41,4 +42,9 @@
 
     <string name="login_text">Log in</string>
     <string name="logout_text">Log out</string>
+
+    <string name="clear_conversation_menu">Clear conversation</string>
+    <string name="clear_conversation_dialog_title">Clear Conversation</string>
+    <string name="clear_conversation_dialog_message">Would you like to clear and leave your conversation? Message history will be lost.</string>
+    <string name="clear_conversation_dialog_positive_button">Yes I\'m Sure</string>
 </resources>
