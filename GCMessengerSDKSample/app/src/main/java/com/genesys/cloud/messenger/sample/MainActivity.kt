@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.genesys.cloud.core.model.StatementScope
 import com.genesys.cloud.core.utils.NRError
+import com.genesys.cloud.core.utils.getAs
 import com.genesys.cloud.core.utils.runMain
 import com.genesys.cloud.core.utils.snack
 import com.genesys.cloud.core.utils.toast
@@ -26,6 +27,7 @@ import com.genesys.cloud.integration.core.StateEvent
 import com.genesys.cloud.integration.messenger.InternalError
 import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
+import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
@@ -106,6 +108,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         viewModel.authCode.observe(this@MainActivity) {
             logoutMenu?.isVisible = viewModel.isAuthenticated
+            if (!viewModel.isAuthenticated){
+                onLogout()
+            }
         }
 
         onBackPressedDispatcher.addCallback(this@MainActivity, mOnBackPressedCallback)
@@ -204,8 +209,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             R.id.logout -> {
-                onLogout()
-                item.isVisible = viewModel.isAuthenticated
+                showFragment(OktaAuthenticationFragment.newLogoutInstance(),
+                    OktaAuthenticationFragment.TAG, true)
                 return true
             }
 
@@ -223,7 +228,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun onLogout() {
-        viewModel.clearAuthCode()
         chatController?.logoutFromAuthenticatedSession()
     }
 
@@ -417,6 +421,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 shouldDefaultBack = false
             }
 
+            StateEvent.Closed -> {
+                onChatClosed(stateEvent.data.getAs<EndedReason>())
+            }
+
             StateEvent.Ended -> {
                 // as in case of `Dismiss` press during disconnection
                 if(supportFragmentManager.backStackEntryCount > 0){
@@ -491,11 +499,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
 
-    private fun onConnectionClosed(reason: EndedReason) {
+    private fun onChatClosed(reason: EndedReason?) {
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
             EndedReason.Logout -> "Logout successful"
-            else -> "Connection was closed."
+            else -> "Chat was closed. ($reason)"
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
         }
