@@ -3,6 +3,7 @@ clientId=
 signInRedirectUri=
 signOutRedirectUri=
 oktaState=
+scopes=
 codeChallenge=
 codeChallengeMethod=
 codeVerifier=

@@ -19,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.11.0"
-def sdkVersion = "1.11.0"
+def projectVersion = "1.12.0.rc3"
+def sdkVersion = "1.12.0.rc3"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -62,6 +62,7 @@ android {
         buildConfigField "String", "SIGN_IN_REDIRECT_URI", '"' + oktaProperties["signInRedirectUri"] + '"'
         buildConfigField "String", "SIGN_OUT_REDIRECT_URI", '"' + oktaProperties["signOutRedirectUri"] + '"'
         buildConfigField "String", "OKTA_STATE", '"' + oktaProperties["oktaState"] + '"'
+        buildConfigField "String", "SCOPES", '"' + oktaProperties["scopes"] + '"'
         buildConfigField "String", 'CODE_CHALLENGE', '"' + oktaProperties['codeChallenge'] + '"'
         buildConfigField "String", 'CODE_CHALLENGE_METHOD', '"' + oktaProperties['codeChallengeMethod'] + '"'
         buildConfigField "String", 'CODE_VERIFIER', '"' + oktaProperties['codeVerifier'] + '"'

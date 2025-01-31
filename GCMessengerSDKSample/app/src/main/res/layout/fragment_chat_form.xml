@@ -86,38 +86,31 @@
 
             <Button
                 android:id="@+id/chat_availability"
-                style="@style/submit_view"
+                style="@style/SubmitButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="@string/chat_availability"
-                android:gravity="center_vertical"
-                android:text="@string/chat_availability"
-                android:textColor="@color/colorPrimary" />
+                android:text="@string/chat_availability" />
 
             <Button
                 android:id="@+id/start_chat"
-                style="@style/submit_view"
+                style="@style/SubmitButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="@string/start_chat"
-                android:gravity="center"
-                android:text="@string/start_chat"
-                android:textColor="@color/colorPrimary" />
+                android:text="@string/start_chat" />
 
         </LinearLayout>
 
         <Button
             android:id="@+id/login_button"
+            style="@style/SubmitButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/submit_view_selector"
-            android:textAllCaps="true"
-            android:textSize="@dimen/text_default_size"
-            android:gravity="center"
-            android:text="@string/login_text"
-            android:textColor="@color/colorPrimary" />
+            android:contentDescription="@string/login_text"
+            android:text="@string/login_text" />
     </LinearLayout>
 
 </LinearLayout>
