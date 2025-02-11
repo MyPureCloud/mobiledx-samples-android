@@ -234,7 +234,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             .setTitle(R.string.clear_conversation_dialog_title)
             .setMessage(R.string.clear_conversation_dialog_message)
             .setNegativeButton(R.string.cancel, null)
-            .setPositiveButton(R.string.clear_conversation_dialog_positive_button) { _, _ -> /* TODO This will be implemented later */}
+            .setPositiveButton(R.string.clear_conversation_dialog_positive_button) { _, _ -> chatController?.clearConversation()}
             .create()
             .show()
     }
