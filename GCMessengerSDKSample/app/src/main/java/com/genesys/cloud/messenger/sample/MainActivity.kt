@@ -506,10 +506,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
 
     private fun onChatClosed(reason: EndedReason?) {
+        removeChatFragment()
         updateMenuVisibility()
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
-            EndedReason.Logout -> "Logout successful"
+            EndedReason.Logout -> "Logout successful."
+            EndedReason.ConversationCleared -> "Conversation was cleared."
             else -> "Chat was closed. ($reason)"
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
