@@ -234,7 +234,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             .setTitle(R.string.clear_conversation_dialog_title)
             .setMessage(R.string.clear_conversation_dialog_message)
             .setNegativeButton(R.string.cancel, null)
-            .setPositiveButton(R.string.clear_conversation_dialog_positive_button) { _, _ -> /* TODO This will be implemented later */}
+            .setPositiveButton(R.string.clear_conversation_dialog_positive_button) { _, _ -> chatController?.clearConversation()}
             .create()
             .show()
     }
@@ -506,10 +506,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
 
     private fun onChatClosed(reason: EndedReason?) {
+        removeChatFragment()
         updateMenuVisibility()
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
-            EndedReason.Logout -> "Logout successful"
+            EndedReason.Logout -> "Logout successful."
+            EndedReason.ConversationCleared -> "Conversation was cleared."
             else -> "Chat was closed. ($reason)"
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
