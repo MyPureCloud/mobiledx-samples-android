@@ -397,7 +397,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 removeChatFragment()
             }
         }
-        toast(this, message, Toast.LENGTH_SHORT)
+        toast(this, message, Toast.LENGTH_LONG)
     }
 
     override fun onChatStateChanged(stateEvent: StateEvent) {
