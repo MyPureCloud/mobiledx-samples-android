@@ -50,6 +50,9 @@ class ChatFormFragment : Fragment() {
         binding.loginButton.setOnClickListener {
             onLoginClicked()
         }
+        binding.pushButton.setOnClickListener {
+            onPushClicked()
+        }
         binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
     }
     //endregion
@@ -66,6 +69,10 @@ class ChatFormFragment : Fragment() {
         } catch (e: IllegalStateException) {
             toast(requireContext(), e.message ?: "Cannot login.")
         }
+    }
+
+    private fun onPushClicked() {
+        //TODO Will be implemented later
     }
 
     private fun observeSavedAccount() {
