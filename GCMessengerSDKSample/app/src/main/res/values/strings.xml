@@ -41,4 +41,6 @@
 
     <string name="login_text">Log in</string>
     <string name="logout_text">Log out</string>
+
+    <string name="enable_push_text">Enable Push</string>
 </resources>

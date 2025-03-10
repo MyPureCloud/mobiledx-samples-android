@@ -126,6 +126,7 @@ dependencies {
         implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
         implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
     }
+    implementation 'com.google.firebase:firebase-messaging:24.1.0'
     //endregion
 
     //region Tests
