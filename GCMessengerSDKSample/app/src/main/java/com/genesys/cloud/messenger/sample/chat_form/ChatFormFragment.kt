@@ -72,7 +72,7 @@ class ChatFormFragment : Fragment() {
     }
 
     private fun onPushClicked() {
-        //TODO Will be implemented later
+        createAccountData()?.let { accountData -> viewModel.changePushEnablement(accountData) }
     }
 
     private fun observeSavedAccount() {

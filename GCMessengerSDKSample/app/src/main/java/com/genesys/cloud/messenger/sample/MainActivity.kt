@@ -1,6 +1,7 @@
 package com.genesys.cloud.messenger.sample
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +10,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -30,6 +33,9 @@ import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
+import com.genesys.cloud.messenger.sample.data.PUSH_NOTIFICATIONS_DEVICE_TOKEN_DATA_KEY
+import com.genesys.cloud.messenger.sample.data.PUSH_NOTIFICATIONS_LOG_TAG
+import com.genesys.cloud.messenger.sample.data.pushDataStore
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
@@ -37,7 +43,10 @@ import com.genesys.cloud.ui.structure.controller.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class MainActivity : AppCompatActivity(), ChatEventListener {
@@ -81,6 +90,45 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     //endregion
 
+    //region - permissions
+
+    // android.Manifest.permission.POST_NOTIFICATIONS needs API 33
+    private val PERMISSION_POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
+    private var permissionRequested: String? = null
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            permissionRequested?.let { permission ->
+                if (isGranted) {
+                    permissionGranted(permission)
+                } else {
+                    permissionDenied(permission)
+                }
+            }
+        }
+
+    private fun requestPermission(permission: String) {
+        Log.d(TAG, "requestPermission($permission)")
+        permissionRequested = permission
+        requestPermissionLauncher.launch(permissionRequested)
+    }
+
+    private fun permissionGranted(permission: String) {
+        Log.d(TAG, "permissionGranted($permission)")
+        when (permission) {
+            PERMISSION_POST_NOTIFICATIONS -> postNotificationsGranted()
+            else -> throw UnsupportedOperationException(permission)
+        }
+    }
+
+    private fun permissionDenied(permission: String) {
+        Log.d(TAG, "permissionDenied($permission)")
+        when (permission) {
+            PERMISSION_POST_NOTIFICATIONS -> postNotificationsDenied()
+            else -> throw UnsupportedOperationException(permission)
+        }
+    }
+    //endregion
+
     //region - lifecycle
 
     @androidx.annotation.OptIn(androidx.core.os.BuildCompat.PrereleaseSdkCheck::class)
@@ -102,6 +150,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     createChat(messengerAccount)
                 } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
+                } else if (uiState.enablePush) {
+                    enablePush(messengerAccount)
+                } else if (uiState.disablePush) {
+                    disablePush(messengerAccount)
                 }
             }
         }
@@ -360,6 +412,56 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 this, "Chat availability status returned ${it.isAvailable}",
             )
         }
+    }
+
+    private fun enablePush(accountInfo: AccountInfo) {
+        Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "enablePush()")
+        if (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            postNotificationsGranted()
+        } else {
+            requestPermission(PERMISSION_POST_NOTIFICATIONS)
+        }
+    }
+
+    private fun postNotificationsGranted() {
+        retrieveDeviceTokenForPush()?.let { deviceToken ->
+            Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "deviceToken read successfully: $deviceToken")
+            /* Temporary solution */
+            Snackbar.make(binding.snackBarLayout,
+            "setPushToken() will be called here", Snackbar.LENGTH_LONG
+            ).show()
+            /* Temporary solution */
+            // TODO Call Messenger SDK to register for Push Notifications - This will be implemented later
+        } ?: {
+            Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "deviceToken not found")
+            Snackbar.make(
+                binding.snackBarLayout,
+                R.string.enable_push_failed_message, Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun postNotificationsDenied() {
+        Snackbar.make(
+            binding.snackBarLayout,
+            R.string.enable_push_failed_message, Snackbar.LENGTH_LONG
+        ).show()
+    }
+
+    private fun retrieveDeviceTokenForPush(): String? {
+        return runBlocking {
+            pushDataStore.data
+                .map { preferences ->
+                    Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "map on preferences")
+                    val item = preferences[PUSH_NOTIFICATIONS_DEVICE_TOKEN_DATA_KEY]
+                    Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "item: $item")
+                    item
+                }.firstOrNull()
+        }
+    }
+
+    private fun disablePush(accountInfo: AccountInfo) {
+        // TODO Call Messenger SDK to unregister from Push Notifications - This will be implemented later
     }
 
     private fun waitingVisibility(visible: Boolean) {
