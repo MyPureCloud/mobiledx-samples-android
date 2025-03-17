@@ -19,6 +19,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.genesys.cloud.core.model.StatementScope
+import com.genesys.cloud.core.utils.IOScope
 import com.genesys.cloud.core.utils.NRError
 import com.genesys.cloud.core.utils.getAs
 import com.genesys.cloud.core.utils.runMain
@@ -40,7 +41,9 @@ import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
 import com.genesys.cloud.ui.structure.controller.*
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
@@ -90,45 +93,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     //endregion
 
-    //region - permissions
-
-    // android.Manifest.permission.POST_NOTIFICATIONS needs API 33
-    private val PERMISSION_POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
-    private var permissionRequested: String? = null
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            permissionRequested?.let { permission ->
-                if (isGranted) {
-                    permissionGranted(permission)
-                } else {
-                    permissionDenied(permission)
-                }
-            }
-        }
-
-    private fun requestPermission(permission: String) {
-        Log.d(TAG, "requestPermission($permission)")
-        permissionRequested = permission
-        requestPermissionLauncher.launch(permissionRequested)
-    }
-
-    private fun permissionGranted(permission: String) {
-        Log.d(TAG, "permissionGranted($permission)")
-        when (permission) {
-            PERMISSION_POST_NOTIFICATIONS -> postNotificationsGranted()
-            else -> throw UnsupportedOperationException(permission)
-        }
-    }
-
-    private fun permissionDenied(permission: String) {
-        Log.d(TAG, "permissionDenied($permission)")
-        when (permission) {
-            PERMISSION_POST_NOTIFICATIONS -> postNotificationsDenied()
-            else -> throw UnsupportedOperationException(permission)
-        }
-    }
-    //endregion
-
     //region - lifecycle
 
     @androidx.annotation.OptIn(androidx.core.os.BuildCompat.PrereleaseSdkCheck::class)
@@ -151,9 +115,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
                 } else if (uiState.enablePush) {
-                    enablePush(messengerAccount)
+                    enablePushNotifications(messengerAccount)
                 } else if (uiState.disablePush) {
-                    disablePush(messengerAccount)
+                    disablePushNotifications(messengerAccount)
                 }
             }
         }
@@ -412,10 +376,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 this, "Chat availability status returned ${it.isAvailable}",
             )
         }
-    }
-
-    private fun enablePush(accountInfo: AccountInfo) {
-        Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "enablePush()")
+    }private fun enablePushNotifications(accountInfo: AccountInfo) {
+        Log.d(TAG, "enablePush()")
         if (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             postNotificationsGranted()
         } else {
@@ -424,45 +386,76 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun postNotificationsGranted() {
-        retrieveDeviceTokenForPush()?.let { deviceToken ->
-            Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "deviceToken read successfully: $deviceToken")
+        val deviceToken = retrieveDeviceTokenForPush()
+        if (deviceToken != null) {
+            Log.d(TAG, "deviceToken read successfully: $deviceToken")
             /* Temporary solution */
-            Snackbar.make(binding.snackBarLayout,
-            "setPushToken() will be called here", Snackbar.LENGTH_LONG
-            ).show()
+            toast(this, "setPushToken() will be called here", Toast.LENGTH_LONG)
             /* Temporary solution */
-            // TODO Call Messenger SDK to register for Push Notifications - This will be implemented later
-        } ?: {
-            Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "deviceToken not found")
-            Snackbar.make(
-                binding.snackBarLayout,
-                R.string.enable_push_failed_message, Snackbar.LENGTH_LONG
-            ).show()
+            // TODO GMMS-8030 - Call Messenger SDK to register for Push Notifications
+        } else {
+            Log.d(TAG, "deviceToken not found")
+            Toast.makeText(this, R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
         }
     }
 
     private fun postNotificationsDenied() {
-        Snackbar.make(
-            binding.snackBarLayout,
-            R.string.enable_push_failed_message, Snackbar.LENGTH_LONG
-        ).show()
+        Toast.makeText(this,R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
     }
 
     private fun retrieveDeviceTokenForPush(): String? {
         return runBlocking {
-            pushDataStore.data
-                .map { preferences ->
-                    Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "map on preferences")
-                    val item = preferences[PUSH_NOTIFICATIONS_DEVICE_TOKEN_DATA_KEY]
-                    Log.d(PUSH_NOTIFICATIONS_LOG_TAG, "item: $item")
-                    item
-                }.firstOrNull()
+            var token :String? = null
+            IOScope().launch {
+                token = Tasks.await(FirebaseMessaging.getInstance().token)
+                Log.d(TAG, "deviceToken received: $token")
+            }.join()
+            token
         }
     }
 
-    private fun disablePush(accountInfo: AccountInfo) {
-        // TODO Call Messenger SDK to unregister from Push Notifications - This will be implemented later
+    private fun disablePushNotifications(accountInfo: AccountInfo) {
+        // TODO GMMS-8092 - Call Messenger SDK to unregister from Push Notifications
     }
+
+    //region - permissions
+
+    // android.Manifest.permission.POST_NOTIFICATIONS needs API 33
+    private val PERMISSION_POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
+    private var permissionRequested: String? = null
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            permissionRequested?.let { permission ->
+                if (isGranted) {
+                    permissionGranted(permission)
+                } else {
+                    permissionDenied(permission)
+                }
+            }
+        }
+
+    private fun requestPermission(permission: String) {
+        Log.d(TAG, "requestPermission($permission)")
+        permissionRequested = permission
+        requestPermissionLauncher.launch(permissionRequested)
+    }
+
+    private fun permissionGranted(permission: String) {
+        Log.d(TAG, "permissionGranted($permission)")
+        when (permission) {
+            PERMISSION_POST_NOTIFICATIONS -> postNotificationsGranted()
+            else -> throw UnsupportedOperationException(permission)
+        }
+    }
+
+    private fun permissionDenied(permission: String) {
+        Log.d(TAG, "permissionDenied($permission)")
+        when (permission) {
+            PERMISSION_POST_NOTIFICATIONS -> postNotificationsDenied()
+            else -> throw UnsupportedOperationException(permission)
+        }
+    }
+    //endregion
 
     private fun waitingVisibility(visible: Boolean) {
         binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
