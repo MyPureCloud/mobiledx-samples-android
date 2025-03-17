@@ -1,6 +1,7 @@
 package com.genesys.cloud.messenger.sample
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,13 +10,16 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.genesys.cloud.core.model.StatementScope
+import com.genesys.cloud.core.utils.IOScope
 import com.genesys.cloud.core.utils.NRError
 import com.genesys.cloud.core.utils.getAs
 import com.genesys.cloud.core.utils.runMain
@@ -30,14 +34,22 @@ import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
+import com.genesys.cloud.messenger.sample.data.PUSH_NOTIFICATIONS_DEVICE_TOKEN_DATA_KEY
+import com.genesys.cloud.messenger.sample.data.PUSH_NOTIFICATIONS_LOG_TAG
+import com.genesys.cloud.messenger.sample.data.pushDataStore
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
 import com.genesys.cloud.ui.structure.controller.*
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class MainActivity : AppCompatActivity(), ChatEventListener {
@@ -102,6 +114,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     createChat(messengerAccount)
                 } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
+                } else if (uiState.enablePush) {
+                    enablePushNotifications(messengerAccount)
+                } else if (uiState.disablePush) {
+                    disablePushNotifications(messengerAccount)
                 }
             }
         }
@@ -360,7 +376,86 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 this, "Chat availability status returned ${it.isAvailable}",
             )
         }
+    }private fun enablePushNotifications(accountInfo: AccountInfo) {
+        Log.d(TAG, "enablePush()")
+        if (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            postNotificationsGranted()
+        } else {
+            requestPermission(PERMISSION_POST_NOTIFICATIONS)
+        }
     }
+
+    private fun postNotificationsGranted() {
+        val deviceToken = retrieveDeviceTokenForPush()
+        if (deviceToken != null) {
+            Log.d(TAG, "deviceToken read successfully: $deviceToken")
+            /* Temporary solution */
+            toast(this, "setPushToken() will be called here", Toast.LENGTH_LONG)
+            /* Temporary solution */
+            // TODO GMMS-8030 - Call Messenger SDK to register for Push Notifications
+        } else {
+            Log.d(TAG, "deviceToken not found")
+            Toast.makeText(this, R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun postNotificationsDenied() {
+        Toast.makeText(this,R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun retrieveDeviceTokenForPush(): String? {
+        return runBlocking {
+            var token :String? = null
+            IOScope().launch {
+                token = Tasks.await(FirebaseMessaging.getInstance().token)
+                Log.d(TAG, "deviceToken received: $token")
+            }.join()
+            token
+        }
+    }
+
+    private fun disablePushNotifications(accountInfo: AccountInfo) {
+        // TODO GMMS-8092 - Call Messenger SDK to unregister from Push Notifications
+    }
+
+    //region - permissions
+
+    // android.Manifest.permission.POST_NOTIFICATIONS needs API 33
+    private val PERMISSION_POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
+    private var permissionRequested: String? = null
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            permissionRequested?.let { permission ->
+                if (isGranted) {
+                    permissionGranted(permission)
+                } else {
+                    permissionDenied(permission)
+                }
+            }
+        }
+
+    private fun requestPermission(permission: String) {
+        Log.d(TAG, "requestPermission($permission)")
+        permissionRequested = permission
+        requestPermissionLauncher.launch(permissionRequested)
+    }
+
+    private fun permissionGranted(permission: String) {
+        Log.d(TAG, "permissionGranted($permission)")
+        when (permission) {
+            PERMISSION_POST_NOTIFICATIONS -> postNotificationsGranted()
+            else -> throw UnsupportedOperationException(permission)
+        }
+    }
+
+    private fun permissionDenied(permission: String) {
+        Log.d(TAG, "permissionDenied($permission)")
+        when (permission) {
+            PERMISSION_POST_NOTIFICATIONS -> postNotificationsDenied()
+            else -> throw UnsupportedOperationException(permission)
+        }
+    }
+    //endregion
 
     private fun waitingVisibility(visible: Boolean) {
         binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
