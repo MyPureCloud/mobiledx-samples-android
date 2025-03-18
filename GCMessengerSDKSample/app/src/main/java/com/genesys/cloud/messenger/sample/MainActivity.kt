@@ -38,6 +38,7 @@ import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
 import com.genesys.cloud.ui.structure.controller.*
+import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
@@ -382,10 +383,15 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         val deviceToken = retrieveDeviceTokenForPush()
         if (deviceToken != null) {
             Log.d(TAG, "deviceToken read successfully: $deviceToken")
-            /* Temporary solution */
-            toast(this, "setPushToken() will be called here", Toast.LENGTH_LONG)
-            /* Temporary solution */
-            // TODO GMMS-8030 - Call Messenger SDK to register for Push Notifications
+            runBlocking {
+                ChatPushNotificationIntegration().setPushToken(deviceToken, accountInfo as MessengerAccount)
+                    .onSuccess {
+                        //TODO GMMS-8092
+                    }.onFailure {
+                        Log.e(TAG, "ChatPushNotificationIntegration.setPushToken() failed.", it)
+                        toast(this@MainActivity, "setPushToken() failed")
+                    }
+            }
         } else {
             Log.d(TAG, "deviceToken not found")
             Toast.makeText(this, R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
