@@ -1,7 +1,9 @@
 package com.genesys.cloud.messenger.sample
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,11 +12,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -34,9 +34,6 @@ import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
-import com.genesys.cloud.messenger.sample.data.PUSH_NOTIFICATIONS_DEVICE_TOKEN_DATA_KEY
-import com.genesys.cloud.messenger.sample.data.PUSH_NOTIFICATIONS_LOG_TAG
-import com.genesys.cloud.messenger.sample.data.pushDataStore
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
@@ -46,8 +43,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -90,6 +85,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             backPressed()
         }
     }
+
+    private var pushNotificationBroadcastReceiver: BroadcastReceiver? = null
 
     //endregion
 
@@ -156,6 +153,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }
             }
         }
+    }override fun onStart() {
+        super.onStart()
+        registerPushNotificationReceiver()
     }
 
     override fun onPause() {
@@ -167,6 +167,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         if (isFinishing) {
             destructChat()
         }
+        unregisterReceiver(pushNotificationBroadcastReceiver)
         super.onStop()
     }
 
@@ -377,15 +378,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             )
         }
     }private fun enablePushNotifications(accountInfo: AccountInfo) {
-        Log.d(TAG, "enablePush()")
-        if (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            postNotificationsGranted()
-        } else {
-            requestPermission(PERMISSION_POST_NOTIFICATIONS)
-        }
-    }
-
-    private fun postNotificationsGranted() {
+        Log.d(TAG, "enablePushNotifications()")
         val deviceToken = retrieveDeviceTokenForPush()
         if (deviceToken != null) {
             Log.d(TAG, "deviceToken read successfully: $deviceToken")
@@ -397,10 +390,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             Log.d(TAG, "deviceToken not found")
             Toast.makeText(this, R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
         }
-    }
-
-    private fun postNotificationsDenied() {
-        Toast.makeText(this,R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
     }
 
     private fun retrieveDeviceTokenForPush(): String? {
@@ -418,44 +407,38 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         // TODO GMMS-8092 - Call Messenger SDK to unregister from Push Notifications
     }
 
-    //region - permissions
-
-    // android.Manifest.permission.POST_NOTIFICATIONS needs API 33
-    private val PERMISSION_POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
-    private var permissionRequested: String? = null
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            permissionRequested?.let { permission ->
-                if (isGranted) {
-                    permissionGranted(permission)
+    private fun registerPushNotificationReceiver() {
+        pushNotificationBroadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent != null) {
+                    pushNotificationReceived(
+                        intent.getStringExtra(AppFirebaseMessagingService.EXTRA_KEY_REMOTE_MESSAGE_TITLE),
+                        intent.getStringExtra(AppFirebaseMessagingService.EXTRA_KEY_REMOTE_MESSAGE_BODY)
+                    )
                 } else {
-                    permissionDenied(permission)
+                    Log.e(TAG, "Broadcast message with action ${AppFirebaseMessagingService.PUSH_NOTIFICATION_RECEIVED} received, but Intent is not present.")
                 }
             }
         }
-
-    private fun requestPermission(permission: String) {
-        Log.d(TAG, "requestPermission($permission)")
-        permissionRequested = permission
-        requestPermissionLauncher.launch(permissionRequested)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(AppFirebaseMessagingService.PUSH_NOTIFICATION_RECEIVED)
+        registerReceiver(pushNotificationBroadcastReceiver, intentFilter)
     }
 
-    private fun permissionGranted(permission: String) {
-        Log.d(TAG, "permissionGranted($permission)")
-        when (permission) {
-            PERMISSION_POST_NOTIFICATIONS -> postNotificationsGranted()
-            else -> throw UnsupportedOperationException(permission)
+    private fun pushNotificationReceived(messageTitle: String?, messageBody: String?) {
+        if (hasActiveChats) return
+        if (messageBody == null) return // Message body is a must in a Push notification
+        val dialog = AlertDialog.Builder(this)
+            .setPositiveButton(com.genesys.cloud.ui.R.string.ok) { _, _ -> }
+            .create()
+        if (messageTitle == null) {
+            dialog.setTitle(messageBody)
+        } else {
+            dialog.setTitle(messageTitle)
+            dialog.setMessage(messageBody)
         }
+        dialog.show()
     }
-
-    private fun permissionDenied(permission: String) {
-        Log.d(TAG, "permissionDenied($permission)")
-        when (permission) {
-            PERMISSION_POST_NOTIFICATIONS -> postNotificationsDenied()
-            else -> throw UnsupportedOperationException(permission)
-        }
-    }
-    //endregion
 
     private fun waitingVisibility(visible: Boolean) {
         binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
