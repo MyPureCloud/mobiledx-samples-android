@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.genesys.cloud.core.model.StatementScope
 import com.genesys.cloud.core.utils.IOScope
 import com.genesys.cloud.core.utils.NRError
@@ -383,8 +384,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         val deviceToken = retrieveDeviceTokenForPush()
         if (deviceToken != null) {
             Log.d(TAG, "deviceToken read successfully: $deviceToken")
-            runBlocking {
-                ChatPushNotificationIntegration().setPushToken(deviceToken, accountInfo as MessengerAccount)
+            lifecycleScope.launch {
+                ChatPushNotificationIntegration.setPushToken(deviceToken, accountInfo as MessengerAccount)
                     .onSuccess {
                         //TODO GMMS-8092
                     }.onFailure {
