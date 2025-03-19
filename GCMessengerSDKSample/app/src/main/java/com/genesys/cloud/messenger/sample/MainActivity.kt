@@ -412,14 +412,16 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     private fun disablePushNotifications(accountInfo: AccountInfo) {
         Log.d(TAG, "disablePushNotifications()")
-        lifecycleScope.launch {
-            ChatPushNotificationIntegration.removePushToken(accountInfo as MessengerAccount)
-                .onSuccess {
-                    //TODO GMMS-8092
-                }.onFailure {
-                    Log.e(TAG, "ChatPushNotificationIntegration.removePushToken() failed.", it)
-                    toast(this@MainActivity, "removePushToken() failed")
-                }
+        (accountInfo as? MessengerAccount)?.let { account ->
+            lifecycleScope.launch {
+                ChatPushNotificationIntegration.removePushToken(account)
+                    .onSuccess {
+                        //TODO GMMS-8092
+                    }.onFailure {
+                        Log.e(TAG, "ChatPushNotificationIntegration.removePushToken() failed.", it)
+                        toast(this@MainActivity, "removePushToken() failed")
+                    }
+            }
         }
     }
 
