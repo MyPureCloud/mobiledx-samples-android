@@ -411,7 +411,16 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun disablePushNotifications(accountInfo: AccountInfo) {
-        // TODO GMMS-8092 - Call Messenger SDK to unregister from Push Notifications
+        Log.d(TAG, "disablePushNotifications()")
+        lifecycleScope.launch {
+            ChatPushNotificationIntegration.removePushToken(accountInfo as MessengerAccount)
+                .onSuccess {
+                    //TODO GMMS-8092
+                }.onFailure {
+                    Log.e(TAG, "ChatPushNotificationIntegration.removePushToken() failed.", it)
+                    toast(this@MainActivity, "removePushToken() failed")
+                }
+        }
     }
 
     private fun registerPushNotificationReceiver() {
