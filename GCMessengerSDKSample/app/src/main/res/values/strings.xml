@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Genesys Cloud Mobile Messenger</string>
     <string name="app_version">Version: %1$s (%2$d)</string>
+    <string name="cancel">Cancel</string>
     <string name="title_details">Account Details</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_home">Home</string>
@@ -20,9 +21,6 @@
     <string name="chat_disabled_error">Chat was restricted and can\'t be proceed.</string>
 
     <string name="end_current_chat">End current chat</string>
-    <string name="destruct_chat_controller">Destruct</string>
-    <string name="upload_file">upload file</string>
-    <string name="clear_history">Clear History</string>
 
     <string name="context_name">Context Name</string>
     <string name="context_value">Context Value</string>
@@ -41,4 +39,9 @@
 
     <string name="login_text">Log in</string>
     <string name="logout_text">Log out</string>
+
+    <string name="clear_conversation_menu">Clear conversation</string>
+    <string name="clear_conversation_dialog_title">Clear Conversation</string>
+    <string name="clear_conversation_dialog_message">Would you like to clear and leave your conversation? Message history will be lost.</string>
+    <string name="clear_conversation_dialog_positive_button">Yes I\'m Sure</string>
 </resources>
