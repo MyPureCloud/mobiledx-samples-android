@@ -385,7 +385,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         if (deviceToken != null) {
             Log.d(TAG, "deviceToken read successfully: $deviceToken")
             lifecycleScope.launch {
-                ChatPushNotificationIntegration.setPushToken(this@MainActivity, deviceToken, accountInfo as MessengerAccount)
+                ChatPushNotificationIntegration.setPushToken(applicationContext, deviceToken, accountInfo as MessengerAccount)
                     .onSuccess {
                         viewModel.setPushEnabled(true)
                         Snackbar.make(
@@ -421,7 +421,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         Log.d(TAG, "disablePushNotifications()")
         (accountInfo as? MessengerAccount)?.let { account ->
             lifecycleScope.launch {
-                ChatPushNotificationIntegration.removePushToken(this@MainActivity, account)
+                ChatPushNotificationIntegration.removePushToken(applicationContext, account)
                     .onSuccess {
                         viewModel.setPushEnabled(false)
                         Snackbar.make(
