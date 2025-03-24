@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.genesys.cloud.core.utils.toast
@@ -54,7 +55,12 @@ class ChatFormFragment : Fragment() {
             onPushClicked()
         }
         binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
-
+        binding.deploymentIdEditText.addTextChangedListener(
+            onTextChanged = { text, _, _, _ ->
+                viewModel.updateLatestTypedDeploymentId(text.toString())
+            }
+        )
+        viewModel.updateLatestTypedDeploymentId(binding.deploymentIdEditText.text.toString())
         viewModel.pushEnabled.observe(requireActivity()) { enabled->
             binding.pushButton.text = getString(
                 if (enabled) R.string.disable_push_text
