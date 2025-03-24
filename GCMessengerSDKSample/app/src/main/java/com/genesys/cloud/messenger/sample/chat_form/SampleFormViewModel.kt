@@ -60,6 +60,10 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         }
     }
 
+    fun setPushEnabled(value: Boolean){
+        _pushEnabled.value = value
+    }
+
     private fun processAccountData(
         accountData: JsonObject,
         startChat: Boolean = false,

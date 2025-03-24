@@ -385,12 +385,19 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         if (deviceToken != null) {
             Log.d(TAG, "deviceToken read successfully: $deviceToken")
             lifecycleScope.launch {
-                ChatPushNotificationIntegration.setPushToken(deviceToken, accountInfo as MessengerAccount)
+                ChatPushNotificationIntegration.setPushToken(this@MainActivity, deviceToken, accountInfo as MessengerAccount)
                     .onSuccess {
-                        //TODO GMMS-8092
+                        viewModel.setPushEnabled(true)
+                        Snackbar.make(
+                            binding.snackBarLayout,
+                            "Push Notifications enabled successfully", Snackbar.LENGTH_LONG
+                        ).also { it.show() }
                     }.onFailure {
                         Log.e(TAG, "ChatPushNotificationIntegration.setPushToken() failed.", it)
-                        toast(this@MainActivity, "setPushToken() failed")
+                        Snackbar.make(
+                            binding.snackBarLayout,
+                            "setPushToken() failed", Snackbar.LENGTH_LONG
+                        ).also { it.show() }
                     }
             }
         } else {
@@ -414,12 +421,19 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         Log.d(TAG, "disablePushNotifications()")
         (accountInfo as? MessengerAccount)?.let { account ->
             lifecycleScope.launch {
-                ChatPushNotificationIntegration.removePushToken(account)
+                ChatPushNotificationIntegration.removePushToken(this@MainActivity, account)
                     .onSuccess {
-                        //TODO GMMS-8092
+                        viewModel.setPushEnabled(false)
+                        Snackbar.make(
+                            binding.snackBarLayout,
+                            "Push Notifications disabled successfully", Snackbar.LENGTH_LONG
+                        ).also { it.show() }
                     }.onFailure {
                         Log.e(TAG, "ChatPushNotificationIntegration.removePushToken() failed.", it)
-                        toast(this@MainActivity, "removePushToken() failed")
+                        Snackbar.make(
+                            binding.snackBarLayout,
+                            "removePushToken() failed", Snackbar.LENGTH_LONG
+                        ).also { it.show() }
                     }
             }
         }

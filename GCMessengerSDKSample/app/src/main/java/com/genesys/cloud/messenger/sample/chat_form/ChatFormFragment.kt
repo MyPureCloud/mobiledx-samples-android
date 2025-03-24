@@ -54,6 +54,13 @@ class ChatFormFragment : Fragment() {
             onPushClicked()
         }
         binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+
+        viewModel.pushEnabled.observe(requireActivity()) { enabled->
+            binding.pushButton.text = getString(
+                if (enabled) R.string.disable_push_text
+                else R.string.enable_push_text
+            )
+        }
     }
     //endregion
 
