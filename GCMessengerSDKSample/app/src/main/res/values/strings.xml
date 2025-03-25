@@ -43,5 +43,6 @@
     <string name="logout_text">Log out</string>
 
     <string name="enable_push_text">Enable Push</string>
+    <string name="disable_push_text">Disable Push</string>
     <string name="enable_push_failed_message">Permission for Push notifications rejected.</string>
 </resources>

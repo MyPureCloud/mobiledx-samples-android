@@ -21,6 +21,8 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
 
     val isAuthenticated: Boolean get() = !authCode.value.isNullOrEmpty()
 
+    private var latestTypedDeploymentId: String = ""
+    private val pushEnabledForDeployment: MutableMap<String,Boolean> = mutableMapOf()
     private val _pushEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     val pushEnabled: LiveData<Boolean> = _pushEnabled
 
@@ -57,6 +59,21 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
             processAccountData(accountData, disablePush = true)
         } else {
             processAccountData(accountData, enablePush = true)
+        }
+    }
+
+    fun setPushEnabled(value: Boolean){
+        pushEnabledForDeployment[latestTypedDeploymentId] = value
+        _pushEnabled.value = value
+    }
+
+    fun updateLatestTypedDeploymentId(deploymentId: String) {
+        latestTypedDeploymentId = deploymentId
+        val existingEnablement = pushEnabledForDeployment.entries.singleOrNull { entry -> entry.key == deploymentId }
+        if (existingEnablement == null) {
+            _pushEnabled.value = false
+        } else {
+            _pushEnabled.value = existingEnablement.value
         }
     }
 
