@@ -431,13 +431,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 onChatClosed(stateEvent.data.getAs<EndedReason>())
             }
 
-            StateEvent.Ended -> {
-                // as in case of `Dismiss` press during disconnection
-                if(supportFragmentManager.backStackEntryCount > 0){
-                    onBackPressed()
-                }
-            }
-
             StateEvent.Unavailable -> runMain {
                 waitingVisibility(false)
                 toast(this, InternalError.DeploymentInactiveStatusError.format(), Toast.LENGTH_SHORT)
@@ -506,7 +499,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
 
     private fun onChatClosed(reason: EndedReason?) {
-        removeChatFragment()
         updateMenuVisibility()
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
