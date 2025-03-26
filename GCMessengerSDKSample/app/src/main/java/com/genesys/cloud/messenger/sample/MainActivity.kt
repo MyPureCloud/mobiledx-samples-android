@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -35,6 +37,8 @@ import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
+import com.genesys.cloud.messenger.sample.data.PermissionHandler
+import com.genesys.cloud.messenger.sample.data.PermissionHandler.Companion.PERMISSION_POST_NOTIFICATIONS
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
@@ -89,6 +93,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private var pushNotificationBroadcastReceiver: BroadcastReceiver? = null
+    private val permissionHandler = PermissionHandler(this)
 
     //endregion
 
@@ -379,7 +384,24 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 this, "Chat availability status returned ${it.isAvailable}",
             )
         }
-    }private fun enablePushNotifications(accountInfo: AccountInfo) {
+    }
+
+    private fun enablePushNotifications(accountInfo: AccountInfo) {
+        Log.d(TAG, "enablePushNotifications()")
+        if (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermissionGranted(accountInfo)
+        } else {
+            permissionHandler.requestPermission(
+                PERMISSION_POST_NOTIFICATIONS,
+                { notificationPermissionGranted(accountInfo) },
+                ::notificationPermissionDenied
+            )
+        }
+    }
+
+    private fun notificationPermissionGranted(accountInfo: AccountInfo) {
         Log.d(TAG, "enablePushNotifications()")
         val deviceToken = retrieveDeviceTokenForPush()
         if (deviceToken != null) {
@@ -391,19 +413,31 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                         Snackbar.make(
                             binding.snackBarLayout,
                             "Push Notifications enabled successfully", Snackbar.LENGTH_LONG
-                        ).also { it.show() }
+                        ).show()
                     }.onFailure {
                         Log.e(TAG, "ChatPushNotificationIntegration.setPushToken() failed.", it)
                         Snackbar.make(
                             binding.snackBarLayout,
                             "setPushToken() failed", Snackbar.LENGTH_LONG
-                        ).also { it.show() }
+                        ).show()
                     }
             }
         } else {
             Log.d(TAG, "deviceToken not found")
-            Toast.makeText(this, R.string.enable_push_failed_message, Toast.LENGTH_LONG).show()
+            Snackbar.make(
+                binding.snackBarLayout,
+                R.string.enable_push_failed_message,
+                Toast.LENGTH_LONG
+            ).show()
         }
+    }
+
+    private fun notificationPermissionDenied() {
+        Snackbar.make(
+            binding.snackBarLayout,
+            R.string.enable_push_failed_message,
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun retrieveDeviceTokenForPush(): String? {
