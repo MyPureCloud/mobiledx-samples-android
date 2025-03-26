@@ -440,6 +440,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 removeChatFragment()
                 waitingVisibility(false)
                 updateMenuVisibility()
+                if (supportFragmentManager.backStackEntryCount > 0) {
+                    onBackPressed()
+                }
             }
 
             StateEvent.Reconnected -> runMain {
