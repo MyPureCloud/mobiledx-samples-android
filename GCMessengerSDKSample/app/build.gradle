@@ -88,6 +88,19 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    bundle {
+        language {
+            language {
+                enableSplit = false
+            }
+            density {
+                enableSplit = false
+            }
+            abi {
+                enableSplit = false
+            }
+        }
+    }
 }
 
 dependencies {
