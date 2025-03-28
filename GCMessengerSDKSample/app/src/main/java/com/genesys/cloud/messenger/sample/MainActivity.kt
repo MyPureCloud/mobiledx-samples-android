@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -488,7 +489,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
         val intentFilter = IntentFilter()
         intentFilter.addAction(AppFirebaseMessagingService.PUSH_NOTIFICATION_RECEIVED)
-        registerReceiver(pushNotificationBroadcastReceiver, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(pushNotificationBroadcastReceiver, intentFilter, RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(pushNotificationBroadcastReceiver, intentFilter)
+        }
     }
 
     private fun pushNotificationReceived(messageTitle: String?, messageBody: String?) {
