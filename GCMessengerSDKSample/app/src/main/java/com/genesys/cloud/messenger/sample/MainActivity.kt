@@ -399,6 +399,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }
             }
 
+            NRError.ClientNotAuthenticatedError -> {
+                removeChatFragment()
+            }
+
             NRError.GeneralError -> {
                 removeChatFragment()
             }
