@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private val hasActiveChats get() = chatController?.hasOpenChats() == true
     private var chatController: ChatController? = null
     private var endMenu: MenuItem? = null
+    private var clearConversationMenu: MenuItem? = null
     private var logoutMenu: MenuItem? = null
     private var reconnectingChatSnackBar: Snackbar? = null
 
@@ -128,7 +129,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
 
         viewModel.authCode.observe(this@MainActivity) {
-            logoutMenu?.isVisible = viewModel.isAuthenticated
             if (!viewModel.isAuthenticated){
                 onLogout()
             }
@@ -209,14 +209,18 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         menuInflater.inflate(R.menu.menu_main, menu)
 
         this.endMenu = menu?.findItem(R.id.end_current_chat)
+        this.clearConversationMenu = menu?.findItem(R.id.clear_conversation)
         this.logoutMenu = menu?.findItem(R.id.logout)
 
-        if (hasActiveChats) {
-            enableMenu(endMenu, true)
-        }
-        logoutMenu?.isVisible = viewModel.isAuthenticated
+        updateMenuVisibility()
 
         return true
+    }
+
+    private fun updateMenuVisibility(){
+        endMenu?.isVisible = hasActiveChats
+        clearConversationMenu?.isVisible = hasActiveChats
+        logoutMenu?.isVisible = viewModel.isAuthenticated
     }
 
     override fun onDestroy() {
@@ -233,16 +237,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 return true
             }
 
-            R.id.logout -> {
-                showFragment(OktaAuthenticationFragment.newLogoutInstance(),
-                    OktaAuthenticationFragment.TAG, true)
+            R.id.clear_conversation -> {
+                showClearConversationDialog()
                 return true
             }
 
-            R.id.destruct_chat -> {
-                destructChat()
-                enableMenu(endMenu, false)
-                item.isEnabled = false
+            R.id.logout -> {
+                showFragment(OktaAuthenticationFragment.newLogoutInstance(),
+                    OktaAuthenticationFragment.TAG, true)
                 return true
             }
 
@@ -252,16 +254,20 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         return false
     }
 
+    private fun showClearConversationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.clear_conversation_dialog_title)
+            .setMessage(R.string.clear_conversation_dialog_message)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.clear_conversation_dialog_positive_button) { _, _ -> chatController?.clearConversation()}
+            .create()
+            .show()
+    }
+
     private fun onLogout() {
         chatController?.logoutFromAuthenticatedSession()
     }
 
-    private fun enableMenu(menuItem: MenuItem?, enable: Boolean) {
-        if (menuItem != null) {
-            menuItem.isEnabled = enable
-            if (enable && !menuItem.isVisible) menuItem.isVisible = true
-        }
-    }
     //endregion
 
     //region - functionality
@@ -542,6 +548,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }
             }
 
+            NRError.ClientNotAuthenticatedError -> {
+                removeChatFragment()
+            }
+
             NRError.GeneralError -> {
                 removeChatFragment()
             }
@@ -556,7 +566,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         when (stateEvent.state) {
             StateEvent.Started -> {
                 waitingVisibility(false)
-                enableMenu(endMenu, hasActiveChats)
+                updateMenuVisibility()
             }
 
             StateEvent.ChatWindowLoaded -> {
@@ -574,22 +584,18 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 onChatClosed(stateEvent.data.getAs<EndedReason>())
             }
 
-            StateEvent.Ended -> {
-                // as in case of `Dismiss` press during disconnection
-                if(supportFragmentManager.backStackEntryCount > 0){
-                    onBackPressed()
-                }
-            }
-
             StateEvent.Unavailable -> runMain {
                 waitingVisibility(false)
                 toast(this, InternalError.DeploymentInactiveStatusError.format(), Toast.LENGTH_SHORT)
             }
 
             StateEvent.Idle -> {
-                enableMenu(endMenu, false)
                 removeChatFragment()
                 waitingVisibility(false)
+                updateMenuVisibility()
+                if (supportFragmentManager.backStackEntryCount > 0) {
+                    onBackPressed()
+                }
             }
 
             StateEvent.Reconnected -> runMain {
@@ -649,9 +655,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
 
     private fun onChatClosed(reason: EndedReason?) {
+        updateMenuVisibility()
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
-            EndedReason.Logout -> "Logout successful"
+            EndedReason.Logout -> "Logout successful."
+            EndedReason.ConversationCleared -> "Conversation was cleared."
             else -> "Chat was closed. ($reason)"
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
