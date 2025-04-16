@@ -19,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.13.0.rc2"
-def sdkVersion = "1.13.0.rc2"
+def projectVersion = "1.13.0.rc8"
+def sdkVersion = "1.13.0.rc8"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -87,6 +87,19 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+    bundle {
+        language {
+            language {
+                enableSplit = false
+            }
+            density {
+                enableSplit = false
+            }
+            abi {
+                enableSplit = false
+            }
+        }
     }
 }
 
