@@ -45,12 +45,12 @@ if (isGoogleServicesFileExists) {
 
 android {
     namespace = "com.genesys.cloud.messenger.sample"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = projectCode
         versionName = projectName
 
