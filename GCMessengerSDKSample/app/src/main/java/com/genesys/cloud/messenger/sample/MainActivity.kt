@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -360,6 +361,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
 
         showFragment(fragment, CONVERSATION_FRAGMENT_TAG, true)
+        showNotificationPermissionIndicator()
     }
 
     private fun showFragment(fragment: Fragment, tag: String, addToBackStack: Boolean = false) {
@@ -390,6 +392,27 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             toast(
                 this, "Chat availability status returned ${it.isAvailable}",
             )
+        }
+    }
+
+    private fun showNotificationPermissionIndicator() {
+        if (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            FloatingSnackbar.make(
+                binding.root,
+                R.string.notifications_disabled_indicator_message,
+                10000
+            ).apply {
+                setAction(R.string.settings) {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.setData(uri)
+                    startActivity(intent)
+                    dismiss()
+                }
+            }.show()
         }
     }
 

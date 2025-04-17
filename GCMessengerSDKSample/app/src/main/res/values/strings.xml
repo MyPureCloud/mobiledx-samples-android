@@ -48,4 +48,6 @@
     <string name="enable_push_text">Enable Push</string>
     <string name="disable_push_text">Disable Push</string>
     <string name="enable_push_failed_message">Permission for Push notifications rejected.</string>
+    <string name="notifications_disabled_indicator_message">Notifications are disabled</string>
+    <string name="settings">Settings</string>
 </resources>
