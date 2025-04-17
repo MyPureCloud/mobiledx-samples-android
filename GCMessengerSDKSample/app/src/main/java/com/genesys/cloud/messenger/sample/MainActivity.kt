@@ -39,6 +39,7 @@ import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModel
 import com.genesys.cloud.messenger.sample.chat_form.SampleFormViewModelFactory
+import com.genesys.cloud.messenger.sample.data.FloatingSnackbar
 import com.genesys.cloud.messenger.sample.data.PermissionHandler
 import com.genesys.cloud.messenger.sample.data.PermissionHandler.Companion.PERMISSION_POST_NOTIFICATIONS
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
@@ -102,7 +103,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     //region - lifecycle
 
-    @androidx.annotation.OptIn(androidx.core.os.BuildCompat.PrereleaseSdkCheck::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
