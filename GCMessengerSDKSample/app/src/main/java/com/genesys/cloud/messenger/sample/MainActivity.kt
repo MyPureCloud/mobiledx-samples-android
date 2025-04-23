@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     //region - lifecycle
 
-    @androidx.annotation.OptIn(androidx.core.os.BuildCompat.PrereleaseSdkCheck::class)
+    @OptIn(androidx.core.os.BuildCompat.PrereleaseSdkCheck::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -407,7 +407,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 removeChatFragment()
             }
         }
-        toast(this, message, Toast.LENGTH_SHORT)
+        toast(this, message, Toast.LENGTH_LONG)
     }
 
     override fun onChatStateChanged(stateEvent: StateEvent) {
