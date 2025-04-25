@@ -142,6 +142,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        (supportFragmentManager.findFragmentByTag(ChatFormFragment.TAG) as? ChatFormFragment)?.openFragment =
+            { fragment, tag ->
+                showFragment(fragment, tag, true)
+            }
+    }
+
     override fun onPause() {
         super.onPause()
         waitingVisibility(false)
@@ -254,11 +262,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun createChatFormFragment(): ChatFormFragment {
-        return ChatFormFragment().apply {
-            openFragment = { fragment, tag ->
-                showFragment(fragment, tag, true)
-            }
-        }
+        return ChatFormFragment()
     }
 
     private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
