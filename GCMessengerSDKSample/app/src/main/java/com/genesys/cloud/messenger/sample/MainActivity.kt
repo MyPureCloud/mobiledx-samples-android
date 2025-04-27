@@ -134,9 +134,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             ChatState.AfterActivityRecreation -> {
-                viewModel.loadSavedAccount()
-                viewModel.uiState.value?.account?.let { account ->
-                    viewModel.startChat(account)
+                if (existingChatFragment != null) {
+                    supportFragmentManager.popBackStackImmediate()
                 }
             }
         }
