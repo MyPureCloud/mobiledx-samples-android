@@ -134,12 +134,19 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             ChatState.AfterActivityRecreation -> {
-                viewModel.loadSavedAccount()
-                viewModel.uiState.value?.account?.let { account ->
-                    viewModel.startChat(account)
+                if (existingChatFragment != null) {
+                    supportFragmentManager.popBackStackImmediate()
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (supportFragmentManager.findFragmentByTag(ChatFormFragment.TAG) as? ChatFormFragment)?.openFragment =
+            { fragment, tag ->
+                showFragment(fragment, tag, true)
+            }
     }
 
     override fun onPause() {
@@ -254,11 +261,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun createChatFormFragment(): ChatFormFragment {
-        return ChatFormFragment().apply {
-            openFragment = { fragment, tag ->
-                showFragment(fragment, tag, true)
-            }
-        }
+        return ChatFormFragment()
     }
 
     private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
