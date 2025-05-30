@@ -124,6 +124,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     //endregion
 
+    //region DataStore
+    implementation "androidx.datastore:datastore-preferences:1.1.7"
+    //endregion
+
     //region navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
