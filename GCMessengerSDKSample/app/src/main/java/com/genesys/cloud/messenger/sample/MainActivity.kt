@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private var clearConversationMenu: MenuItem? = null
     private var logoutMenu: MenuItem? = null
     private var reconnectingChatSnackBar: Snackbar? = null
-    private var closableSnackbar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -163,10 +162,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }
             }
         }
-    }override fun onStart() {
+    }
+
+    override fun onStart() {
         super.onStart()
         registerPushNotificationReceiver()
-        binding.snackBarLayout.setOnClickListener { closableSnackbar?.dismiss() }
     }
 
     override fun onPause() {
@@ -448,11 +448,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                         ).show()
                     }.onFailure {
                         Log.e(TAG, "ChatPushNotificationIntegration.setPushToken() failed.", it)
-                        closableSnackbar = Snackbar.make(
+                        Snackbar.make(
                             binding.snackBarLayout,
                             "setPushToken() failed",
                             Snackbar.LENGTH_INDEFINITE
-                        ).apply { show() }
+                        ).apply {
+                            view.setOnClickListener { dismiss() }
+                            show()
+                        }
                     }
             }
         } else {
