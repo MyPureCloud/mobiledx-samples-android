@@ -162,7 +162,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }
             }
         }
-    }override fun onStart() {
+    }
+
+    override fun onStart() {
         super.onStart()
         registerPushNotificationReceiver()
     }
@@ -448,8 +450,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                         Log.e(TAG, "ChatPushNotificationIntegration.setPushToken() failed.", it)
                         Snackbar.make(
                             binding.snackBarLayout,
-                            "setPushToken() failed", Snackbar.LENGTH_LONG
-                        ).show()
+                            "setPushToken() failed",
+                            Snackbar.LENGTH_INDEFINITE
+                        ).apply {
+                            view.setOnClickListener { dismiss() }
+                            show()
+                        }
                     }
             }
         } else {
