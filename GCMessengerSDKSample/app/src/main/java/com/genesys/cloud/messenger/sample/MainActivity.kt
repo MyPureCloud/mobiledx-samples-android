@@ -20,7 +20,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -44,7 +43,7 @@ import com.genesys.cloud.messenger.sample.data.FloatingSnackbar
 import com.genesys.cloud.messenger.sample.data.PermissionHandler
 import com.genesys.cloud.messenger.sample.data.PermissionHandler.Companion.PERMISSION_POST_NOTIFICATIONS
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
-import com.genesys.cloud.messenger.sample.data.repositories.PushNotificationsRepository
+import com.genesys.cloud.messenger.sample.data.repositories.PushNotificationsSingleAccountRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
 import com.genesys.cloud.ui.structure.controller.*
@@ -54,8 +53,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -102,7 +99,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     private var pushNotificationBroadcastReceiver: BroadcastReceiver? = null
     private val permissionHandler = PermissionHandler(this)
-    private val pushNotificationsRepository = PushNotificationsRepository(this)
+    private val pushNotificationsSingleAccountRepository = PushNotificationsSingleAccountRepository(this)
 
     //endregion
 
@@ -442,47 +439,45 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         if (deviceToken != null) {
             Log.d(TAG, "deviceToken read successfully: $deviceToken")
             lifecycleScope.launch {
-                removePreviousRegistration()
+                removePreviousPushRegistration()
                 ChatPushNotificationIntegration.setPushToken(applicationContext, deviceToken, accountInfo as MessengerAccount)
                     .onSuccess {
                         Log.d(TAG, "ChatPushNotificationIntegration.setPushToken() succeed.")
-                        pushNotificationsRepository.saveAccount(accountInfo)
+                        pushNotificationsSingleAccountRepository.saveAccount(accountInfo)
                         viewModel.setPushEnabled(true)
-                        Snackbar.make(
-                            binding.snackBarLayout,
-                            "Push Notifications enabled successfully", Snackbar.LENGTH_LONG
-                        ).show()
+                        binding.snackBarLayout.snack(
+                            "Push Notifications enabled successfully",
+                            Snackbar.LENGTH_LONG
+                        )
                     }.onFailure {
                         Log.e(TAG, "ChatPushNotificationIntegration.setPushToken() failed.", it)
-                        Snackbar.make(
-                            binding.snackBarLayout,
-                            "setPushToken() failed", Snackbar.LENGTH_LONG
-                        ).show()
+                        binding.snackBarLayout.snack(
+                            "Registration for Push Notifications failed",
+                            Snackbar.LENGTH_LONG
+                        )
                     }
             }
         } else {
             Log.d(TAG, "deviceToken not found")
-            Snackbar.make(
-                binding.snackBarLayout,
-                R.string.enable_push_failed_message,
+            binding.snackBarLayout.snack(
+                getString(R.string.enable_push_failed_message),
                 Snackbar.LENGTH_LONG
-            ).show()
+            )
         }
     }
 
-    private suspend fun removePreviousRegistration() {
+    private suspend fun removePreviousPushRegistration() {
         Log.d(TAG, "Try to remove previous deviceToken registration")
-        pushNotificationsRepository.getAccount()?.let { account ->
+        pushNotificationsSingleAccountRepository.getAccount()?.let { account ->
             disablePushNotifications(account)
         }
     }
 
     private fun notificationPermissionDenied() {
-        Snackbar.make(
-            binding.snackBarLayout,
-            R.string.enable_push_failed_message,
+        binding.snackBarLayout.snack(
+            getString(R.string.enable_push_failed_message),
             Toast.LENGTH_LONG
-        ).show()
+        )
     }
 
     private fun retrieveDeviceTokenForPush(): String? {
@@ -499,21 +494,21 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private suspend fun disablePushNotifications(accountInfo: AccountInfo) {
         Log.d(TAG, "disablePushNotifications()")
         (accountInfo as? MessengerAccount)?.let { account ->
-            runBlocking { pushNotificationsRepository.removeAccount(account) }
+            runBlocking { pushNotificationsSingleAccountRepository.removeAccount() }
             ChatPushNotificationIntegration.removePushToken(applicationContext, account)
                 .onSuccess {
                     Log.d(TAG, "ChatPushNotificationIntegration.removePushToken() succeed.")
                     viewModel.setPushEnabled(false)
-                    Snackbar.make(
-                        binding.snackBarLayout,
-                        "Push Notifications disabled successfully", Snackbar.LENGTH_LONG
-                    ).also { it.show() }
+                    binding.snackBarLayout.snack(
+                        "Push Notifications disabled successfully",
+                        Snackbar.LENGTH_LONG
+                    )
                 }.onFailure {
                     Log.e(TAG, "ChatPushNotificationIntegration.removePushToken() failed.", it)
-                    Snackbar.make(
-                        binding.snackBarLayout,
-                        "removePushToken() failed", Snackbar.LENGTH_LONG
-                    ).also { it.show() }
+                    binding.snackBarLayout.snack(
+                        "Unregister from Push Notifications failed",
+                        Snackbar.LENGTH_LONG
+                    )
                 }
         }
     }
@@ -641,10 +636,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnecting -> runMain {
-                reconnectingChatSnackBar = Snackbar.make(
-                    binding.snackBarLayout,
-                    R.string.chat_connection_reconnecting, Snackbar.LENGTH_INDEFINITE
-                ).also { it.show() }
+                reconnectingChatSnackBar = binding.snackBarLayout.snack(
+                    getString(R.string.chat_connection_reconnecting), Snackbar.LENGTH_INDEFINITE
+                )
             }
 
             StateEvent.Disconnected -> runMain {
