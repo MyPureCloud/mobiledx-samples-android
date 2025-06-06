@@ -164,7 +164,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 }
             }
         }
-    }override fun onStart() {
+    }
+
+    override fun onStart() {
         super.onStart()
         registerPushNotificationReceiver()
     }
@@ -454,7 +456,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                         binding.snackBarLayout.snack(
                             "Registration for Push Notifications failed",
                             Snackbar.LENGTH_LONG
-                        )
+                        ).apply{
+                            view.setOnClickListener { dismiss() }
+                        }
                     }
             }
         } else {
