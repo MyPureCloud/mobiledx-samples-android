@@ -141,6 +141,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
         (supportFragmentManager.findFragmentByTag(ChatFormFragment.TAG) as? ChatFormFragment)?.openFragment =
