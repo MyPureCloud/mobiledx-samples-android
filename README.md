@@ -38,3 +38,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Authenticated messaging
 The app integrates Okta authentication. To use this authentication service, you must configure okta.properties file with the necessary data to the path GCMessengerSDKSample/app. See an example in GCMessengerSDKSample/app/okta.properties.example
+
+test
