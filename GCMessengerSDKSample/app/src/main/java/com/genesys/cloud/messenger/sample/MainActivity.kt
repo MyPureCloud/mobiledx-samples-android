@@ -150,6 +150,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
     }
 
+
     override fun onPause() {
         super.onPause()
         waitingVisibility(false)
