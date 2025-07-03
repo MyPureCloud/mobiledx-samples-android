@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     override fun onBackPressed() {
-
+        chatController?.endChat(true)
         reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
 
         val fragmentBack = supportFragmentManager.backStackEntryCount > 0
