@@ -8,12 +8,14 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.genesys.cloud.core.utils.toast
+import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.R
 import com.genesys.cloud.messenger.sample.data.defs.DataKeys
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMap
 import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
+import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.gson.JsonObject
 
 class ChatFormFragment : Fragment() {
@@ -76,11 +78,23 @@ class ChatFormFragment : Fragment() {
             }
 
             sampleData.account?.let { accountRawJson ->
-                binding.deploymentIdEditText.setText(accountRawJson[DataKeys.DeploymentId]?.asString)
-                binding.domainNameEditText.setText(accountRawJson[DataKeys.Domain]?.asString)
+                val deploymentId = accountRawJson[DataKeys.DeploymentId]?.asString
+                val domain = accountRawJson[DataKeys.Domain]?.asString
+
+                binding.deploymentIdEditText.setText(deploymentId)
+                binding.domainNameEditText.setText(domain)
                 binding.customAttributesEditText.setText(accountRawJson[DataKeys.CustomAttributes]?.asString)
+
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
+                }
+
+                if (!deploymentId.isNullOrEmpty() && !domain.isNullOrEmpty()) {
+                    AuthenticationStatus.shouldAuthorize(
+                        requireActivity().applicationContext,
+                        MessengerAccount(deploymentId, domain), {
+                            binding.loginButton.visibility = if (it) View.VISIBLE else View.INVISIBLE
+                        })
                 }
             }
         }
