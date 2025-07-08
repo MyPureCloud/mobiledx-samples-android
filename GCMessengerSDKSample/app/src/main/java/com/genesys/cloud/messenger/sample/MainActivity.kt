@@ -270,8 +270,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         viewModel.isAuthenticated = false
 
-        AuthenticationStatus.shouldAuthorize(this, account, {
-            if (it) {
+        AuthenticationStatus.shouldAuthorize(
+            context = this,
+            account = account
+        ) { shouldAuthorize ->
+
+            if (shouldAuthorize) {
+
                 if (account is MessengerAccount && viewModel.hasAuthCode) {
                     viewModel.authCode.value?.let {
                             authCode -> account.setAuthenticationInfo(authCode,
@@ -285,8 +290,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             createChat(account, chatStartError)
-        })
+        }
     }
+
     private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
         if (chatController?.wasDestructed != false) {
 

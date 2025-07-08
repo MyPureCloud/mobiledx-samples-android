@@ -117,21 +117,24 @@ class ChatFormFragment : Fragment() {
         // Since we handling text on change for both fields:
         // * there is no reason to call shouldAuthorize on invalid deployment IDs\domains
         // * otherwise just reset UI to default state
-        ChatAvailability.checkAvailability(account, { res ->
+        ChatAvailability.checkAvailability(account = account) { res ->
             if (res.isAvailable) {
                 setLoginButtonStateImpl(account)
             } else {
                 binding.loginButton.visibility = View.VISIBLE
             }
-        })
+        }
     }
 
     private fun setLoginButtonStateImpl(account: MessengerAccount) {
         context?.let {
-            AuthenticationStatus.shouldAuthorize(it,
-                account, {
-                        result -> binding.loginButton.visibility = if (result) View.VISIBLE else View.INVISIBLE
-                })
+            AuthenticationStatus.shouldAuthorize(
+                context = it,
+                account = account
+            ) { shouldAuthorize ->
+                    binding.loginButton.visibility =
+                        if (shouldAuthorize) View.VISIBLE else View.INVISIBLE
+            }
         }
     }
 
