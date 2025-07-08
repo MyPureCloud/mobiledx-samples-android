@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.genesys.cloud.core.utils.toast
@@ -15,6 +16,7 @@ import com.genesys.cloud.messenger.sample.data.defs.DataKeys
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMap
 import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
+import com.genesys.cloud.ui.structure.controller.ChatAvailability
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.gson.JsonObject
 
@@ -81,24 +83,56 @@ class ChatFormFragment : Fragment() {
                 val deploymentId = accountRawJson[DataKeys.DeploymentId]?.asString
                 val domain = accountRawJson[DataKeys.Domain]?.asString
 
-                binding.deploymentIdEditText.setText(deploymentId)
-                binding.domainNameEditText.setText(domain)
+                setAccountEditTextValue(binding.deploymentIdEditText, deploymentId)
+                setAccountEditTextValue(binding.domainNameEditText, domain)
+
                 binding.customAttributesEditText.setText(accountRawJson[DataKeys.CustomAttributes]?.asString)
 
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
                 }
 
-                if (!deploymentId.isNullOrEmpty() && !domain.isNullOrEmpty()) {
-                    AuthenticationStatus.shouldAuthorize(
-                        requireActivity().applicationContext,
-                        MessengerAccount(deploymentId, domain), {
-                            binding.loginButton.visibility = if (it) View.VISIBLE else View.INVISIBLE
-                        })
-                }
+                setLoginButtonState(deploymentId, domain)
             }
         }
         viewModel.loadSavedAccount()
+    }
+
+    private fun setAccountEditTextValue(editText: AppCompatEditText, text: String?) {
+        editText.setText(text)
+        editText.doOnTextChanged { _, _, _, _ ->
+            val deploymentId = binding.deploymentIdEditText.text.toString()
+            val domain = binding.domainNameEditText.text.toString()
+
+            setLoginButtonState(deploymentId, domain)
+        }
+    }
+
+    private fun setLoginButtonState(deploymentId: String?, domain: String?) {
+        if (deploymentId.isNullOrEmpty() || domain.isNullOrEmpty()) return
+
+        val account = MessengerAccount(deploymentId, domain)
+
+        // Verify that chat is available with actual deployment id and domain.
+        // Since we handling text on change for both fields:
+        // * there is no reason to call shouldAuthorize on invalid deployment IDs\domains
+        // * otherwise just reset UI to default state
+        ChatAvailability.checkAvailability(account, { res ->
+            if (res.isAvailable) {
+                setLoginButtonStateImpl(account)
+            } else {
+                binding.loginButton.visibility = View.VISIBLE
+            }
+        })
+    }
+
+    private fun setLoginButtonStateImpl(account: MessengerAccount) {
+        context?.let {
+            AuthenticationStatus.shouldAuthorize(it,
+                account, {
+                        result -> binding.loginButton.visibility = if (result) View.VISIBLE else View.INVISIBLE
+                })
+        }
     }
 
     private fun startChat() {
