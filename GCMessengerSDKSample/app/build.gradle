@@ -19,7 +19,7 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.15.0.rc3"
+def projectVersion = "1.15.0.rc4"
 def sdkVersion = "1.15.0-SNAPSHOT-feature-GMMS-9059-session-resumption"
 
 def parts = projectVersion.split('\\.')
