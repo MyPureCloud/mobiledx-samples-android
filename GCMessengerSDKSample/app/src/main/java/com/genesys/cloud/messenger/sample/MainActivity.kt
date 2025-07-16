@@ -49,6 +49,7 @@ import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
 import com.genesys.cloud.ui.structure.controller.*
 import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
 import com.google.android.gms.tasks.Tasks
+import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -121,7 +122,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 val messengerAccount = accountRawJson.toMessengerAccount()
 
                 if (uiState.startChat) {
-                    createChat(messengerAccount)
+                    prepareAndCreateChat(messengerAccount)
                 } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
                 } else if (uiState.enablePush) {
@@ -133,7 +134,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
 
         viewModel.authCode.observe(this@MainActivity) {
-            if (!viewModel.isAuthenticated){
+            if (viewModel.isAuthenticated && !viewModel.hasAuthCode) {
                 onLogout()
             }
         }
@@ -295,13 +296,35 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         return ChatFormFragment()
     }
 
-    private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
+    private fun prepareAndCreateChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
         waitingVisibility(true)
 
-        if (account is MessengerAccount && viewModel.isAuthenticated){
-            account.setAuthenticationInfo(viewModel.authCode.value!!, viewModel.redirectUri, viewModel.codeVerifier)
-        }
+        viewModel.isAuthenticated = false
 
+        AuthenticationStatus.shouldAuthorize(
+            context = this,
+            account = account
+        ) { shouldAuthorize ->
+
+            if (shouldAuthorize) {
+
+                if (account is MessengerAccount && viewModel.hasAuthCode) {
+                    viewModel.authCode.value?.let {
+                            authCode -> account.setAuthenticationInfo(authCode,
+                        viewModel.redirectUri, viewModel.codeVerifier)
+                    }
+
+                    viewModel.isAuthenticated = true
+                }
+            } else {
+                viewModel.isAuthenticated = true
+            }
+
+            createChat(account, chatStartError)
+        }
+    }
+
+    private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
         if (chatController?.wasDestructed != false) {
 
             chatController = ChatController.Builder(this)

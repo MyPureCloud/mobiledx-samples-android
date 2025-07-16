@@ -19,7 +19,9 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _authCode: MutableLiveData<String> = MutableLiveData()
     val authCode: LiveData<String> = _authCode
 
-    val isAuthenticated: Boolean get() = !authCode.value.isNullOrEmpty()
+    var isAuthenticated: Boolean = false
+
+    val hasAuthCode: Boolean get() = !authCode.value.isNullOrEmpty()
 
     private var latestTypedDeploymentId: String = ""
     private val pushEnabledForDeployment: MutableMap<String,Boolean> = mutableMapOf()
