@@ -480,6 +480,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                         )
                     }.onFailure {
                         Log.e(TAG, "ChatPushNotificationIntegration.setPushToken() failed.", it)
+                        handleSetPushTokenFailure(it, accountInfo)
                         binding.snackBarLayout.snack(
                             "Registration for Push Notifications failed",
                             Snackbar.LENGTH_LONG
@@ -494,6 +495,20 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 getString(R.string.enable_push_failed_message),
                 Snackbar.LENGTH_LONG
             )
+        }
+    }
+
+    private fun handleSetPushTokenFailure(throwable: Throwable, accountInfo: AccountInfo) {
+        when (throwable.message) {
+            "Deployment Id in the request does not match the expected deployment Id for the given TokenId" -> {
+                AlertDialog.Builder(this)
+                    .setMessage(throwable.message)
+                    .setPositiveButton(R.string.disable_push_text) { _, _ ->
+                        disablePushNotifications(accountInfo)
+                    }
+                    .create()
+                    .show()
+            }
         }
     }
 
