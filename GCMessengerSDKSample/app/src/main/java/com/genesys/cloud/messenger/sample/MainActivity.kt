@@ -43,7 +43,6 @@ import com.genesys.cloud.messenger.sample.data.FloatingSnackbar
 import com.genesys.cloud.messenger.sample.data.PermissionHandler
 import com.genesys.cloud.messenger.sample.data.PermissionHandler.Companion.PERMISSION_POST_NOTIFICATIONS
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
-import com.genesys.cloud.messenger.sample.data.repositories.PushNotificationsSingleAccountRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
 import com.genesys.cloud.ui.structure.controller.*
@@ -100,7 +99,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     private var pushNotificationBroadcastReceiver: BroadcastReceiver? = null
     private val permissionHandler = PermissionHandler(this)
-    private val pushNotificationsSingleAccountRepository = PushNotificationsSingleAccountRepository(this)
 
     //endregion
 
@@ -128,7 +126,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 } else if (uiState.enablePush) {
                     enablePushNotifications(messengerAccount)
                 } else if (uiState.disablePush) {
-                    lifecycleScope.launch { disablePushNotifications(messengerAccount) }
+                    disablePushNotifications(messengerAccount)
                 }
             }
         }
@@ -468,11 +466,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         if (deviceToken != null) {
             Log.d(TAG, "deviceToken read successfully: $deviceToken")
             lifecycleScope.launch {
-                removePreviousPushRegistration()
                 ChatPushNotificationIntegration.setPushToken(applicationContext, deviceToken, accountInfo as MessengerAccount)
                     .onSuccess {
                         Log.d(TAG, "ChatPushNotificationIntegration.setPushToken() succeed.")
-                        pushNotificationsSingleAccountRepository.saveAccount(accountInfo)
                         viewModel.setPushEnabled(true)
                         binding.snackBarLayout.snack(
                             "Push Notifications enabled successfully",
@@ -512,13 +508,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
-    private suspend fun removePreviousPushRegistration() {
-        Log.d(TAG, "Try to remove previous deviceToken registration")
-        pushNotificationsSingleAccountRepository.getAccount()?.let { account ->
-            disablePushNotifications(account)
-        }
-    }
-
     private fun notificationPermissionDenied() {
         binding.snackBarLayout.snack(
             getString(R.string.enable_push_failed_message),
@@ -537,25 +526,26 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
-    private suspend fun disablePushNotifications(accountInfo: AccountInfo) {
+    private fun disablePushNotifications(accountInfo: AccountInfo) {
         Log.d(TAG, "disablePushNotifications()")
         (accountInfo as? MessengerAccount)?.let { account ->
-            runBlocking { pushNotificationsSingleAccountRepository.removeAccount() }
-            ChatPushNotificationIntegration.removePushToken(applicationContext, account)
-                .onSuccess {
-                    Log.d(TAG, "ChatPushNotificationIntegration.removePushToken() succeed.")
-                    viewModel.setPushEnabled(false)
-                    binding.snackBarLayout.snack(
-                        "Push Notifications disabled successfully",
-                        Snackbar.LENGTH_LONG
-                    )
-                }.onFailure {
-                    Log.e(TAG, "ChatPushNotificationIntegration.removePushToken() failed.", it)
-                    binding.snackBarLayout.snack(
-                        "Unregister from Push Notifications failed",
-                        Snackbar.LENGTH_LONG
-                    )
-                }
+            lifecycleScope.launch {
+                ChatPushNotificationIntegration.removePushToken(applicationContext, account)
+                    .onSuccess {
+                        Log.d(TAG, "ChatPushNotificationIntegration.removePushToken() succeed.")
+                        viewModel.setPushEnabled(false)
+                        binding.snackBarLayout.snack(
+                            "Push Notifications disabled successfully",
+                            Snackbar.LENGTH_LONG
+                        )
+                    }.onFailure {
+                        Log.e(TAG, "ChatPushNotificationIntegration.removePushToken() failed.", it)
+                        binding.snackBarLayout.snack(
+                            "Unregister from Push Notifications failed",
+                            Snackbar.LENGTH_LONG
+                        )
+                    }
+            }
         }
     }
 
