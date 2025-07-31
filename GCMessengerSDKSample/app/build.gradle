@@ -19,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.15.0.rc9"
-def sdkVersion = "1.15.0.rc9"
+def projectVersion = "1.15.0.rc11"
+def sdkVersion = "1.15.0-SNAPSHOT-feature-GMMS-9111-Localization"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
