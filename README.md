@@ -1,6 +1,6 @@
 # Overview
 
-This repository contains sample Android application demonstrating the use of the GC Mobile Messenger SDK. 
+This repository contains sample Android application demonstrating the use of the GC Mobile Messenger SDK.
 
 ## Getting Started
 To get started with these samples, clone this repository to your local machine:
@@ -29,7 +29,10 @@ git clone git@github.com:MyPureCloud/mobiledx-samples-android.git
 
 [Transport Mobile SDK ](https://developer.genesys.cloud/commdigital/digital/webmessaging/mobile-messaging/messenger-transport-mobile-sdk/)
 
-[Genesys Cloud Developer Forum](https://developer.genesys.cloud/forum/c/web-messaging/39)
+## Questions and Support
+
+For help, troubleshooting, or to share feedback about the Mobile Messenger SDK, please post in the [Genesys Cloud Community Forum](https://community.genesys.com/communities/gc-developer-community?CommunityKey=a39cc4d6-857e-43cb-be7b-019581ab9f38).
+It's the best place to get quick responses from Genesys experts and the developer community.
 
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
