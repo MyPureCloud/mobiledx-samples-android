@@ -11,34 +11,37 @@ import kotlinx.coroutines.launch
 
 class SampleFormViewModel(private val sampleRepository: SampleRepository) : ViewModel() {
 
-    private var _uiState: MutableLiveData<SampleUIState> = MutableLiveData()
+    private val _uiState: MutableLiveData<SampleUIState> = MutableLiveData()
     val uiState: LiveData<SampleUIState> = _uiState
 
     var redirectUri: String = ""
     var codeVerifier: String? = null
-    private var _authCode: MutableLiveData<String> = MutableLiveData()
+    private val _authCode: MutableLiveData<String> = MutableLiveData()
     val authCode: LiveData<String> = _authCode
 
     var isAuthenticated: Boolean = false
 
     val hasAuthCode: Boolean get() = !authCode.value.isNullOrEmpty()
 
+    private var latestTypedDeploymentId: String = ""
+    private val pushEnabledForDeployment: MutableMap<String,Boolean> = mutableMapOf()
+    private val _pushEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
+    val pushEnabled: LiveData<Boolean> = _pushEnabled
+
     fun loadSavedAccount() {
         viewModelScope.launch {
             _uiState.value = SampleUIState(
-                sampleRepository.getSavedAccount() as JsonObject,
-                startChat = false,
-                testAvailability = false
+                account = sampleRepository.getSavedAccount() as JsonObject
             )
         }
     }
 
     fun startChat(accountData: JsonObject) {
-        processAccountData(accountData, startChat = true, testAvailability = false)
+        processAccountData(accountData = accountData, startChat = true)
     }
 
     fun testChatAvailability(accountData: JsonObject) {
-        processAccountData(accountData, startChat = false, testAvailability = true)
+        processAccountData(accountData, testAvailability = true)
     }
 
     fun setAuthCode(authCode: String, redirectUri: String, codeVerifier: String?){
@@ -53,16 +56,43 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         this.codeVerifier = null
     }
 
+    fun changePushEnablement(accountData: JsonObject) {
+        if (_pushEnabled.value == true) {
+            processAccountData(accountData, disablePush = true)
+        } else {
+            processAccountData(accountData, enablePush = true)
+        }
+    }
+
+    fun setPushEnabled(value: Boolean){
+        pushEnabledForDeployment[latestTypedDeploymentId] = value
+        _pushEnabled.value = value
+    }
+
+    fun updateLatestTypedDeploymentId(deploymentId: String) {
+        latestTypedDeploymentId = deploymentId
+        val existingEnablement = pushEnabledForDeployment.entries.singleOrNull { entry -> entry.key == deploymentId }
+        if (existingEnablement == null) {
+            _pushEnabled.value = false
+        } else {
+            _pushEnabled.value = existingEnablement.value
+        }
+    }
+
     private fun processAccountData(
         accountData: JsonObject,
-        startChat: Boolean,
-        testAvailability: Boolean
+        startChat: Boolean = false,
+        testAvailability: Boolean = false,
+        enablePush: Boolean = false,
+        disablePush: Boolean = false
     ) {
         accountData.takeIf { it.size() > 0 }?.let {
             _uiState.value = SampleUIState(
                 accountData,
                 startChat = startChat,
-                testAvailability = testAvailability
+                testAvailability = testAvailability,
+                enablePush = enablePush,
+                disablePush = disablePush
             )
             sampleRepository.saveAccount(accountData)
         }
