@@ -19,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.15.0.rc12"
-def sdkVersion = "1.15.0.rc10"
+def projectVersion = "1.16.0.rc1"
+def sdkVersion = "1.16.0.rc1"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -139,6 +139,7 @@ dependencies {
         implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
         implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
     }
+    implementation 'com.google.firebase:firebase-messaging:24.1.0'
     //endregion
 
     //region Tests
