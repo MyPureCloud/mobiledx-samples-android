@@ -4,6 +4,8 @@ import com.google.gson.JsonObject
 
 data class SampleUIState(
     val account: JsonObject?,
-    val startChat: Boolean,
-    val testAvailability: Boolean
+    val startChat: Boolean = false,
+    val testAvailability: Boolean = false,
+    val enablePush: Boolean = false,
+    val disablePush: Boolean = false
 )

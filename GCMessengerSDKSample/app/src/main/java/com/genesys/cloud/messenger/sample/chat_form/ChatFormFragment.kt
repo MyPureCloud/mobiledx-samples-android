@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -54,7 +55,22 @@ class ChatFormFragment : Fragment() {
         binding.loginButton.setOnClickListener {
             onLoginClicked()
         }
+        binding.pushButton.setOnClickListener {
+            onPushClicked()
+        }
         binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+        binding.deploymentIdEditText.addTextChangedListener(
+            onTextChanged = { text, _, _, _ ->
+                viewModel.updateLatestTypedDeploymentId(text.toString())
+            }
+        )
+        viewModel.updateLatestTypedDeploymentId(binding.deploymentIdEditText.text.toString())
+        viewModel.pushEnabled.observe(requireActivity()) { enabled->
+            binding.pushButton.text = getString(
+                if (enabled) R.string.disable_push_text
+                else R.string.enable_push_text
+            )
+        }
     }
     //endregion
 
@@ -70,6 +86,10 @@ class ChatFormFragment : Fragment() {
         } catch (e: IllegalStateException) {
             toast(requireContext(), e.message ?: "Cannot login.")
         }
+    }
+
+    private fun onPushClicked() {
+        createAccountData()?.let { accountData -> viewModel.changePushEnablement(accountData) }
     }
 
     private fun observeSavedAccount() {
