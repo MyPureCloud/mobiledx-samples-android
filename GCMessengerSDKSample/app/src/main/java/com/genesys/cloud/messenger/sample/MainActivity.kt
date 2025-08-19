@@ -91,15 +91,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private var reconnectingChatSnackBar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
-    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            backPressed()
-        }
-    }
-
+    
     private var pushNotificationBroadcastReceiver: BroadcastReceiver? = null
     private val permissionHandler = PermissionHandler(this)
-
     //endregion
 
     //region - lifecycle
@@ -136,8 +130,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 onLogout()
             }
         }
-
-        onBackPressedDispatcher.addCallback(this@MainActivity, mOnBackPressedCallback)
 
         val existingChatFragment = findChatFragment()
 
@@ -191,7 +183,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         super.onStop()
     }
 
-    fun backPressed() {
+    override fun onBackPressed() {
+        chatController?.endChat(false)
+        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
+
         when (supportFragmentManager.backStackEntryCount) {
             1 -> {
                 shouldDefaultBack = true
@@ -201,17 +196,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 finish()
             }
         }
-    }
 
-    override fun onBackPressed() {
-        chatController?.endChat(false)
-        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
-
-        val fragmentBack = supportFragmentManager.backStackEntryCount > 0
-        mOnBackPressedCallback.isEnabled = !fragmentBack
-        shouldDefaultBack = fragmentBack
-
-        onBackPressedDispatcher.onBackPressed()
+        if (!supportFragmentManager.isStateSaved) super.onBackPressed()
     }
 
     //endregion
@@ -238,7 +224,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onDestroy() {
         destructChat()
         super.onDestroy()
-        mOnBackPressedCallback.remove()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -408,7 +393,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                         ?.popBackStackImmediate(
                             CONVERSATION_FRAGMENT_TAG,
                             0
-                        ) == false && supportFragmentManager.backStackEntryCount >= 1) backPressed()
+                        ) == false && supportFragmentManager.backStackEntryCount >= 1) {
+                    onBackPressed()
+                }
 
             } catch (ex: IllegalStateException) {
                 ex.printStackTrace()
