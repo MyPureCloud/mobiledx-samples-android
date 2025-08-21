@@ -28,6 +28,10 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _pushEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     val pushEnabled: LiveData<Boolean> = _pushEnabled
 
+    init {
+        _pushEnabled.value = sampleRepository.savedPushConfig
+    }
+
     fun loadSavedAccount() {
         viewModelScope.launch {
             _uiState.value = SampleUIState(
@@ -67,13 +71,14 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     fun setPushEnabled(value: Boolean){
         pushEnabledForDeployment[latestTypedDeploymentId] = value
         _pushEnabled.value = value
+        sampleRepository.savedPushConfig = value
     }
 
     fun updateLatestTypedDeploymentId(deploymentId: String) {
         latestTypedDeploymentId = deploymentId
         val existingEnablement = pushEnabledForDeployment.entries.singleOrNull { entry -> entry.key == deploymentId }
         if (existingEnablement == null) {
-            _pushEnabled.value = false
+            _pushEnabled.value = sampleRepository.savedPushConfig
         } else {
             _pushEnabled.value = existingEnablement.value
         }
