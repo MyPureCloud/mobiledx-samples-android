@@ -2,6 +2,8 @@ package com.genesys.cloud.messenger.sample.data.repositories
 
 interface SampleRepository {
 
+    var savedPushConfig: Boolean?
+
     /**
      * Gets the prev account data from the shared properties, If null it returns the default account
      * @param chatType Is being used as the saved account's key
