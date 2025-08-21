@@ -44,4 +44,10 @@
     <string name="clear_conversation_dialog_title">Clear Conversation</string>
     <string name="clear_conversation_dialog_message">Would you like to clear and leave your conversation? Message history will be lost.</string>
     <string name="clear_conversation_dialog_positive_button">Yes I\'m Sure</string>
+
+    <string name="enable_push_text">Enable Push</string>
+    <string name="disable_push_text">Disable Push</string>
+    <string name="enable_push_failed_message">Permission for Push notifications rejected.</string>
+    <string name="notifications_disabled_indicator_message">Notifications are disabled</string>
+    <string name="settings">Settings</string>
 </resources>
