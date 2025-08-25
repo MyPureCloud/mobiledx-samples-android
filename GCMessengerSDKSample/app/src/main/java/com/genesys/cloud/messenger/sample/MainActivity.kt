@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         viewModel.authCode.observe(this@MainActivity) {
             if (viewModel.isAuthenticated && !viewModel.hasAuthCode) {
+                waitingVisibility(true)
                 onLogout()
             }
         }
@@ -723,6 +724,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
 
     private fun onChatClosed(reason: EndedReason?) {
+        waitingVisibility(false)
         updateMenuVisibility()
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
