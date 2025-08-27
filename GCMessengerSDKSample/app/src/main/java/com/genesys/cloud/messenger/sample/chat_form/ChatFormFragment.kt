@@ -32,6 +32,8 @@ class ChatFormFragment : Fragment() {
         )
     }
     private lateinit var binding: FragmentChatFormBinding
+
+    internal var onFormReady: (() -> Unit)? = null
     //endregion
 
     //region - lifecycle
@@ -71,6 +73,7 @@ class ChatFormFragment : Fragment() {
                 else R.string.enable_push_text
             )
         }
+        onFormReady?.invoke()
     }
     //endregion
 

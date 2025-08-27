@@ -5,14 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -94,6 +99,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     
     private var pushNotificationBroadcastReceiver: BroadcastReceiver? = null
     private val permissionHandler = PermissionHandler(this)
+
+    private var logoutProgressOverlay: View? = null
     //endregion
 
     //region - lifecycle
@@ -127,6 +134,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         viewModel.authCode.observe(this@MainActivity) {
             if (viewModel.isAuthenticated && !viewModel.hasAuthCode) {
+                showLogoutProgress(true)
                 onLogout()
             }
         }
@@ -276,7 +284,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun createChatFormFragment(): ChatFormFragment {
-        return ChatFormFragment()
+        return ChatFormFragment().apply {
+            onFormReady = { showLogoutProgress(false) }
+        }
     }
 
     private fun prepareAndCreateChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
@@ -710,6 +720,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
 
     private fun onChatClosed(reason: EndedReason?) {
+        waitingVisibility(false)
         updateMenuVisibility()
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
@@ -720,5 +731,30 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             toast(this, message, Toast.LENGTH_LONG)
         }
     }
+    private fun showLogoutProgress(show: Boolean) {
+        if (show && logoutProgressOverlay == null) {
+            logoutProgressOverlay = FrameLayout(this).apply {
+                setBackgroundColor(Color.WHITE)
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                // Add progress bar to the overlay
+                val progressBar = ProgressBar(this@MainActivity).apply {
+                    layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        Gravity.CENTER
+                    )
+                }
+                addView(progressBar)
+            }
+            (findViewById<ViewGroup>(android.R.id.content)).addView(logoutProgressOverlay)
+        } else if (!show) {
+            logoutProgressOverlay?.let { (findViewById<ViewGroup>(android.R.id.content)).removeView(it) }
+            logoutProgressOverlay = null
+        }
+    }
+
     //endregion
 }
