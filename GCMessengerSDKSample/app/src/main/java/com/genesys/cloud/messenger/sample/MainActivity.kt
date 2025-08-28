@@ -708,8 +708,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         return url.startsWith("/")
     }
 
+    fun showOktaProgress(show: Boolean) {
+        val oktaFragment = supportFragmentManager.findFragmentByTag(OktaAuthenticationFragment.TAG) as? OktaAuthenticationFragment
+        oktaFragment?.showProgressBar(show)
+    }
 
     private fun onChatClosed(reason: EndedReason?) {
+        showOktaProgress(false)
         updateMenuVisibility()
         when (reason) {
             EndedReason.SessionLimitReached -> "You have been logged out because the session limit was exceeded."
@@ -720,5 +725,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             toast(this, message, Toast.LENGTH_LONG)
         }
     }
+
     //endregion
 }
