@@ -708,7 +708,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         return url.startsWith("/")
     }
 
-
     private fun onChatClosed(reason: EndedReason?) {
         updateMenuVisibility()
         when (reason) {
@@ -720,5 +719,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             toast(this, message, Toast.LENGTH_LONG)
         }
     }
+
     //endregion
 }
