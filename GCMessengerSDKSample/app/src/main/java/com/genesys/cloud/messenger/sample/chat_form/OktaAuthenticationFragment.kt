@@ -61,6 +61,11 @@ class OktaAuthenticationFragment : WebFragment() {
         viewModel.clearAuthCode()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        showProgressBar(false)
+    }
+
     companion object {
 
         val TAG: String = OktaAuthenticationFragment::class.java.simpleName
