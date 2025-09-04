@@ -121,8 +121,8 @@ class ChatFormFragment : Fragment() {
     private fun setAccountEditTextValue(editText: AppCompatEditText, text: String?) {
         editText.setText(text)
         editText.doOnTextChanged { _, _, _, _ ->
-            val deploymentId = binding.deploymentIdEditText.text.toString()
-            val domain = binding.domainNameEditText.text.toString()
+            val deploymentId = binding.deploymentIdEditText.text.toString().trim()
+            val domain = binding.domainNameEditText.text.toString().trim()
 
             setLoginButtonState(deploymentId, domain)
         }
