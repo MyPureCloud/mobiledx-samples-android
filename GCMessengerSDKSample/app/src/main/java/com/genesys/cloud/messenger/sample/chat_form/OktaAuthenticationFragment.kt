@@ -1,5 +1,6 @@
 package com.genesys.cloud.messenger.sample.chat_form
 
+import android.view.View
 import android.os.Bundle
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -40,6 +41,17 @@ class OktaAuthenticationFragment : WebFragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (arguments?.getString(URL) == buildOktaLogoutUrl()) {
+            showProgressBar(true)
+        }
+    }
+
+    internal fun showProgressBar(show: Boolean) {
+        progressBar?.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
     private fun authCodeReceived(authCode: String) {
         viewModel.setAuthCode(authCode, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
         parentFragmentManager.popBackStack()
@@ -47,7 +59,11 @@ class OktaAuthenticationFragment : WebFragment() {
 
     private fun signoutSuccessful() {
         viewModel.clearAuthCode()
-        requireFragmentManager().popBackStack()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showProgressBar(false)
     }
 
     companion object {

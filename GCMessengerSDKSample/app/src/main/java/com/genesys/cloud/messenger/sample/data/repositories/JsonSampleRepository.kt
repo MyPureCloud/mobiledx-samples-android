@@ -9,6 +9,16 @@ class JsonSampleRepository(context: Context) : SampleRepository {
 
     private val wContext: WeakReference<Context> = WeakReference<Context>(context)
 
+    override var savedPushConfig: Boolean? = wContext.get()
+        ?.getSharedPreferences("push_settings", 0)
+        ?.getBoolean("push_enabled", false)
+        set(value) {
+            field = value
+            wContext.get()?.getSharedPreferences("push_settings", 0)?.edit()
+                ?.putBoolean("push_enabled", value ?: false)
+                ?.apply()
+        }
+
     override fun getSavedAccount(): JsonObject {
 
         val sharedPreferences = wContext.get()?.getSharedPreferences("accounts", 0)
