@@ -20,14 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.genesys.cloud.** { *; }
--dontwarn org.conscrypt.**
--dontwarn org.bouncycastle.**
--dontwarn org.openjsse.**
--dontwarn org.slf4j.impl.StaticLoggerBinder
--keep class com.affirm.android.** { *; }
--keep class com.genesys.cloud.integration.messenger.translations.** { *; }
--keep class com.genesys.cloud.core.utils.network.** { *; }
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class * extends com.google.gson.reflect.TypeToken
 
