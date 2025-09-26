@@ -8,11 +8,14 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import com.genesys.cloud.messenger.sample.R
+import android.widget.ProgressBar
 
 open class WebFragment : Fragment() {
 
     private var url: String? = null
     private var webView: WebView? = null
+
+    internal var progressBar: ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +30,7 @@ open class WebFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.web_fragment, container, false)
         webView = view.findViewById(R.id.webView)
+        progressBar = view.findViewById(R.id.progressBar)
         webView?.let {
             it.settings.javaScriptEnabled = true
             it.setWebViewClient(provideWebViewClient())

@@ -19,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.16.0"
-def sdkVersion = "1.16.0"
+def projectVersion = "1.17.0.rc2"
+def sdkVersion = "1.17.0.rc2"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -75,11 +75,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     viewBinding {
         enabled = true
