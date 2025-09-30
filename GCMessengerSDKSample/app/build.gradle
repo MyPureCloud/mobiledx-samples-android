@@ -19,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.17.0.rc1"
-def sdkVersion = "1.17.0.rc1"
+def projectVersion = "1.17.0.rc4"
+def sdkVersion = "1.17.0-SNAPSHOT-PR-96-2"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -70,8 +70,13 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles (
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
