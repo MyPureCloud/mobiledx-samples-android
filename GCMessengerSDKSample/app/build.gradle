@@ -18,9 +18,9 @@ plugins {
 
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
-// project version section
-def projectVersion = "1.17.0.rc3"
-def sdkVersion = "1.17.0.rc3"
+// region project version
+def projectVersion = "1.17.0"
+def sdkVersion = "1.17.0"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -34,7 +34,7 @@ if (parts.length > 3) {
     def preRelease = parts[3].replaceAll('rc', '').toInteger()
     projectCode += preRelease
 }
-// project version section
+// endregion project version
 
 if (isGoogleServicesFileExists) {
     apply plugin: 'com.google.gms.google-services'
