@@ -14,7 +14,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +48,7 @@ import com.genesys.cloud.ui.structure.controller.*
 import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
 import com.google.android.gms.tasks.Tasks
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
+import com.genesys.cloud.ui.structure.elements.ChatElement
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -561,6 +561,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private fun pushNotificationReceived(messageTitle: String?, messageBody: String?) {
         if (hasActiveChats) return
         if (messageBody == null) return // Message body is a must in a Push notification
+        showAlertDialog(messageTitle, messageBody)
+    }
+
+    private fun showAlertDialog(messageTitle: String?, messageBody: String) {
         val dialog = AlertDialog.Builder(this)
             .setPositiveButton(com.genesys.cloud.ui.R.string.ok) { _, _ -> }
             .create()
@@ -717,6 +721,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             else -> "Chat was closed. ($reason)"
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
+        }
+    }
+
+    override fun onChatElementReceived(chatElement: ChatElement) {
+        super.onChatElementReceived(chatElement)
+        Log.i(TAG, "onChatElementReceived(${chatElement.text})")
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            showAlertDialog("New Incoming message", chatElement.text)
         }
     }
 
