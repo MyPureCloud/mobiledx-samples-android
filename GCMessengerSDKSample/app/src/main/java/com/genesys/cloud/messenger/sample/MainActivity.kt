@@ -13,12 +13,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -102,8 +107,28 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = true
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val root = findViewById<FrameLayout>(R.id.main_layout)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply padding so UI elements aren’t overlapped
+            view.updatePadding(
+                left = systemBars.left,
+                top = systemBars.top,
+                right = systemBars.right,
+                bottom = systemBars.bottom
+            )
+
+            insets
+        }
 
         viewModel.uiState.observe(this@MainActivity) { uiState ->
 
