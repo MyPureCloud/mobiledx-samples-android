@@ -115,19 +115,21 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val root = findViewById<FrameLayout>(R.id.main_layout)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        if (Build.VERSION.SDK_INT >= 35) {
+            val root = findViewById<FrameLayout>(R.id.main_layout)
+            ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Apply padding so UI elements aren’t overlapped
-            view.updatePadding(
-                left = systemBars.left,
-                top = systemBars.top,
-                right = systemBars.right,
-                bottom = systemBars.bottom
-            )
+                // Apply padding so UI elements aren’t overlapped
+                view.updatePadding(
+                    left = systemBars.left,
+                    top = systemBars.top,
+                    right = systemBars.right,
+                    bottom = systemBars.bottom
+                )
 
-            insets
+                insets
+            }
         }
 
         viewModel.uiState.observe(this@MainActivity) { uiState ->
@@ -684,13 +686,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnected -> runMain {
-                binding.snackBarLayout.snack(getString(R.string.chat_connection_recovered))
+                showSnackbar(getString(R.string.chat_connection_recovered))
             }
 
             StateEvent.Reconnecting -> runMain {
-                reconnectingChatSnackBar = binding.snackBarLayout.snack(
-                    getString(R.string.chat_connection_reconnecting), Snackbar.LENGTH_INDEFINITE
-                )
+                reconnectingChatSnackBar = showSnackbar(
+                    getString(R.string.chat_connection_reconnecting), Snackbar.LENGTH_INDEFINITE)
             }
 
             StateEvent.Disconnected -> runMain {
@@ -756,6 +757,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             showAlertDialog("New Incoming message", chatElement.text)
         }
     }*/
+
+    private fun showSnackbar(message: String, timeout: Int = Snackbar.LENGTH_LONG): Snackbar {
+        val snackbar = Snackbar.make(binding.snackBarLayout,
+            message, timeout)
+
+        snackbar.show()
+        return snackbar
+    }
 
     //endregion
 }
