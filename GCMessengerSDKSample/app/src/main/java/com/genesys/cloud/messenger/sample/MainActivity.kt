@@ -115,21 +115,19 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= 35) {
-            val root = findViewById<FrameLayout>(R.id.main_layout)
-            ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val root = findViewById<FrameLayout>(R.id.main_layout)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-                // Apply padding so UI elements aren’t overlapped
-                view.updatePadding(
-                    left = systemBars.left,
-                    top = systemBars.top,
-                    right = systemBars.right,
-                    bottom = systemBars.bottom
-                )
+            // Apply padding so UI elements aren’t overlapped
+            view.updatePadding(
+                left = systemBars.left,
+                top = systemBars.top,
+                right = systemBars.right,
+                bottom = systemBars.bottom
+            )
 
-                insets
-            }
+            insets
         }
 
         viewModel.uiState.observe(this@MainActivity) { uiState ->
