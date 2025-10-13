@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-        insetsController.isAppearanceLightStatusBars = true
+        insetsController.isAppearanceLightStatusBars = Build.VERSION.SDK_INT >= 35
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
