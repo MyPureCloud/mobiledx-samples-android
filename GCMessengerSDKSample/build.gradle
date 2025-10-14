@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath("com.android.tools.build:gradle:8.6.0")
+        classpath("com.android.tools.build:gradle:8.6.1")
 
         if (file("app/google-services.json").exists()) {
             classpath("com.google.gms:google-services:4.3.15")
