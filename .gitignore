@@ -86,3 +86,6 @@ lint/tmp/
 # lint/reports/
 Keystores.zip
 Keystores
+
+# MacOS cache
+.DS_Store
