@@ -21,6 +21,7 @@
     <string name="chat_disabled_error">Chat was restricted and can\'t be proceed.</string>
 
     <string name="end_current_chat">End current chat</string>
+    <string name="minimize_chat">Minimize chat</string>
 
     <string name="context_name">Context Name</string>
     <string name="context_value">Context Value</string>
