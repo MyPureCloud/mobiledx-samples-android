@@ -724,13 +724,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
-    override fun onChatElementReceived(chatElement: ChatElement) {
+    /*override fun onChatElementReceived(chatElement: ChatElement) {
         super.onChatElementReceived(chatElement)
         Log.i(TAG, "onChatElementReceived(${chatElement.text})")
         if (supportFragmentManager.backStackEntryCount == 0) {
             showAlertDialog("New Incoming message", chatElement.text)
         }
-    }
+    }*/
 
     //endregion
 }
