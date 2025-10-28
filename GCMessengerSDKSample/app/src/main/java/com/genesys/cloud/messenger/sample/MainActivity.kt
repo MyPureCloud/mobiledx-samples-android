@@ -757,11 +757,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun showSnackbar(message: String, timeout: Int = Snackbar.LENGTH_LONG): Snackbar {
-        val snackbar = Snackbar.make(binding.snackBarLayout,
-            message, timeout)
-
-        snackbar.show()
-        return snackbar
+        return window.decorView.snack(message, timeout)
     }
 
     //endregion
