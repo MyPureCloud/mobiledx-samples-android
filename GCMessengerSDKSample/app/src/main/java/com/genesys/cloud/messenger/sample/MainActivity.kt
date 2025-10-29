@@ -757,7 +757,20 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun showSnackbar(message: String, timeout: Int = Snackbar.LENGTH_LONG): Snackbar {
-        return window.decorView.snack(message, timeout)
+        val snackbar = Snackbar.make(binding.snackBarLayout,
+            message, timeout)
+
+        ViewCompat.setOnApplyWindowInsetsListener(snackbar.view) { view, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            view.translationY = if (imeVisible) -imeHeight.toFloat() else 0f
+
+            insets
+        }
+
+        snackbar.show()
+        return snackbar
     }
 
     //endregion
