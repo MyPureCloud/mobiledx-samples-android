@@ -15,6 +15,11 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.GCMessengerSDKSample">
+
+        <meta-data
+            android:name="androidx.compose.ui.test.testTagsAsResourceId"
+            android:value="true" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
