@@ -11,10 +11,10 @@ git clone git@github.com:MyPureCloud/mobiledx-samples-android.git
 
 ## Prerequisites
 - Android Studio Flamingo 2022.2.1 Patch 2 (+)
-- Gradle version 7.4.1 (+)
-- Gradle plugin 7.3.1 (+)
-- Kotlin plugin version 1.7.10 (+)
-- Java 11
+- Gradle version 8.7.0 (+)
+- Gradle plugin 8.6.1 (+)
+- Kotlin plugin version 2.1.21 (+)
+- Java 17
 - An Android device or emulator running Android API level 21 (Lollipop) or higher
 
 ## Installation

@@ -18,9 +18,9 @@ plugins {
 
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
-// region project version
-def projectVersion = "1.17.0"
-def sdkVersion = "1.17.0"
+// project version section
+def projectVersion = "1.18.0"
+def sdkVersion = "1.18.0"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -34,7 +34,7 @@ if (parts.length > 3) {
     def preRelease = parts[3].replaceAll('rc', '').toInteger()
     projectCode += preRelease
 }
-// endregion project version
+// project version section
 
 if (isGoogleServicesFileExists) {
     apply plugin: 'com.google.gms.google-services'
@@ -45,12 +45,12 @@ if (isGoogleServicesFileExists) {
 
 android {
     namespace = "com.genesys.cloud.messenger.sample"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = projectCode
         versionName = projectName
 
@@ -70,8 +70,13 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles (
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+            )
         }
     }
     compileOptions {

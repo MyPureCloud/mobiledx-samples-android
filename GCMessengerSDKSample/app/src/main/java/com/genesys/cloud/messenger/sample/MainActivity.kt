@@ -13,13 +13,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +53,7 @@ import com.genesys.cloud.ui.structure.controller.*
 import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
 import com.google.android.gms.tasks.Tasks
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
+import com.genesys.cloud.ui.structure.elements.ChatElement
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -85,6 +90,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private lateinit var binding: ActivityMainBinding
     private val hasActiveChats get() = chatController?.hasOpenChats() == true
     private var chatController: ChatController? = null
+    private var minimizeMenu: MenuItem? = null
     private var endMenu: MenuItem? = null
     private var clearConversationMenu: MenuItem? = null
     private var logoutMenu: MenuItem? = null
@@ -102,8 +108,28 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = Build.VERSION.SDK_INT >= 35
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val root = findViewById<FrameLayout>(R.id.main_layout)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply padding so UI elements aren’t overlapped
+            view.updatePadding(
+                left = systemBars.left,
+                top = systemBars.top,
+                right = systemBars.right,
+                bottom = systemBars.bottom
+            )
+
+            insets
+        }
 
         viewModel.uiState.observe(this@MainActivity) { uiState ->
 
@@ -183,10 +209,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         super.onStop()
     }
 
-    override fun onBackPressed() {
-        chatController?.endChat(false)
-        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
-
+    private fun handleBackStackCount() {
         when (supportFragmentManager.backStackEntryCount) {
             1 -> {
                 shouldDefaultBack = true
@@ -196,6 +219,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 finish()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        chatController?.endChat(false)
+        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
+
+       handleBackStackCount()
 
         if (!supportFragmentManager.isStateSaved) super.onBackPressed()
     }
@@ -206,6 +236,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
+        this.minimizeMenu = menu?.findItem(R.id.minimize_chat)
         this.endMenu = menu?.findItem(R.id.end_current_chat)
         this.clearConversationMenu = menu?.findItem(R.id.clear_conversation)
         this.logoutMenu = menu?.findItem(R.id.logout)
@@ -216,6 +247,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun updateMenuVisibility(){
+        minimizeMenu?.isVisible = hasActiveChats
         endMenu?.isVisible = hasActiveChats
         clearConversationMenu?.isVisible = hasActiveChats
         logoutMenu?.isVisible = viewModel.isAuthenticated
@@ -228,6 +260,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.minimize_chat -> {
+                handleBackStackCount()
+                super.onBackPressed()
+                return true
+            }
+
             R.id.end_current_chat -> {
                 chatController?.endChat(false)
                 item.isEnabled = hasActiveChats
@@ -561,6 +599,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private fun pushNotificationReceived(messageTitle: String?, messageBody: String?) {
         if (hasActiveChats) return
         if (messageBody == null) return // Message body is a must in a Push notification
+        showAlertDialog(messageTitle, messageBody)
+    }
+
+    private fun showAlertDialog(messageTitle: String?, messageBody: String) {
         val dialog = AlertDialog.Builder(this)
             .setPositiveButton(com.genesys.cloud.ui.R.string.ok) { _, _ -> }
             .create()
@@ -655,13 +697,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Reconnected -> runMain {
-                binding.snackBarLayout.snack(getString(R.string.chat_connection_recovered))
+                showSnackbar(getString(R.string.chat_connection_recovered))
             }
 
             StateEvent.Reconnecting -> runMain {
-                reconnectingChatSnackBar = binding.snackBarLayout.snack(
-                    getString(R.string.chat_connection_reconnecting), Snackbar.LENGTH_INDEFINITE
-                )
+                reconnectingChatSnackBar = showSnackbar(
+                    getString(R.string.chat_connection_reconnecting), Snackbar.LENGTH_INDEFINITE)
             }
 
             StateEvent.Disconnected -> runMain {
@@ -718,6 +759,31 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }.let { message ->
             toast(this, message, Toast.LENGTH_LONG)
         }
+    }
+
+    override fun onChatElementReceived(chatElement: ChatElement) {
+        super.onChatElementReceived(chatElement)
+        Log.i(TAG, "onChatElementReceived(${chatElement.text})")
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            showAlertDialog("New Incoming message", chatElement.text)
+        }
+    }
+
+    private fun showSnackbar(message: String, timeout: Int = Snackbar.LENGTH_LONG): Snackbar {
+        val snackbar = Snackbar.make(binding.snackBarLayout,
+            message, timeout)
+
+        ViewCompat.setOnApplyWindowInsetsListener(snackbar.view) { view, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            view.translationY = if (imeVisible) -imeHeight.toFloat() else 0f
+
+            insets
+        }
+
+        snackbar.show()
+        return snackbar
     }
 
     //endregion
