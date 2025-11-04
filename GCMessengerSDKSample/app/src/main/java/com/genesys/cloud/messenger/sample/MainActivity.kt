@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private lateinit var binding: ActivityMainBinding
     private val hasActiveChats get() = chatController?.hasOpenChats() == true
     private var chatController: ChatController? = null
+    private var minimizeMenu: MenuItem? = null
     private var endMenu: MenuItem? = null
     private var clearConversationMenu: MenuItem? = null
     private var logoutMenu: MenuItem? = null
@@ -208,10 +209,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         super.onStop()
     }
 
-    override fun onBackPressed() {
-        chatController?.endChat(false)
-        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
-
+    private fun handleBackStackCount() {
         when (supportFragmentManager.backStackEntryCount) {
             1 -> {
                 shouldDefaultBack = true
@@ -221,6 +219,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 finish()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        chatController?.endChat(false)
+        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
+
+       handleBackStackCount()
 
         if (!supportFragmentManager.isStateSaved) super.onBackPressed()
     }
@@ -231,6 +236,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
+        this.minimizeMenu = menu?.findItem(R.id.minimize_chat)
         this.endMenu = menu?.findItem(R.id.end_current_chat)
         this.clearConversationMenu = menu?.findItem(R.id.clear_conversation)
         this.logoutMenu = menu?.findItem(R.id.logout)
@@ -241,6 +247,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun updateMenuVisibility(){
+        minimizeMenu?.isVisible = hasActiveChats
         endMenu?.isVisible = hasActiveChats
         clearConversationMenu?.isVisible = hasActiveChats
         logoutMenu?.isVisible = viewModel.isAuthenticated
@@ -253,6 +260,12 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.minimize_chat -> {
+                handleBackStackCount()
+                super.onBackPressed()
+                return true
+            }
+
             R.id.end_current_chat -> {
                 chatController?.endChat(false)
                 item.isEnabled = hasActiveChats
@@ -759,6 +772,15 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private fun showSnackbar(message: String, timeout: Int = Snackbar.LENGTH_LONG): Snackbar {
         val snackbar = Snackbar.make(binding.snackBarLayout,
             message, timeout)
+
+        ViewCompat.setOnApplyWindowInsetsListener(snackbar.view) { view, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            view.translationY = if (imeVisible) -imeHeight.toFloat() else 0f
+
+            insets
+        }
 
         snackbar.show()
         return snackbar

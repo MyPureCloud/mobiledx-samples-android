@@ -22,7 +22,7 @@ class FloatingSnackbar {
                 val snackbar = this
                 val params = view.layoutParams as FrameLayout.LayoutParams
                 params.gravity = Gravity.TOP
-                params.topMargin = 8.px
+                params.topMargin = 128.px
                 params.bottomMargin = 8.px
                 params.leftMargin = 16.px
                 params.rightMargin = 16.px
