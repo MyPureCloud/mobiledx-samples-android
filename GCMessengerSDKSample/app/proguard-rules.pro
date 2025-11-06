@@ -23,3 +23,5 @@
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class * extends com.google.gson.reflect.TypeToken
 
+-keep class com.genesys.cloud.integration.messenger.carousel.Card { *; }
+-keep class com.genesys.cloud.integration.messenger.carousel.CardAction { *; }
