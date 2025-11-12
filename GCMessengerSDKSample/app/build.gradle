@@ -19,7 +19,7 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.19.0.rc17"
+def projectVersion = "1.19.0.rc18"
 def sdkVersion = "1.19.0-SNAPSHOT-PR-153-32"
 
 def parts = projectVersion.split('\\.')
@@ -111,9 +111,9 @@ android {
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:${sdkVersion}")
-    implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
-    implementation("com.genesys.cloud:ui:${sdkVersion}")
+    api("com.genesys.cloud:core:${sdkVersion}")
+    api("com.genesys.cloud:chatintegration:${sdkVersion}")
+    api("com.genesys.cloud:ui:${sdkVersion}")
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
