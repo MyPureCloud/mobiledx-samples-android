@@ -724,6 +724,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
+    override fun onUrlLinkSelected(url: String) {
+        onUrlLinkClicked(url)
+    }
+
     override fun onUrlLinkClicked(url: String): Boolean {
         toast(this, "Url link selected: $url", Toast.LENGTH_SHORT)
 
