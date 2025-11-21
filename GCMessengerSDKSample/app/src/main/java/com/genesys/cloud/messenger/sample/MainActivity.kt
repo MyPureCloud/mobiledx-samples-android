@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     private var reconnectingChatSnackBar: Snackbar? = null
 
     private var shouldDefaultBack: Boolean = false
-    
+
     private var pushNotificationBroadcastReceiver: BroadcastReceiver? = null
     private val permissionHandler = PermissionHandler(this)
     //endregion
@@ -724,12 +724,16 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
-    override fun onUrlLinkSelected(url: String) {
+    override fun onUrlLinkClicked(url: String): Boolean {
         toast(this, "Url link selected: $url", Toast.LENGTH_SHORT)
 
         try {
             val intent = if (isFileUrl(url)) {
-                val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", File(url))
+                val uri = FileProvider.getUriForFile(
+                    this,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    File(url)
+                )
 
                 Intent(Intent.ACTION_VIEW).apply {
                     setDataAndType(uri, "*/*")
@@ -739,9 +743,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 Intent(Intent.ACTION_VIEW).setData(Uri.parse(url))
             }
             startActivity(intent)
+            return true
 
         } catch (e: Exception) {
             Log.w(TAG, "failed to activate link on default app: " + e.message)
+            return false
         }
     }
 
