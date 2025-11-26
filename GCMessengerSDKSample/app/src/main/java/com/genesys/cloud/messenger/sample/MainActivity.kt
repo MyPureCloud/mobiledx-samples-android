@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -740,7 +741,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
             } else {
-                Intent(Intent.ACTION_VIEW).setData(Uri.parse(url))
+                Intent(Intent.ACTION_VIEW).setData(normalizeUrl(url).toUri())
             }
             startActivity(intent)
             return true
@@ -749,6 +750,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             Log.w(TAG, "failed to activate link on default app: " + e.message)
             return false
         }
+    }
+
+    private fun normalizeUrl(url: String): String {
+        return if (url.toUri().scheme != null) url else "https://$url"
     }
 
     private fun isFileUrl(url: String): Boolean {
