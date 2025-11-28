@@ -19,8 +19,7 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.19.0.rc26"
-def sdkVersion = "1.19.0.rc4"
+def projectVersion = project.findProperty('projectVersion') ?: "1.19.0.rc26"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -125,9 +124,9 @@ dependencies {
     } else {
         // Standalone build: use published artifacts from JFrog
         // These dependencies fetch versioned artifacts from the remote repository
-        implementation("com.genesys.cloud:core:${sdkVersion}")
-        implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
-        implementation("com.genesys.cloud:ui:${sdkVersion}")
+        implementation("com.genesys.cloud:core:${projectVersion}")
+        implementation("com.genesys.cloud:chatintegration:${projectVersion}")
+        implementation("com.genesys.cloud:ui:${projectVersion}")
     }
 
     //region android
