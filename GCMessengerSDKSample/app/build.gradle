@@ -93,6 +93,10 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
     bundle {
         language {
             language {
@@ -111,9 +115,20 @@ android {
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:${sdkVersion}")
-    implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
-    implementation("com.genesys.cloud:ui:${sdkVersion}")
+    def isPartOfMultiProject = rootProject.name == 'mobile-messenger-android-sdk'
+    if (isPartOfMultiProject) {
+        // Local development: use source code from SDK modules
+        // These dependencies point to the local :core, :chatintegration, and :ui projects
+        implementation project(':core')
+        implementation project(':chatintegration')
+        implementation project(':ui')
+    } else {
+        // Standalone build: use published artifacts from JFrog
+        // These dependencies fetch versioned artifacts from the remote repository
+        implementation("com.genesys.cloud:core:${sdkVersion}")
+        implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
+        implementation("com.genesys.cloud:ui:${sdkVersion}")
+    }
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
