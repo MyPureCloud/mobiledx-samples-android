@@ -772,13 +772,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
-    /*override fun onChatElementReceived(chatElement: ChatElement) {
+    override fun onChatElementReceived(chatElement: ChatElement) {
         super.onChatElementReceived(chatElement)
         Log.i(TAG, "onChatElementReceived(${chatElement.text})")
         if (supportFragmentManager.backStackEntryCount == 0) {
             showAlertDialog("New Incoming message", chatElement.text)
         }
-    }*/
+    }
 
     private fun showSnackbar(message: String, timeout: Int = Snackbar.LENGTH_LONG): Snackbar {
         val snackbar = Snackbar.make(binding.snackBarLayout,
