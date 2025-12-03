@@ -451,8 +451,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun showNotificationPermissionIndicator() {
-        if (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS)
-            != PackageManager.PERMISSION_GRANTED
+        if ((viewModel.pushEnabled.value ?: false)
+            && (ContextCompat.checkSelfPermission(this, PERMISSION_POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED)
         ) {
             FloatingSnackbar.make(
                 binding.root,
