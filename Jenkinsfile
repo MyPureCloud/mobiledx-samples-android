@@ -30,6 +30,7 @@ void setBuildStatus(String message, String state) {
         $class: "GitHubCommitStatusSetter",
         reposSource: [$class: "ManuallyEnteredRepositorySource", url: "${env.GIT_URL}"],
         commitShaSource: [$class: "ManuallyEnteredShaSource", sha: "${env.GIT_COMMIT}"],
+        credentialsId: "MYPURECLOUD_GITHUB_TOKEN",
         errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
         statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
     ])
