@@ -20,6 +20,7 @@ import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
 import com.genesys.cloud.ui.structure.controller.ChatAvailability
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.gson.JsonObject
+import java.util.UUID
 
 class ChatFormFragment : Fragment() {
 
@@ -82,9 +83,13 @@ class ChatFormFragment : Fragment() {
 
     private fun onLoginClicked() {
         try {
-            if (viewModel.isImplicitFlowEnabled) {
-                // TODO GMMS-10530 implement implicit login
-                toast(requireContext(), "Implicit login is not implemented yet")
+            if(viewModel.isImplicitFlowEnabled) {
+                val nonce = UUID.randomUUID().toString()
+                openFragment.invoke(
+                    OktaAuthenticationFragment.newImplicitLoginInstance(nonce),
+                    OktaAuthenticationFragment.TAG
+                )
+                viewModel.setNonce(nonce)
             } else {
                 openFragment.invoke(
                     OktaAuthenticationFragment.newLoginInstance(),
