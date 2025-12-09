@@ -221,7 +221,7 @@ class ChatFormFragment : Fragment() {
         }
 
         accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
-        accountData.addProperty(DataKeys.Logging, binding.implicitSwitch.isEnabled)
+        accountData.addProperty(DataKeys.ImplicitFlow, binding.implicitSwitch.isEnabled)
 
         return accountData
     }
