@@ -28,13 +28,18 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _pushEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     val pushEnabled: LiveData<Boolean> = _pushEnabled
 
+    val isImplicitFlowEnabled : Boolean
+        get() = _uiState.value?.enableImplicitFlow == true
+
     init {
         _pushEnabled.value = sampleRepository.savedPushConfig
     }
 
     fun loadSavedAccount() {
         viewModelScope.launch {
-            _uiState.value = SampleUIState(
+            _uiState.value = _uiState.value?.copy(
+                account = sampleRepository.getSavedAccount() as JsonObject
+            ) ?: SampleUIState(
                 account = sampleRepository.getSavedAccount() as JsonObject
             )
         }
@@ -74,6 +79,10 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         sampleRepository.savedPushConfig = value
     }
 
+    fun setImplicitFlowEnabled(value: Boolean) {
+        _uiState.value = _uiState.value?.copy( enableImplicitFlow = value)
+    }
+
     fun updateLatestTypedDeploymentId(deploymentId: String) {
         latestTypedDeploymentId = deploymentId
         val existingEnablement = pushEnabledForDeployment.entries.singleOrNull { entry -> entry.key == deploymentId }
@@ -89,7 +98,8 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         startChat: Boolean = false,
         testAvailability: Boolean = false,
         enablePush: Boolean = false,
-        disablePush: Boolean = false
+        disablePush: Boolean = false,
+        implicitEnabled: Boolean = false
     ) {
         accountData.takeIf { it.size() > 0 }?.let {
             _uiState.value = SampleUIState(
@@ -97,7 +107,8 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
                 startChat = startChat,
                 testAvailability = testAvailability,
                 enablePush = enablePush,
-                disablePush = disablePush
+                disablePush = disablePush,
+                enableImplicitFlow = implicitEnabled
             )
             sampleRepository.saveAccount(accountData)
         }

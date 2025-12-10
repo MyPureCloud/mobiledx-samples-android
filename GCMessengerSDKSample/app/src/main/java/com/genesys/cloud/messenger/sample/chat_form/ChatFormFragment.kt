@@ -64,6 +64,9 @@ class ChatFormFragment : Fragment() {
                 viewModel.updateLatestTypedDeploymentId(text.toString())
             }
         )
+        binding.implicitSwitch.setOnCheckedChangeListener { _, newValue ->
+            viewModel.setImplicitFlowEnabled(newValue)
+        }
         viewModel.updateLatestTypedDeploymentId(binding.deploymentIdEditText.text.toString())
         viewModel.pushEnabled.observe(requireActivity()) { enabled->
             binding.pushButton.text = getString(
@@ -79,10 +82,15 @@ class ChatFormFragment : Fragment() {
 
     private fun onLoginClicked() {
         try {
-            openFragment.invoke(
-                OktaAuthenticationFragment.newLoginInstance(),
-                OktaAuthenticationFragment.TAG
-            )
+            if (viewModel.isImplicitFlowEnabled) {
+                // TODO GMMS-10530 implement implicit login
+                toast(requireContext(), "Implicit login is not implemented yet")
+            } else {
+                openFragment.invoke(
+                    OktaAuthenticationFragment.newLoginInstance(),
+                    OktaAuthenticationFragment.TAG
+                )
+            }
         } catch (e: IllegalStateException) {
             toast(requireContext(), e.message ?: "Cannot login.")
         }
@@ -110,6 +118,9 @@ class ChatFormFragment : Fragment() {
 
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
+                }
+                accountRawJson[DataKeys.ImplicitFlow]?.let {
+                    binding.implicitSwitch.isEnabled = it.asBoolean
                 }
 
                 setLoginButtonState(deploymentId, domain)
@@ -210,6 +221,7 @@ class ChatFormFragment : Fragment() {
         }
 
         accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
+        accountData.addProperty(DataKeys.ImplicitFlow, binding.implicitSwitch.isEnabled)
 
         return accountData
     }
