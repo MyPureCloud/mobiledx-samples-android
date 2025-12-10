@@ -158,7 +158,6 @@ class OktaAuthenticationFragment : WebFragment() {
     }
 }
 
-
 private fun Uri.getParam(param: String): String? {
     return fragment?.let { currentFragment ->
         Log.d(TAG, "Fragment: $currentFragment")
