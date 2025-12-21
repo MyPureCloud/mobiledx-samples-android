@@ -19,13 +19,14 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "2.0.0.rc1"
+def projectVersion = "2.0.0-SNAPSHOT-PR-208-7"
 def sdkVersion = "2.0.0-SNAPSHOT-PR-208-7"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
 def minor = parts[1].toInteger()
-def patch = parts[2].toInteger()
+def patchPart = parts[2].split('-')[0] // Get "0" from "0-SNAPSHOT-PR-208-7"
+def patch = patchPart.toInteger()
 
 def projectCode = (major * 1000000) + (minor * 10000) + (patch * 100)
 def projectName = "${major}.${minor}.${patch}"
