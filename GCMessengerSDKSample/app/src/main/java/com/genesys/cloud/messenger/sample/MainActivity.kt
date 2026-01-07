@@ -336,6 +336,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                     }
 
                     viewModel.isAuthenticated = true
+                } else if(!viewModel.idToken.value.isNullOrEmpty()) {
+                    viewModel.idToken.value?.let { idToken->
+                        // TODO GMMS-10534 account.setImplicitAuthenticationInfo
+                    }
+                    viewModel.isAuthenticated = true
                 }
             } else {
                 viewModel.isAuthenticated = true
