@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class SampleFormViewModel(private val sampleRepository: SampleRepository) : ViewModel() {
 
@@ -38,7 +39,7 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _idToken = MutableStateFlow<String?>(null)
     val idToken: StateFlow<String?> = _idToken.asStateFlow()
 
-    private val _nonce = MutableStateFlow<String?>(null)
+    private val _nonce = MutableStateFlow<String>(UUID.randomUUID().toString())
     val nonce = _nonce.asStateFlow()
 
     init {
