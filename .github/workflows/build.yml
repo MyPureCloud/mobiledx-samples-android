@@ -30,14 +30,11 @@ jobs:
         distribution: 'temurin'
 
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        gradle-home-cache-cleanup: true
-        cache-read-only: ${{ github.event_name == 'pull_request' }}
+      uses: gradle/actions/setup-gradle@v5
 
     - name: Build and test
       run: |
         cd GCMessengerSDKSample
-        ./gradlew build --build-cache --parallel --daemon --no-watch-fs
+        ./gradlew build --build-cache --parallel --no-watch-fs
       env:
         GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"
