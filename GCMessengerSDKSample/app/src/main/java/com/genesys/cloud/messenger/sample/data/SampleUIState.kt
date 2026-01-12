@@ -7,5 +7,6 @@ data class SampleUIState(
     val startChat: Boolean = false,
     val testAvailability: Boolean = false,
     val enablePush: Boolean = false,
-    val disablePush: Boolean = false
+    val disablePush: Boolean = false,
+    val enableImplicitFlow: Boolean = false
 )
