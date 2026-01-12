@@ -54,7 +54,6 @@ import com.genesys.cloud.ui.structure.controller.*
 import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
 import com.google.android.gms.tasks.Tasks
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
-import com.genesys.cloud.ui.structure.elements.ChatElement
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -330,18 +329,22 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
             if (shouldAuthorize) {
 
-                if (account is MessengerAccount && viewModel.hasAuthCode) {
-                    viewModel.authCode.value?.let {
-                            authCode -> account.setAuthenticationInfo(authCode,
-                        viewModel.redirectUri, viewModel.codeVerifier)
-                    }
+                if (account is MessengerAccount) {
+                    if (viewModel.hasAuthCode) {
+                        viewModel.authCode.value?.let { authCode ->
+                            account.setAuthenticationInfo(
+                                authCode,
+                                viewModel.redirectUri, viewModel.codeVerifier
+                            )
+                        }
 
-                    viewModel.isAuthenticated = true
-                } else if(!viewModel.idToken.value.isNullOrEmpty()) {
-                    viewModel.idToken.value?.let { idToken->
-                        // TODO GMMS-10534 account.setImplicitAuthenticationInfo
+                        viewModel.isAuthenticated = true
+                    } else if (!viewModel.idToken.value.isNullOrEmpty()) {
+                        viewModel.idToken.value?.let { idToken ->
+                            account.setImplicitAuthenticationInfo(idToken, viewModel.nonce.value)
+                        }
+                        viewModel.isAuthenticated = true
                     }
-                    viewModel.isAuthenticated = true
                 }
             } else {
                 viewModel.isAuthenticated = true
