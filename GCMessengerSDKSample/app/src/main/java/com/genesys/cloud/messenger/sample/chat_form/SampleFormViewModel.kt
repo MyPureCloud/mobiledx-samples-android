@@ -42,6 +42,9 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _nonce = MutableStateFlow<String>(UUID.randomUUID().toString())
     val nonce = _nonce.asStateFlow()
 
+    private val _isReauthorizationInProgress = MutableStateFlow<Boolean>(false)
+    val isReauthorizationInProgress = _isReauthorizationInProgress.asStateFlow()
+
     init {
         _pushEnabled.value = sampleRepository.savedPushConfig
     }
@@ -77,6 +80,10 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
 
     fun setNonce(newNonce: String) {
         _nonce.update { newNonce }
+    }
+
+    fun setReAuthorizationProgress(isReAuthorizationRequired: Boolean) {
+        _isReauthorizationInProgress.update { isReAuthorizationRequired}
     }
 
     fun clearAuthCode(){
