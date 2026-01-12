@@ -87,7 +87,7 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
 
     fun clearIdToken() {
         _idToken.update { null }
-        _nonce.update { null }
+        _nonce.update { UUID.randomUUID().toString() }
     }
 
     fun changePushEnablement(accountData: JsonObject) {

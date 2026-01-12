@@ -20,7 +20,7 @@ def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
 def projectVersion = "1.21.0.rc2"
-def sdkVersion = "1.20.0-SNAPSHOT-PR-207-7"
+def sdkVersion = "1.20.0-SNAPSHOT-PR-215-3"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()

@@ -328,18 +328,22 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
             if (shouldAuthorize) {
 
-                if (account is MessengerAccount && viewModel.hasAuthCode) {
-                    viewModel.authCode.value?.let {
-                            authCode -> account.setAuthenticationInfo(authCode,
-                        viewModel.redirectUri, viewModel.codeVerifier)
-                    }
+                if (account is MessengerAccount) {
+                    if (viewModel.hasAuthCode) {
+                        viewModel.authCode.value?.let { authCode ->
+                            account.setAuthenticationInfo(
+                                authCode,
+                                viewModel.redirectUri, viewModel.codeVerifier
+                            )
+                        }
 
-                    viewModel.isAuthenticated = true
-                } else if(!viewModel.idToken.value.isNullOrEmpty()) {
-                    viewModel.idToken.value?.let {
-                        account.setImplicitAuthenticationInfo(it, viewModel.nonce.value)
+                        viewModel.isAuthenticated = true
+                    } else if (!viewModel.idToken.value.isNullOrEmpty()) {
+                        viewModel.idToken.value?.let { idToken ->
+                            account.setImplicitAuthenticationInfo(idToken, viewModel.nonce.value)
+                        }
+                        viewModel.isAuthenticated = true
                     }
-                    viewModel.isAuthenticated = true
                 }
             } else {
                 viewModel.isAuthenticated = true
