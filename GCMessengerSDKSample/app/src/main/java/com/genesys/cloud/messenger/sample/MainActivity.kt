@@ -54,6 +54,7 @@ import com.genesys.cloud.ui.structure.controller.*
 import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
 import com.google.android.gms.tasks.Tasks
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
+import com.genesys.cloud.ui.structure.elements.ChatElement
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -178,6 +179,17 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             ChatState.AfterActivityRecreation -> {
                 if (existingChatFragment != null) {
                     supportFragmentManager.popBackStackImmediate()
+                }
+            }
+        }
+
+        viewModel.apply {
+            val messengerAccount = uiState.value?.account?.toMessengerAccount()
+            lifecycleScope.launch {
+                idToken.collect {
+                    if (isReauthorizationInProgress.value && messengerAccount != null) {
+                        prepareAndCreateChat(messengerAccount)
+                    }
                 }
             }
         }
@@ -660,6 +672,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 removeChatFragment()
             }
 
+            NRError.AuthorizationRequired -> {
+                viewModel.setReAuthorizationProgress(true)
+                waitingVisibility(true)
+            }
+
             NRError.GeneralError -> {
                 removeChatFragment()
             }
@@ -675,6 +692,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             StateEvent.Started -> {
                 waitingVisibility(false)
                 updateMenuVisibility()
+                lifecycleScope.launch{
+                    viewModel.setReAuthorizationProgress(false)
+                }
             }
 
             StateEvent.ChatWindowLoaded -> {
