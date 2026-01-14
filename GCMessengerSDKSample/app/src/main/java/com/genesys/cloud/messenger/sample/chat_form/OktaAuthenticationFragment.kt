@@ -139,7 +139,7 @@ class OktaAuthenticationFragment : WebFragment() {
 
         private fun buildImplicitOktaAuthorizeUrl(nonce: String): String {
             val builder =
-                StringBuilder("https://${notNullOrEmpty(BuildConfig.OKTA_DOMAIN, "OKTA_DOMAIN")}/oauth2/v1/authorize").apply {
+                StringBuilder("https://${notNullOrEmpty(BuildConfig.OKTA_DOMAIN, "OKTA_DOMAIN")}/oauth2/default/v1/authorize").apply {
                     append("?client_id=${notNullOrEmpty(BuildConfig.CLIENT_ID, "CLIENT_ID")}")
                     append("&response_type=id_token")
                     append("&scope=${notNullOrEmpty(BuildConfig.SCOPES, "SCOPES")}")

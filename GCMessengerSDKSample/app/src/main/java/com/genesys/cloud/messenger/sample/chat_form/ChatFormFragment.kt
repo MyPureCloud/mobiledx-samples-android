@@ -154,7 +154,7 @@ class ChatFormFragment : Fragment() {
         // * there is no reason to call shouldAuthorize on invalid deployment IDs\domains
         // * otherwise just reset UI to default state
         ChatAvailability.checkAvailability(account = account) { res ->
-            if (res.isAvailable) {
+            if (!viewModel.isImplicitFlowEnabled &&  res.isAvailable) {
                 setLoginButtonStateImpl(account)
             } else {
                 binding.loginButton.visibility = View.VISIBLE
