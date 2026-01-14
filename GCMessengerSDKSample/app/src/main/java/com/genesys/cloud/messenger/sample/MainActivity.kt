@@ -186,10 +186,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         viewModel.apply {
             val messengerAccount = uiState.value?.account?.toMessengerAccount()
             lifecycleScope.launch {
-                idToken.collect {
+                idToken.collect { newIdToken ->
                     if (isReauthorizationInProgress.value && messengerAccount != null) {
-                        prepareAndCreateChat(messengerAccount)
-                    }
+                        newIdToken?.let {
+                            chatController?.reauthorizeImplicitFlow(it, nonce.value)
+                        } ?: {
+                            Log.e(TAG, "implicit new idToken is null, cannot reauthorize")
+                        }                    }
                 }
             }
         }
@@ -673,6 +676,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             NRError.AuthorizationRequired -> {
+                Log.d(TAG, "implicit re-authorization is needed")
                 viewModel.setReAuthorizationProgress(true)
                 waitingVisibility(true)
             }
@@ -724,6 +728,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 if (supportFragmentManager.backStackEntryCount > 0) {
                     onBackPressed()
                 }
+            }
+
+            StateEvent.Started -> {
+                viewModel.setReAuthorizationProgress(false)
             }
 
             StateEvent.Reconnected -> runMain {
