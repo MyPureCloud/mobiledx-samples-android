@@ -9,6 +9,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.BuildConfig
@@ -20,6 +21,7 @@ import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
 import com.genesys.cloud.ui.structure.controller.ChatAvailability
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.gson.JsonObject
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class ChatFormFragment : Fragment() {
@@ -65,8 +67,12 @@ class ChatFormFragment : Fragment() {
                 viewModel.updateLatestTypedDeploymentId(text.toString())
             }
         )
-        binding.implicitSwitch.setOnCheckedChangeListener { _, newValue ->
-            viewModel.setImplicitFlowEnabled(newValue)
+
+        binding.implicitSwitch.apply {
+            isChecked = viewModel.isImplicitFlowEnabled
+            setOnCheckedChangeListener { _, newValue ->
+                viewModel.setImplicitFlowEnabled(newValue)
+            }
         }
         viewModel.updateLatestTypedDeploymentId(binding.deploymentIdEditText.text.toString())
         viewModel.pushEnabled.observe(requireActivity()) { enabled->
@@ -75,11 +81,25 @@ class ChatFormFragment : Fragment() {
                 else R.string.enable_push_text
             )
         }
+
+        lifecycleScope.launch{
+            viewModel.isReLoginInProgress.collect {
+                if (it) {
+                    onReAuthorizationRequired()
+                }
+            }
+        }
     }
     //endregion
 
     //region - functionality
     internal var openFragment: (fragment: Fragment, tag: String) -> Unit = { _, _ -> }
+
+    private fun onReAuthorizationRequired() {
+        viewModel.setReLoginInProgress(false)
+        viewModel.clearIdToken()
+        onLoginClicked()
+    }
 
     private fun onLoginClicked() {
         try {
@@ -163,13 +183,15 @@ class ChatFormFragment : Fragment() {
     }
 
     private fun setLoginButtonStateImpl(account: MessengerAccount) {
-        context?.let {
-            AuthenticationStatus.shouldAuthorize(
-                context = it,
-                account = account
-            ) { shouldAuthorize ->
+        if (!viewModel.isImplicitFlowEnabled) {
+            context?.let {
+                AuthenticationStatus.shouldAuthorize(
+                    context = it,
+                    account = account
+                ) { shouldAuthorize ->
                     binding.loginButton.visibility =
                         if (shouldAuthorize) View.VISIBLE else View.INVISIBLE
+                }
             }
         }
     }

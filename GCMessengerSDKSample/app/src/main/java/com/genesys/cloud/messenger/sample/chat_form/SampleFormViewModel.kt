@@ -45,6 +45,9 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _isReauthorizationInProgress = MutableStateFlow<Boolean>(false)
     val isReauthorizationInProgress = _isReauthorizationInProgress.asStateFlow()
 
+    private val _isReLoginInProgress = MutableStateFlow(false)
+    val isReLoginInProgress = _isReLoginInProgress.asStateFlow()
+
     init {
         _pushEnabled.value = sampleRepository.savedPushConfig
     }
@@ -61,11 +64,11 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     }
 
     fun startChat(accountData: JsonObject) {
-        processAccountData(accountData = accountData, startChat = true)
+        processAccountData(accountData = accountData, startChat = true, implicitEnabled = isImplicitFlowEnabled)
     }
 
     fun testChatAvailability(accountData: JsonObject) {
-        processAccountData(accountData, testAvailability = true)
+        processAccountData(accountData, testAvailability = true, implicitEnabled = isImplicitFlowEnabled)
     }
 
     fun setAuthCode(authCode: String, redirectUri: String, codeVerifier: String?){
@@ -82,8 +85,12 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         _nonce.update { newNonce }
     }
 
-    fun setReAuthorizationProgress(isReAuthorizationRequired: Boolean) {
-        _isReauthorizationInProgress.update { isReAuthorizationRequired}
+    fun setReAuthorizationInProgress(isReAuthorizationStarted: Boolean) {
+        _isReauthorizationInProgress.update { isReAuthorizationStarted }
+    }
+
+    fun setReLoginInProgress(isReLoginStarted: Boolean) {
+        _isReLoginInProgress.update { isReLoginStarted }
     }
 
     fun clearAuthCode(){
@@ -145,7 +152,7 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
                 testAvailability = testAvailability,
                 enablePush = enablePush,
                 disablePush = disablePush,
-                enableImplicitFlow = isImplicitFlowEnabled
+                enableImplicitFlow = implicitEnabled
             ) ?: SampleUIState(
                 account = accountData,
                 startChat = startChat,

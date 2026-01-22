@@ -7,20 +7,14 @@ import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment.Companion.TAG
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 
 class OktaAuthenticationFragment : WebFragment() {
 
-    private val viewModel: SampleFormViewModel by activityViewModels {
-        SampleFormViewModelFactory(
-            JsonSampleRepository(
-                requireActivity().applicationContext
-            )
-        )
-    }
+    private lateinit var viewModel: SampleFormViewModel
 
     override fun provideWebViewClient(): WebViewClient {
         return object : WebViewClient() {
@@ -53,6 +47,11 @@ class OktaAuthenticationFragment : WebFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(
+            owner = requireActivity(),
+            factory = SampleFormViewModelFactory(JsonSampleRepository(requireActivity().applicationContext))
+        )[SampleFormViewModel::class.java]
+
         if (arguments?.getString(URL) == buildOktaLogoutUrl()) {
             showProgressBar(true)
         }
@@ -64,12 +63,12 @@ class OktaAuthenticationFragment : WebFragment() {
 
     private fun authCodeReceived(authCode: String) {
         viewModel.setAuthCode(authCode, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
-        parentFragmentManager.popBackStack()
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     private fun idTokenReceived(idToken: String) {
         viewModel.setIdToken(idToken)
-        parentFragmentManager.popBackStack()
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     private fun signoutSuccessful() {
