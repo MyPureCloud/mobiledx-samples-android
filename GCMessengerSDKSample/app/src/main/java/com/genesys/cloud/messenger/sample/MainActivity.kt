@@ -50,10 +50,15 @@ import com.genesys.cloud.messenger.sample.data.PermissionHandler.Companion.PERMI
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
-import com.genesys.cloud.ui.structure.controller.*
-import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
-import com.google.android.gms.tasks.Tasks
+import com.genesys.cloud.ui.structure.controller.ChatAvailability
+import com.genesys.cloud.ui.structure.controller.ChatController
+import com.genesys.cloud.ui.structure.controller.ChatEventListener
+import com.genesys.cloud.ui.structure.controller.ChatLoadResponse
+import com.genesys.cloud.ui.structure.controller.ChatLoadedListener
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
+import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
+import com.genesys.cloud.ui.structure.elements.ChatElement
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -178,6 +183,19 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             ChatState.AfterActivityRecreation -> {
                 if (existingChatFragment != null) {
                     supportFragmentManager.popBackStackImmediate()
+                }
+            }
+        }
+
+        viewModel.apply {
+            lifecycleScope.launch {
+                idToken.collect { newIdToken ->
+                    if (isReauthorizationInProgress.value) {
+                        newIdToken?.let {
+                            chatController?.reauthorizeImplicitFlow(it, nonce.value)
+                            setReAuthorizationInProgress(false)
+                        }
+                    }
                 }
             }
         }
@@ -322,36 +340,35 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         viewModel.isAuthenticated = false
 
-        AuthenticationStatus.shouldAuthorize(
-            context = this,
-            account = account
-        ) { shouldAuthorize ->
-
-            if (shouldAuthorize) {
-
-                if (account is MessengerAccount) {
-                    if (viewModel.hasAuthCode) {
+        if (viewModel.isImplicitFlowEnabled) {
+            viewModel.idToken.value?.let { currentIdToken ->
+                (account as? MessengerAccount)?.setImplicitAuthenticationInfo(
+                    currentIdToken,
+                    viewModel.nonce.value
+                )
+            }
+            viewModel.isAuthenticated = true
+        } else {
+            AuthenticationStatus.shouldAuthorize(
+                context = this,
+                account = account
+            ) { shouldAuthorize ->
+                if (shouldAuthorize) {
+                    if (account is MessengerAccount && viewModel.hasAuthCode) {
                         viewModel.authCode.value?.let { authCode ->
                             account.setAuthenticationInfo(
                                 authCode,
                                 viewModel.redirectUri, viewModel.codeVerifier
                             )
                         }
-
-                        viewModel.isAuthenticated = true
-                    } else if (!viewModel.idToken.value.isNullOrEmpty()) {
-                        viewModel.idToken.value?.let { idToken ->
-                            account.setImplicitAuthenticationInfo(idToken, viewModel.nonce.value)
-                        }
                         viewModel.isAuthenticated = true
                     }
+                } else {
+                    viewModel.isAuthenticated = true
                 }
-            } else {
-                viewModel.isAuthenticated = true
             }
-
-            createChat(account, chatStartError)
         }
+        createChat(account, chatStartError)
     }
 
     private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
@@ -660,6 +677,13 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 removeChatFragment()
             }
 
+            NRError.AuthorizationRequired -> {
+                Log.d(TAG, "NRError.AuthorizationRequired start ReAuthorization process")
+                viewModel.setReAuthorizationInProgress(true)
+                viewModel.setReLoginInProgress(true)
+                waitingVisibility(true)
+            }
+
             NRError.GeneralError -> {
                 removeChatFragment()
             }
@@ -675,6 +699,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             StateEvent.Started -> {
                 waitingVisibility(false)
                 updateMenuVisibility()
+                reconnectingChatSnackBar?.dismiss()
             }
 
             StateEvent.ChatWindowLoaded -> {
