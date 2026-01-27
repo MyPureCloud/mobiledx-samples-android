@@ -7,7 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.genesys.cloud.messenger.sample.data.SampleUIState
 import com.genesys.cloud.messenger.sample.data.repositories.SampleRepository
 import com.google.gson.JsonObject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class SampleFormViewModel(private val sampleRepository: SampleRepository) : ViewModel() {
 
@@ -28,24 +33,42 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _pushEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     val pushEnabled: LiveData<Boolean> = _pushEnabled
 
+    val isImplicitFlowEnabled : Boolean
+        get() = _uiState.value?.enableImplicitFlow == true
+
+    private val _idToken = MutableStateFlow<String?>(null)
+    val idToken: StateFlow<String?> = _idToken.asStateFlow()
+
+    private val _nonce = MutableStateFlow<String>(UUID.randomUUID().toString())
+    val nonce = _nonce.asStateFlow()
+
+    private val _isReauthorizationInProgress = MutableStateFlow<Boolean>(false)
+    val isReauthorizationInProgress = _isReauthorizationInProgress.asStateFlow()
+
+    private val _isReLoginInProgress = MutableStateFlow(false)
+    val isReLoginInProgress = _isReLoginInProgress.asStateFlow()
+
     init {
         _pushEnabled.value = sampleRepository.savedPushConfig
     }
 
     fun loadSavedAccount() {
         viewModelScope.launch {
-            _uiState.value = SampleUIState(
-                account = sampleRepository.getSavedAccount() as JsonObject
+            val savedAccount = sampleRepository.getSavedAccount() as JsonObject
+            _uiState.value = _uiState.value?.copy(
+                account = savedAccount
+            ) ?: SampleUIState(
+                account = savedAccount
             )
         }
     }
 
     fun startChat(accountData: JsonObject) {
-        processAccountData(accountData = accountData, startChat = true)
+        processAccountData(accountData = accountData, startChat = true, implicitEnabled = isImplicitFlowEnabled)
     }
 
     fun testChatAvailability(accountData: JsonObject) {
-        processAccountData(accountData, testAvailability = true)
+        processAccountData(accountData, testAvailability = true, implicitEnabled = isImplicitFlowEnabled)
     }
 
     fun setAuthCode(authCode: String, redirectUri: String, codeVerifier: String?){
@@ -54,10 +77,31 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         this.codeVerifier = codeVerifier
     }
 
+    fun setIdToken(newIdToken: String) {
+        _idToken.update { newIdToken }
+    }
+
+    fun setNonce(newNonce: String) {
+        _nonce.update { newNonce }
+    }
+
+    fun setReAuthorizationInProgress(isReAuthorizationStarted: Boolean) {
+        _isReauthorizationInProgress.update { isReAuthorizationStarted }
+    }
+
+    fun setReLoginInProgress(isReLoginStarted: Boolean) {
+        _isReLoginInProgress.update { isReLoginStarted }
+    }
+
     fun clearAuthCode(){
         _authCode.value = ""
         this.redirectUri = ""
         this.codeVerifier = null
+    }
+
+    fun clearIdToken() {
+        _idToken.update { null }
+        _nonce.update { UUID.randomUUID().toString() }
     }
 
     fun changePushEnablement(accountData: JsonObject) {
@@ -72,6 +116,15 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         pushEnabledForDeployment[latestTypedDeploymentId] = value
         _pushEnabled.value = value
         sampleRepository.savedPushConfig = value
+    }
+
+    fun setImplicitFlowEnabled(isEnabled : Boolean) {
+        _uiState.value = _uiState.value?.copy(
+            enableImplicitFlow = isEnabled
+        ) ?: SampleUIState(
+            account = null,
+            enableImplicitFlow = isEnabled
+        )
     }
 
     fun updateLatestTypedDeploymentId(deploymentId: String) {
@@ -89,15 +142,24 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         startChat: Boolean = false,
         testAvailability: Boolean = false,
         enablePush: Boolean = false,
-        disablePush: Boolean = false
+        disablePush: Boolean = false,
+        implicitEnabled: Boolean = false
     ) {
         accountData.takeIf { it.size() > 0 }?.let {
-            _uiState.value = SampleUIState(
-                accountData,
+            _uiState.value = _uiState.value?.copy(
+                account = accountData,
                 startChat = startChat,
                 testAvailability = testAvailability,
                 enablePush = enablePush,
-                disablePush = disablePush
+                disablePush = disablePush,
+                enableImplicitFlow = implicitEnabled
+            ) ?: SampleUIState(
+                account = accountData,
+                startChat = startChat,
+                testAvailability = testAvailability,
+                enablePush = enablePush,
+                disablePush = disablePush,
+                enableImplicitFlow = implicitEnabled,
             )
             sampleRepository.saveAccount(accountData)
         }

@@ -9,6 +9,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.BuildConfig
@@ -20,6 +21,8 @@ import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
 import com.genesys.cloud.ui.structure.controller.ChatAvailability
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.gson.JsonObject
+import kotlinx.coroutines.launch
+import java.util.UUID
 
 class ChatFormFragment : Fragment() {
 
@@ -64,6 +67,13 @@ class ChatFormFragment : Fragment() {
                 viewModel.updateLatestTypedDeploymentId(text.toString())
             }
         )
+
+        binding.implicitSwitch.apply {
+            isChecked = viewModel.isImplicitFlowEnabled
+            setOnCheckedChangeListener { _, newValue ->
+                viewModel.setImplicitFlowEnabled(newValue)
+            }
+        }
         viewModel.updateLatestTypedDeploymentId(binding.deploymentIdEditText.text.toString())
         viewModel.pushEnabled.observe(requireActivity()) { enabled->
             binding.pushButton.text = getString(
@@ -71,18 +81,41 @@ class ChatFormFragment : Fragment() {
                 else R.string.enable_push_text
             )
         }
+
+        lifecycleScope.launch{
+            viewModel.isReLoginInProgress.collect {
+                if (it) {
+                    onReAuthorizationRequired()
+                }
+            }
+        }
     }
     //endregion
 
     //region - functionality
     internal var openFragment: (fragment: Fragment, tag: String) -> Unit = { _, _ -> }
 
+    private fun onReAuthorizationRequired() {
+        viewModel.setReLoginInProgress(false)
+        viewModel.clearIdToken()
+        onLoginClicked()
+    }
+
     private fun onLoginClicked() {
         try {
-            openFragment.invoke(
-                OktaAuthenticationFragment.newLoginInstance(),
-                OktaAuthenticationFragment.TAG
-            )
+            if(viewModel.isImplicitFlowEnabled) {
+                val nonce = UUID.randomUUID().toString()
+                openFragment.invoke(
+                    OktaAuthenticationFragment.newImplicitLoginInstance(nonce),
+                    OktaAuthenticationFragment.TAG
+                )
+                viewModel.setNonce(nonce)
+            } else {
+                openFragment.invoke(
+                    OktaAuthenticationFragment.newLoginInstance(),
+                    OktaAuthenticationFragment.TAG
+                )
+            }
         } catch (e: IllegalStateException) {
             toast(requireContext(), e.message ?: "Cannot login.")
         }
@@ -111,6 +144,9 @@ class ChatFormFragment : Fragment() {
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
                 }
+                accountRawJson[DataKeys.ImplicitFlow]?.let {
+                    binding.implicitSwitch.isEnabled = it.asBoolean
+                }
 
                 setLoginButtonState(deploymentId, domain)
             }
@@ -138,7 +174,7 @@ class ChatFormFragment : Fragment() {
         // * there is no reason to call shouldAuthorize on invalid deployment IDs\domains
         // * otherwise just reset UI to default state
         ChatAvailability.checkAvailability(account = account) { res ->
-            if (res.isAvailable) {
+            if (!viewModel.isImplicitFlowEnabled &&  res.isAvailable) {
                 setLoginButtonStateImpl(account)
             } else {
                 binding.loginButton.visibility = View.VISIBLE
@@ -147,13 +183,15 @@ class ChatFormFragment : Fragment() {
     }
 
     private fun setLoginButtonStateImpl(account: MessengerAccount) {
-        context?.let {
-            AuthenticationStatus.shouldAuthorize(
-                context = it,
-                account = account
-            ) { shouldAuthorize ->
+        if (!viewModel.isImplicitFlowEnabled) {
+            context?.let {
+                AuthenticationStatus.shouldAuthorize(
+                    context = it,
+                    account = account
+                ) { shouldAuthorize ->
                     binding.loginButton.visibility =
                         if (shouldAuthorize) View.VISIBLE else View.INVISIBLE
+                }
             }
         }
     }
@@ -210,6 +248,7 @@ class ChatFormFragment : Fragment() {
         }
 
         accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
+        accountData.addProperty(DataKeys.ImplicitFlow, binding.implicitSwitch.isEnabled)
 
         return accountData
     }

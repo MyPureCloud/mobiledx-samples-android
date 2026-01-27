@@ -12,7 +12,8 @@ import java.lang.annotation.RetentionPolicy;
         DataKeys.Domain,
         DataKeys.CustomAttributes,
         DataKeys.TokenStoreKey,
-        DataKeys.Logging,})
+        DataKeys.Logging,
+        DataKeys.ImplicitFlow,})
 
 public @interface DataKeys {
     String TokenStoreKey = "tokenStoreKey";
@@ -20,4 +21,5 @@ public @interface DataKeys {
     String DeploymentId = "deploymentId";
     String Logging = "logging";
     String CustomAttributes = "customAttributes";
+    String ImplicitFlow = "implicit_flow";
 }
