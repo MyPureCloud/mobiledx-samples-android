@@ -21,6 +21,7 @@ import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
 import com.genesys.cloud.ui.structure.controller.ChatAvailability
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.gson.JsonObject
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -82,12 +83,14 @@ class ChatFormFragment : Fragment() {
             )
         }
 
-        lifecycleScope.launch{
-            viewModel.isReLoginInProgress.collect {
-                if (it) {
-                    onReAuthorizationRequired()
+        lifecycleScope.launch {
+            viewModel.isReLoginInProgress
+                .drop(1) // don't collect the stored value but only the changes
+                .collect {
+                    if (it) {
+                        onReAuthorizationRequired()
+                    }
                 }
-            }
         }
     }
     //endregion

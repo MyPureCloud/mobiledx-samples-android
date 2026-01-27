@@ -63,6 +63,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -189,7 +190,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         viewModel.apply {
             lifecycleScope.launch {
-                idToken.collect { newIdToken ->
+                idToken
+                    .drop(1) // don't collect the stored value but only the changes
+                    .collect { newIdToken ->
                     if (isReauthorizationInProgress.value) {
                         newIdToken?.let {
                             chatController?.reauthorizeImplicitFlow(it, nonce.value)
@@ -707,6 +710,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.ChatWindowDetached -> {
+                waitingVisibility(false)
                 if (!shouldDefaultBack && supportFragmentManager.backStackEntryCount == 0) {
                     finish()
                 }
