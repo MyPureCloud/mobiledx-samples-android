@@ -28,13 +28,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
-import com.genesys.cloud.core.model.StatementScope
-import com.genesys.cloud.core.utils.IOScope
 import com.genesys.cloud.core.utils.NRError
-import com.genesys.cloud.core.utils.getAs
-import com.genesys.cloud.core.utils.runMain
-import com.genesys.cloud.core.utils.snack
-import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
 import com.genesys.cloud.integration.core.EndedReason
 import com.genesys.cloud.integration.core.StateEvent
@@ -50,6 +44,10 @@ import com.genesys.cloud.messenger.sample.data.PermissionHandler.Companion.PERMI
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMessengerAccount
 import com.genesys.cloud.messenger.sample.databinding.ActivityMainBinding
+import com.genesys.cloud.messenger.sample.util.IOScope
+import com.genesys.cloud.messenger.sample.util.runMain
+import com.genesys.cloud.messenger.sample.util.snack
+import com.genesys.cloud.messenger.sample.util.toast
 import com.genesys.cloud.ui.structure.controller.*
 import com.genesys.cloud.ui.structure.controller.pushnotifications.ChatPushNotificationIntegration
 import com.google.android.gms.tasks.Tasks
@@ -642,7 +640,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         when (error.errorCode) {
             NRError.ConfigurationsError, NRError.ConversationCreationError -> {
-                Log.e(TAG,"!!!!! Chat ${error.scope} can't be created: $message")
+                Log.e(TAG,"!!!!! Chat can't be created: $message")
                 if (findChatFragment()?.isVisible == true) {
                     onBackPressed()
                 }
@@ -661,7 +659,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     override fun onChatStateChanged(stateEvent: StateEvent) {
 
-        Log.d(TAG, "${stateEvent.scope} chat in state: ${stateEvent.state}")
+        Log.d(TAG, "Chat in state: ${stateEvent.state}")
 
         when (stateEvent.state) {
             StateEvent.Started -> {
@@ -670,7 +668,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.ChatWindowLoaded -> {
-                if (chatController?.getScope() == StatementScope.BoldScope) waitingVisibility(false)
             }
 
             StateEvent.ChatWindowDetached -> {
@@ -681,7 +678,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Closed -> {
-                onChatClosed(stateEvent.data.getAs<EndedReason>())
+                onChatClosed(stateEvent.data as? EndedReason)
             }
 
             StateEvent.Unavailable -> runMain {

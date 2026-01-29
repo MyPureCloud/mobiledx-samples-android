@@ -9,7 +9,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.R
@@ -17,6 +16,7 @@ import com.genesys.cloud.messenger.sample.data.defs.DataKeys
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMap
 import com.genesys.cloud.messenger.sample.databinding.FragmentChatFormBinding
+import com.genesys.cloud.messenger.sample.util.toast
 import com.genesys.cloud.ui.structure.controller.ChatAvailability
 import com.genesys.cloud.ui.structure.controller.auth.AuthenticationStatus
 import com.google.gson.JsonObject

@@ -9,9 +9,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatTextView
-import com.genesys.cloud.core.utils.children
-import com.genesys.cloud.core.utils.px
+import androidx.core.view.children
 import com.genesys.cloud.messenger.sample.R
+import com.genesys.cloud.messenger.sample.util.px
 import com.google.android.material.snackbar.Snackbar
 
 class FloatingSnackbar {
@@ -29,8 +29,8 @@ class FloatingSnackbar {
                 view.layoutParams = params
                 view.setBackgroundResource(R.drawable.snackbar_floating_background)
                 view.setOnClickListener { snackbar.dismiss() }
-                val contentLayout = view.children().firstOrNull() as LinearLayout
-                contentLayout.children().filterIsInstance<AppCompatTextView>().firstOrNull()
+                val contentLayout = (view as ViewGroup).children.firstOrNull() as LinearLayout
+                contentLayout.children.filterIsInstance<AppCompatTextView>().firstOrNull()
                     ?.setTextColor(Color.rgb(0, 0, 0))
                 (contentLayout as? LinearLayout?)?.addView(
                     ImageView(context).apply {
