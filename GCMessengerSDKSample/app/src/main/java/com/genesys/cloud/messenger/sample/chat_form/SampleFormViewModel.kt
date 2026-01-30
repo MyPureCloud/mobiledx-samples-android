@@ -83,6 +83,9 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
 
     fun setNonce(newNonce: String) {
         _nonce.update { newNonce }
+        _uiState.value = _uiState.value?.copy(
+            startChat = false
+        )
     }
 
     fun setReAuthorizationInProgress(isReAuthorizationStarted: Boolean) {
@@ -120,7 +123,8 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
 
     fun setImplicitFlowEnabled(isEnabled : Boolean) {
         _uiState.value = _uiState.value?.copy(
-            enableImplicitFlow = isEnabled
+            enableImplicitFlow = isEnabled,
+            startChat = false
         ) ?: SampleUIState(
             account = null,
             enableImplicitFlow = isEnabled
