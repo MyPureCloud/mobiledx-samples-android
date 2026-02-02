@@ -147,7 +147,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
                 if (uiState.startChat) {
                     prepareAndCreateChat(messengerAccount)
-                    viewModel.clearStartChat()
                 } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
                 } else if (uiState.enablePush) {
@@ -704,6 +703,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 waitingVisibility(false)
                 updateMenuVisibility()
                 reconnectingChatSnackBar?.dismiss()
+                viewModel.clearStartChat()
             }
 
             StateEvent.ChatWindowLoaded -> {
