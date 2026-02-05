@@ -63,6 +63,16 @@
                 android:textSize="16sp"
                 android:layout_marginTop="6dp"/>
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/implicitSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="true"
+                android:padding="6sp"
+                android:text="@string/quick_start_account_form_implicit"
+                android:textSize="16sp"
+                android:layout_marginTop="6dp"/>
+
         </LinearLayout>
     </ScrollView>
 

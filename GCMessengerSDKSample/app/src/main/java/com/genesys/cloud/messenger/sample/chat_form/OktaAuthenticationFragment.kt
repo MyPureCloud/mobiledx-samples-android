@@ -1,23 +1,20 @@
 package com.genesys.cloud.messenger.sample.chat_form
 
+import android.net.Uri
 import android.view.View
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.genesys.cloud.messenger.sample.BuildConfig
+import com.genesys.cloud.messenger.sample.chat_form.OktaAuthenticationFragment.Companion.TAG
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 
 class OktaAuthenticationFragment : WebFragment() {
 
-    private val viewModel: SampleFormViewModel by activityViewModels {
-        SampleFormViewModelFactory(
-            JsonSampleRepository(
-                requireActivity().applicationContext
-            )
-        )
-    }
+    private lateinit var viewModel: SampleFormViewModel
 
     override fun provideWebViewClient(): WebViewClient {
         return object : WebViewClient() {
@@ -35,6 +32,13 @@ class OktaAuthenticationFragment : WebFragment() {
                 request?.url?.getQueryParameter("code")?.let {
                     authCodeReceived(it)
                     return true
+                }  ?: run {
+                    request?.url?.getParam("id_token")?.let {
+                        idTokenReceived(it)
+                        return true
+                    }
+                } ?: run {
+                    Log.w(TAG, "Neither authCode nor idToken was able to found")
                 }
                 return super.shouldOverrideUrlLoading(view, request)
             }
@@ -43,6 +47,11 @@ class OktaAuthenticationFragment : WebFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(
+            owner = requireActivity(),
+            factory = SampleFormViewModelFactory(JsonSampleRepository(requireActivity().applicationContext))
+        )[SampleFormViewModel::class.java]
+
         if (arguments?.getString(URL) == buildOktaLogoutUrl()) {
             showProgressBar(true)
         }
@@ -54,11 +63,17 @@ class OktaAuthenticationFragment : WebFragment() {
 
     private fun authCodeReceived(authCode: String) {
         viewModel.setAuthCode(authCode, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
-        parentFragmentManager.popBackStack()
+        activity?.onBackPressedDispatcher?.onBackPressed()
+    }
+
+    private fun idTokenReceived(idToken: String) {
+        viewModel.setIdToken(idToken)
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     private fun signoutSuccessful() {
         viewModel.clearAuthCode()
+        viewModel.clearIdToken()
     }
 
     override fun onDestroy() {
@@ -73,6 +88,15 @@ class OktaAuthenticationFragment : WebFragment() {
         @JvmStatic
         fun newLoginInstance(): OktaAuthenticationFragment {
             val oktaAuthorizeUrl = buildOktaAuthorizeUrl()
+            return OktaAuthenticationFragment().apply {
+                arguments = Bundle().apply {
+                    putString(URL, oktaAuthorizeUrl)
+                }
+            }
+        }
+
+        fun newImplicitLoginInstance(nonce: String): OktaAuthenticationFragment {
+            val oktaAuthorizeUrl = buildImplicitOktaAuthorizeUrl(nonce)
             return OktaAuthenticationFragment().apply {
                 arguments = Bundle().apply {
                     putString(URL, oktaAuthorizeUrl)
@@ -112,6 +136,19 @@ class OktaAuthenticationFragment : WebFragment() {
             return builder.toString()
         }
 
+        private fun buildImplicitOktaAuthorizeUrl(nonce: String): String {
+            val builder =
+                StringBuilder("https://${notNullOrEmpty(BuildConfig.OKTA_DOMAIN, "OKTA_DOMAIN")}/oauth2/default/v1/authorize").apply {
+                    append("?client_id=${notNullOrEmpty(BuildConfig.CLIENT_ID, "CLIENT_ID")}")
+                    append("&response_type=id_token")
+                    append("&scope=${notNullOrEmpty(BuildConfig.SCOPES, "SCOPES")}")
+                    append("&redirect_uri=${notNullOrEmpty(BuildConfig.SIGN_IN_REDIRECT_URI, "SIGN_IN_REDIRECT_URI")}")
+                    append("&state=${notNullOrEmpty(BuildConfig.OKTA_STATE, "OKTA_STATE")}")
+                    append("&nonce=${nonce}")
+                }
+            return builder.toString()
+        }
+
         fun buildOktaLogoutUrl(): String{
             val builder =
                 StringBuilder("https://${notNullOrEmpty(BuildConfig.OKTA_DOMAIN, "OKTA_DOMAIN")}/login/signout")
@@ -119,3 +156,35 @@ class OktaAuthenticationFragment : WebFragment() {
         }
     }
 }
+
+private fun Uri.getParam(param: String): String? {
+    return fragment?.let { currentFragment ->
+        Log.d(TAG, "Fragment: $currentFragment")
+        // The fragment is a string like "id_token=eyJraWQiOiJyS0px&access_token=..."
+
+        val params = mutableMapOf<String, String>()
+        val pairs = currentFragment.split("&")
+        for (pair in pairs) {
+            val parts = pair.split("=")
+            if (parts.size == 2) {
+                val key = Uri.decode(parts[0]) // Decode URL-encoded parts
+                val value = Uri.decode(parts[1])
+                params[key] = value
+            }
+        }
+
+        val paramValue = params[param]
+
+        if (paramValue != null) {
+            Log.d(TAG, "Extracted $param: $paramValue")
+            paramValue
+        } else {
+            Log.e(TAG, "$param not found in fragment")
+            null
+        }
+    } ?: run {
+        Log.e(TAG, "no fragment found")
+        null
+    }
+}
+

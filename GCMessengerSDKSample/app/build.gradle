@@ -19,8 +19,8 @@ plugins {
 def isGoogleServicesFileExists = file("google-services.json").exists()
 
 // project version section
-def projectVersion = "1.20.0"
-def sdkVersion = "1.20.0"
+def projectVersion = "1.21.0.rc9"
+def sdkVersion = "1.21.0.rc6"
 
 def parts = projectVersion.split('\\.')
 def major = parts[0].toInteger()
@@ -33,6 +33,8 @@ def projectName = "${major}.${minor}.${patch}"
 if (parts.length > 3) {
     def preRelease = parts[3].replaceAll('rc', '').toInteger()
     projectCode += preRelease
+} else {
+    projectCode += 99
 }
 // project version section
 
