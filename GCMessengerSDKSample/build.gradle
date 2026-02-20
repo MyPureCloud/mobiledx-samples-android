@@ -2,7 +2,8 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:8.6.1")
 
-        if (file("app/google-services.json").exists()) {
+        def googleServicesFile = new File(project.projectDir, "app/google-services.json")
+        if (googleServicesFile.exists()) {
             classpath("com.google.gms:google-services:4.3.15")
             classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.4")
         }

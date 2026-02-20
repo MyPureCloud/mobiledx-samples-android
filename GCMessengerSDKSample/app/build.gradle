@@ -1,7 +1,7 @@
 buildscript {
     ext {
         oktaProperties = new Properties()
-        oktaPropertiesFile = new File(rootDir.absolutePath + "/app/okta.properties")
+        oktaPropertiesFile = new File(project.projectDir, "okta.properties")
         if (oktaPropertiesFile.exists()) {
             oktaProperties.load(oktaPropertiesFile.newReader())
             println("okta.properties loaded.")
@@ -16,22 +16,28 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-def isGoogleServicesFileExists = file("google-services.json").exists()
+def googleServicesFile = new File(project.projectDir, "google-services.json")
+def isGoogleServicesFileExists = googleServicesFile.exists()
 
 // project version section
-def projectVersion = "1.21.0"
-def sdkVersion = "1.21.0"
+def projectVersion = rootProject.findProperty('versionParam') ?: '2.0.0'
+def useArtifactory = rootProject.findProperty('useArtifactory')?.toBoolean() ?: (rootProject.name != 'mobile-messenger-android-sdk')
 
-def parts = projectVersion.split('\\.')
-def major = parts[0].toInteger()
-def minor = parts[1].toInteger()
-def patch = parts[2].toInteger()
+// Parse version: 1.21.0, 1.21.0-snapshot-pr-214-12, 1.21.0-rc5
+def versionParts = projectVersion.split('-', 2)
+def semverParts = versionParts[0].split('\\.')
+def major = semverParts[0].toInteger()
+def minor = semverParts[1].toInteger()
+def patch = semverParts[2].toInteger()
 
 def projectCode = (major * 1000000) + (minor * 10000) + (patch * 100)
 def projectName = "${major}.${minor}.${patch}"
 
-if (parts.length > 3) {
-    def preRelease = parts[3].replaceAll('rc', '').toInteger()
+if (versionParts.length > 1) {
+    // Has suffix like "snapshot-pr-214-12" or "rc5"
+    def suffix = versionParts[1]
+    def numbers = suffix.replaceAll('[^0-9]', '')
+    def preRelease = numbers.isEmpty() ? 0 : Math.min(numbers.toInteger(), 98)
     projectCode += preRelease
 } else {
     projectCode += 99
@@ -95,6 +101,10 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
     bundle {
         language {
             language {
@@ -113,9 +123,17 @@ android {
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:${sdkVersion}")
-    implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
-    implementation("com.genesys.cloud:ui:${sdkVersion}")
+    if (useArtifactory) {
+        // Use published artifacts from JFrog
+        implementation("com.genesys.cloud:core:${projectVersion}")
+        implementation("com.genesys.cloud:chatintegration:${projectVersion}")
+        implementation("com.genesys.cloud:ui:${projectVersion}")
+    } else {
+        // Local development: use source code from SDK modules
+        implementation project(':core')
+        implementation project(':chatintegration')
+        implementation project(':ui')
+    }
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
