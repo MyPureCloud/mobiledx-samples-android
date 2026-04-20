@@ -16,6 +16,7 @@
     <string name="quick_start_account_form_server">Server</string>
     <string name="quick_start_account_form_logging">Logging</string>
     <string name="quick_start_account_form_implicit">Implicit auth flow</string>
+    <string name="quick_start_account_form_session_expiration_notice_interval">Session Expiration Notice Interval (seconds)</string>
 
     <string name="account_form_contexts">Contexts</string>
 
