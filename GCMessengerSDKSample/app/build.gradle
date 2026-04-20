@@ -20,28 +20,9 @@ def googleServicesFile = new File(project.projectDir, "google-services.json")
 def isGoogleServicesFileExists = googleServicesFile.exists()
 
 // project version section
-def projectVersion = rootProject.findProperty('versionParam') ?: '2.0.0'
+def projectVersion = rootProject.findProperty('versionParam') ?: '2.1.0'
 def useArtifactory = rootProject.findProperty('useArtifactory')?.toBoolean() ?: (rootProject.name != 'mobile-messenger-android-sdk')
-
-// Parse version: 1.21.0, 1.21.0-snapshot-pr-214-12, 1.21.0-rc5
-def versionParts = projectVersion.split('-', 2)
-def semverParts = versionParts[0].split('\\.')
-def major = semverParts[0].toInteger()
-def minor = semverParts[1].toInteger()
-def patch = semverParts[2].toInteger()
-
-def projectCode = (major * 1000000) + (minor * 10000) + (patch * 100)
-def projectName = "${major}.${minor}.${patch}"
-
-if (versionParts.length > 1) {
-    // Has suffix like "snapshot-pr-214-12" or "rc5"
-    def suffix = versionParts[1]
-    def numbers = suffix.replaceAll('[^0-9]', '')
-    def preRelease = numbers.isEmpty() ? 0 : Math.min(numbers.toInteger(), 98)
-    projectCode += preRelease
-} else {
-    projectCode += 99
-}
+def injectedVersionCode = project.findProperty("versionCode")?.toString()?.toInteger()
 // project version section
 
 if (isGoogleServicesFileExists) {
@@ -59,8 +40,8 @@ android {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
         targetSdk = 35
-        versionCode = projectCode
-        versionName = projectName
+        versionCode = injectedVersionCode ?: 1
+        versionName = projectVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

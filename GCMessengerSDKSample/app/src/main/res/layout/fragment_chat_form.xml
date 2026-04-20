@@ -53,6 +53,13 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/quick_start_account_form_custom_attributes" />
 
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/sessionExpirationNoticeIntervalEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="@string/quick_start_account_form_session_expiration_notice_interval" />
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/loggingSwitch"
                 android:layout_width="match_parent"

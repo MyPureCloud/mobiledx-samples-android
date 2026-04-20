@@ -16,6 +16,9 @@ fun JsonObject.toMessengerAccount(): MessengerAccount {
     ).apply {
         logging = get(DataKeys.Logging)?.asBoolean ?: false
         customAttributes = getString(DataKeys.CustomAttributes).toMap() ?: emptyMap()
+        getString(DataKeys.SessionExpirationNoticeInterval)?.toLongOrNull()?.takeIf { it > 0 }?.let {
+            sessionExpirationNoticeInterval = it
+        }
     }
 }
 

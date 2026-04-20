@@ -143,6 +143,7 @@ class ChatFormFragment : Fragment() {
                 setAccountEditTextValue(binding.domainNameEditText, domain)
 
                 binding.customAttributesEditText.setText(accountRawJson[DataKeys.CustomAttributes]?.asString)
+                binding.sessionExpirationNoticeIntervalEditText.setText(accountRawJson[DataKeys.SessionExpirationNoticeInterval]?.asString)
 
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
@@ -252,6 +253,14 @@ class ChatFormFragment : Fragment() {
 
         accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
         accountData.addProperty(DataKeys.ImplicitFlow, binding.implicitSwitch.isEnabled)
+
+        val sessionExpirationNoticeIntervalValue = binding.sessionExpirationNoticeIntervalEditText.text.toString()
+        if (sessionExpirationNoticeIntervalValue.isNotEmpty()) {
+            accountData.addProperty(
+                DataKeys.SessionExpirationNoticeInterval,
+                sessionExpirationNoticeIntervalValue
+            )
+        }
 
         return accountData
     }
