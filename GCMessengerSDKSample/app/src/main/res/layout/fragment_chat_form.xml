@@ -20,8 +20,7 @@
         android:layout_height="wrap_content"
         android:text="@string/title_details"
         android:textColor="@color/black"
-        android:textSize="22sp"
-        android:layout_margin="10dp"/>
+        android:textSize="22sp"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -105,45 +104,58 @@
                 android:id="@+id/chat_availability"
                 style="@style/SubmitButtonStyle"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:contentDescription="@string/chat_availability"
-                android:text="@string/chat_availability" />
+                android:text="@string/chat_availability"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorSecondary"
+                />
+
+            <Button
+                android:id="@+id/push_button"
+                style="@style/SubmitButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/enable_push_text"
+                android:text="@string/enable_push_text"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorSecondary"
+                />
+
+            <Button
+                android:id="@+id/login_button"
+                style="@style/SubmitButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/login_text"
+                android:text="@string/login_text"
+                />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorSecondary"
+                />
 
             <Button
                 android:id="@+id/start_chat"
                 style="@style/SubmitButtonStyle"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:contentDescription="@string/start_chat"
-                android:text="@string/start_chat" />
-
+                android:text="@string/start_chat"
+                />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/login_button"
-            style="@style/SubmitButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="@string/login_text"
-            android:text="@string/login_text" />
-
-        <Button
-            android:id="@+id/push_button"
-            style="@style/SubmitButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="@string/enable_push_text"
-            android:text="@string/enable_push_text" />
-    </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

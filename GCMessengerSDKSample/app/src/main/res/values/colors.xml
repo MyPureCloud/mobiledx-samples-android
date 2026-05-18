@@ -4,6 +4,12 @@
     <color name="colorPrimaryDark">@color/purple_700</color>
     <color name="colorSecondary">@color/purple_200</color>
     <color name="colorAccent">@color/teal_200</color>
+    <color name="colorAccentGray">#9b9b9b</color>
+
+    <color name="colorTextDark">#4a4a4a</color>
+    <color name="colorTextSemiDark">#6a6a6a</color>
+    <color name="colorTextLight">#ffffff</color>
+    <color name="colorTextSecondary">#0087ff</color>
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
@@ -12,6 +18,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="submit_view_idle">#dcdcdc</color>
+    <color name="submit_view_pressed">@color/colorPrimary</color>
+
+    <color name="main_button_idle">@android:color/transparent</color>
+    <color name="main_button_pressed">@color/colorPrimary</color>
+    <color name="main_button_disabled">@color/colorAccentGray</color>
 
     <color name="form_field_hint">?colorAccent</color>
     <color name="snackbar_floating_background_color">#F3F3F3</color>

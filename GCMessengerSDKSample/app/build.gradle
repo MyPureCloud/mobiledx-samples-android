@@ -13,14 +13,13 @@ buildscript {
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
 }
 
 def googleServicesFile = new File(project.projectDir, "google-services.json")
 def isGoogleServicesFileExists = googleServicesFile.exists()
 
 // project version section
-def projectVersion = rootProject.findProperty('versionParam') ?: '2.1.0'
+def projectVersion = rootProject.findProperty('versionParam') ?: '2.2.0'
 def useArtifactory = rootProject.findProperty('useArtifactory')?.toBoolean() ?: (rootProject.name != 'mobile-messenger-android-sdk')
 def injectedVersionCode = project.findProperty("versionCode")?.toString()?.toInteger()
 // project version section
@@ -34,12 +33,12 @@ if (isGoogleServicesFileExists) {
 
 android {
     namespace = "com.genesys.cloud.messenger.sample"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = injectedVersionCode ?: 1
         versionName = projectVersion
 
@@ -72,9 +71,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     viewBinding {
         enabled = true
     }
@@ -83,8 +79,7 @@ android {
         buildConfig = true
     }
     lint {
-        abortOnError = false
-        checkReleaseBuilds = false
+        checkReleaseBuilds = true
     }
     bundle {
         language {
@@ -98,6 +93,12 @@ android {
                 enableSplit = false
             }
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget("17"))
     }
 }
 
@@ -142,10 +143,10 @@ dependencies {
 
     //region Firebase
     if (isGoogleServicesFileExists) {
-        implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
-        implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
+        implementation("com.google.firebase:firebase-crashlytics-ktx:19.4.4")
+        implementation("com.google.firebase:firebase-analytics-ktx:22.5.0")
     }
-    implementation 'com.google.firebase:firebase-messaging:24.1.0'
+    implementation 'com.google.firebase:firebase-messaging:24.1.2'
     //endregion
 
     //region Tests
