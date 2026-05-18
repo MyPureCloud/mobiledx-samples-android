@@ -1,5 +1,6 @@
 package com.genesys.cloud.messenger.sample.chat_form
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -72,6 +73,7 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     }
 
     fun setAuthCode(authCode: String, redirectUri: String, codeVerifier: String?){
+        Log.d(TAG, "setAuthCode(${authCode.take(3)})")
         _authCode.value = authCode
         this.redirectUri = redirectUri
         this.codeVerifier = codeVerifier
@@ -94,6 +96,7 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     }
 
     fun clearAuthCode(){
+        Log.d(TAG, "clearAuthCode()")
         _authCode.value = ""
         this.redirectUri = ""
         this.codeVerifier = null
@@ -169,5 +172,9 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         _uiState.value = _uiState.value?.copy(
             startChat = false
         )
+    }
+
+    companion object{
+        private const val TAG = "SampleFormViewModel"
     }
 }
