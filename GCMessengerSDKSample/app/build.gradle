@@ -19,7 +19,7 @@ def googleServicesFile = new File(project.projectDir, "google-services.json")
 def isGoogleServicesFileExists = googleServicesFile.exists()
 
 // project version section
-def projectVersion = rootProject.findProperty('versionParam') ?: '2.2.0'
+def projectVersion = rootProject.findProperty('versionParam') ?: '1.9.0'
 def useArtifactory = rootProject.findProperty('useArtifactory')?.toBoolean() ?: (rootProject.name != 'mobile-messenger-android-sdk')
 def useMavenCentral = rootProject.findProperty('useMavenCentral')?.toBoolean() ?: false
 def injectedVersionCode = project.findProperty("versionCode")?.toString()?.toInteger()
