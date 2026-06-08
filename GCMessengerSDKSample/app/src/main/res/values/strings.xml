@@ -2,6 +2,7 @@
     <string name="app_name">Genesys Cloud Mobile Messenger</string>
     <string name="app_version">Version: %1$s (%2$d)</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     <string name="title_details">Account Details</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_home">Home</string>
@@ -16,6 +17,7 @@
     <string name="quick_start_account_form_server">Server</string>
     <string name="quick_start_account_form_logging">Logging</string>
     <string name="quick_start_account_form_implicit">Implicit auth flow</string>
+    <string name="quick_start_account_form_session_expiration_notice_interval">Session Expiration Notice Interval (seconds)</string>
 
     <string name="account_form_contexts">Contexts</string>
 

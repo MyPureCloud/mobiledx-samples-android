@@ -1,7 +1,7 @@
 buildscript {
     ext {
         oktaProperties = new Properties()
-        oktaPropertiesFile = new File(rootDir.absolutePath + "/app/okta.properties")
+        oktaPropertiesFile = new File(project.projectDir, "okta.properties")
         if (oktaPropertiesFile.exists()) {
             oktaProperties.load(oktaPropertiesFile.newReader())
             println("okta.properties loaded.")
@@ -13,29 +13,15 @@ buildscript {
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
 }
 
-def isGoogleServicesFileExists = file("google-services.json").exists()
+def googleServicesFile = new File(project.projectDir, "google-services.json")
+def isGoogleServicesFileExists = googleServicesFile.exists()
 
 // project version section
-def projectVersion = "1.21.0.rc9"
-def sdkVersion = "1.21.0.rc6"
-
-def parts = projectVersion.split('\\.')
-def major = parts[0].toInteger()
-def minor = parts[1].toInteger()
-def patch = parts[2].toInteger()
-
-def projectCode = (major * 1000000) + (minor * 10000) + (patch * 100)
-def projectName = "${major}.${minor}.${patch}"
-
-if (parts.length > 3) {
-    def preRelease = parts[3].replaceAll('rc', '').toInteger()
-    projectCode += preRelease
-} else {
-    projectCode += 99
-}
+def projectVersion = rootProject.findProperty('versionParam') ?: '2.2.0'
+def useArtifactory = rootProject.findProperty('useArtifactory')?.toBoolean() ?: (rootProject.name != 'mobile-messenger-android-sdk')
+def injectedVersionCode = project.findProperty("versionCode")?.toString()?.toInteger()
 // project version section
 
 if (isGoogleServicesFileExists) {
@@ -47,14 +33,14 @@ if (isGoogleServicesFileExists) {
 
 android {
     namespace = "com.genesys.cloud.messenger.sample"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.genesys.cloud.messenger.sample"
         minSdk = 21
-        targetSdk = 35
-        versionCode = projectCode
-        versionName = projectName
+        targetSdk = 36
+        versionCode = injectedVersionCode ?: 1
+        versionName = projectVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -85,15 +71,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     viewBinding {
         enabled = true
     }
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+    lint {
+        checkReleaseBuilds = true
     }
     bundle {
         language {
@@ -110,12 +96,26 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget("17"))
+    }
+}
+
 dependencies {
 
     //region Genesys
-    implementation("com.genesys.cloud:core:${sdkVersion}")
-    implementation("com.genesys.cloud:chatintegration:${sdkVersion}")
-    implementation("com.genesys.cloud:ui:${sdkVersion}")
+    if (useArtifactory) {
+        // Use published artifacts from JFrog
+        implementation("com.genesys.cloud:core:${projectVersion}")
+        implementation("com.genesys.cloud:chatintegration:${projectVersion}")
+        implementation("com.genesys.cloud:ui:${projectVersion}")
+    } else {
+        // Local development: use source code from SDK modules
+        implementation project(':core')
+        implementation project(':chatintegration')
+        implementation project(':ui')
+    }
 
     //region android
     implementation("androidx.core:core-ktx:1.9.0")
@@ -143,10 +143,10 @@ dependencies {
 
     //region Firebase
     if (isGoogleServicesFileExists) {
-        implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
-        implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
+        implementation("com.google.firebase:firebase-crashlytics-ktx:19.4.4")
+        implementation("com.google.firebase:firebase-analytics-ktx:22.5.0")
     }
-    implementation 'com.google.firebase:firebase-messaging:24.1.0'
+    implementation 'com.google.firebase:firebase-messaging:24.1.2'
     //endregion
 
     //region Tests

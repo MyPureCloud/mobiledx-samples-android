@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -28,13 +29,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
-import com.genesys.cloud.core.model.StatementScope
-import com.genesys.cloud.core.utils.IOScope
 import com.genesys.cloud.core.utils.NRError
-import com.genesys.cloud.core.utils.getAs
-import com.genesys.cloud.core.utils.runMain
-import com.genesys.cloud.core.utils.snack
-import com.genesys.cloud.core.utils.toast
 import com.genesys.cloud.integration.core.AccountInfo
 import com.genesys.cloud.integration.core.EndedReason
 import com.genesys.cloud.integration.core.StateEvent
@@ -121,6 +116,8 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        onBackPress()
 
         val root = findViewById<FrameLayout>(R.id.main_layout)
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
@@ -242,15 +239,23 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
     }
 
-    override fun onBackPressed() {
-        chatController?.endChat(false)
-        reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
-
-       handleBackStackCount()
-
-        if (!supportFragmentManager.isStateSaved) super.onBackPressed()
+    private fun onBackPress() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    chatController?.endChat(false)
+                    reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
+                    handleBackStackCount()
+                    if (!supportFragmentManager.isStateSaved) {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            }
+        )
     }
-
     //endregion
 
     //region - menu
@@ -282,8 +287,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.minimize_chat -> {
-                handleBackStackCount()
-                super.onBackPressed()
+                minimizeChatUiPreservingSession()
                 return true
             }
 
@@ -310,6 +314,21 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         return false
     }
 
+
+    /**
+     * Hides the chat UI by popping the fragment back stack without calling [ChatController.endChat],
+     * so the messenger session stays connected and can still receive messages (see [onChatElementReceived]).
+     */
+    private fun minimizeChatUiPreservingSession() {
+        if (supportFragmentManager.isStateSaved) return
+        val depth = supportFragmentManager.backStackEntryCount
+        if (depth == 0) return
+        if (depth == 1) {
+            shouldDefaultBack = true
+        }
+        supportFragmentManager.popBackStack()
+    }
+
     private fun showClearConversationDialog() {
         AlertDialog.Builder(this)
             .setTitle(R.string.clear_conversation_dialog_title)
@@ -321,6 +340,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun onLogout() {
+        Log.d(TAG, "onLogout()")
         chatController?.logoutFromAuthenticatedSession()
     }
 
@@ -339,6 +359,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun prepareAndCreateChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
+        Log.d(TAG, "prepareAndCreateChat(${(account as? MessengerAccount)?.authenticationInfo?.authCode?.take(3)})")
         waitingVisibility(true)
 
         viewModel.isAuthenticated = false
@@ -356,9 +377,11 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 context = this,
                 account = account
             ) { shouldAuthorize ->
+                Log.d(TAG, "shouldAuthorize(${shouldAuthorize})")
                 if (shouldAuthorize) {
                     if (account is MessengerAccount && viewModel.hasAuthCode) {
                         viewModel.authCode.value?.let { authCode ->
+                            Log.d(TAG, "account.setAuthenticationInfo(${authCode.take(3)})")
                             account.setAuthenticationInfo(
                                 authCode,
                                 viewModel.redirectUri, viewModel.codeVerifier
@@ -375,6 +398,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     }
 
     private fun createChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
+        Log.d(TAG, "createChat(accountInfo=(authInfo=${(account as? MessengerAccount)?.authenticationInfo?.authCode?.take(3)}))")
         if (chatController?.wasDestructed != false) {
 
             chatController = ChatController.Builder(this)
@@ -461,7 +485,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                             CONVERSATION_FRAGMENT_TAG,
                             0
                         ) == false && supportFragmentManager.backStackEntryCount >= 1) {
-                    onBackPressed()
+                    onBackPressedDispatcher.onBackPressed()
                 }
 
             } catch (ex: IllegalStateException) {
@@ -619,11 +643,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
         }
         val intentFilter = IntentFilter()
         intentFilter.addAction(AppFirebaseMessagingService.PUSH_NOTIFICATION_RECEIVED)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(pushNotificationBroadcastReceiver, intentFilter, RECEIVER_EXPORTED)
-        } else {
-            registerReceiver(pushNotificationBroadcastReceiver, intentFilter)
-        }
+        ContextCompat.registerReceiver(this, pushNotificationBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_EXPORTED)
     }
 
     private fun pushNotificationReceived(messageTitle: String?, messageBody: String?) {
@@ -634,7 +654,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     private fun showAlertDialog(messageTitle: String?, messageBody: String) {
         val dialog = AlertDialog.Builder(this)
-            .setPositiveButton(com.genesys.cloud.ui.R.string.ok) { _, _ -> }
+            .setPositiveButton(R.string.ok) { _, _ -> }
             .create()
         if (messageTitle == null) {
             dialog.setTitle(messageBody)
@@ -670,9 +690,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
         when (error.errorCode) {
             NRError.ConfigurationsError, NRError.ConversationCreationError -> {
-                Log.e(TAG,"!!!!! Chat ${error.scope} can't be created: $message")
+                Log.e(TAG,"!!!!! Chat can't be created: $message")
                 if (findChatFragment()?.isVisible == true) {
-                    onBackPressed()
+                    onBackPressedDispatcher.onBackPressed()
                 }
             }
 
@@ -696,7 +716,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     override fun onChatStateChanged(stateEvent: StateEvent) {
 
-        Log.d(TAG, "${stateEvent.scope} chat in state: ${stateEvent.state}")
+        Log.d(TAG, "Chat in state: ${stateEvent.state}")
 
         when (stateEvent.state) {
             StateEvent.Started -> {
@@ -704,10 +724,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 updateMenuVisibility()
                 reconnectingChatSnackBar?.dismiss()
                 viewModel.clearStartChat()
-            }
-
-            StateEvent.ChatWindowLoaded -> {
-                if (chatController?.getScope() == StatementScope.BoldScope) waitingVisibility(false)
             }
 
             StateEvent.ChatWindowDetached -> {
@@ -719,7 +735,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
 
             StateEvent.Closed -> {
-                onChatClosed(stateEvent.data.getAs<EndedReason>())
+                onChatClosed(stateEvent.data as? EndedReason)
             }
 
             StateEvent.Unavailable -> runMain {
@@ -732,7 +748,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 waitingVisibility(false)
                 updateMenuVisibility()
                 if (supportFragmentManager.backStackEntryCount > 0) {
-                    onBackPressed()
+                    onBackPressedDispatcher.onBackPressed()
                 }
             }
 
@@ -814,9 +830,14 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
     override fun onChatElementReceived(chatElement: ChatElement) {
         super.onChatElementReceived(chatElement)
         Log.i(TAG, "onChatElementReceived(${chatElement.text})")
-        if (supportFragmentManager.backStackEntryCount == 0) {
+        if (!isConversationFragmentVisibleToUser()) {
             showAlertDialog("New Incoming message", chatElement.text)
         }
+    }
+
+    private fun isConversationFragmentVisibleToUser(): Boolean {
+        val chatFragment = findChatFragment() ?: return false
+        return chatFragment.isAdded && chatFragment.isVisible
     }
 
     private fun showSnackbar(message: String, timeout: Int = Snackbar.LENGTH_LONG): Snackbar {
