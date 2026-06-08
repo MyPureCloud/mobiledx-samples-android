@@ -21,6 +21,7 @@ def isGoogleServicesFileExists = googleServicesFile.exists()
 // project version section
 def projectVersion = rootProject.findProperty('versionParam') ?: '2.2.0'
 def useArtifactory = rootProject.findProperty('useArtifactory')?.toBoolean() ?: (rootProject.name != 'mobile-messenger-android-sdk')
+def useMavenCentral = rootProject.findProperty('useMavenCentral')?.toBoolean() ?: false
 def injectedVersionCode = project.findProperty("versionCode")?.toString()?.toInteger()
 // project version section
 
@@ -106,10 +107,10 @@ dependencies {
 
     //region Genesys
     if (useArtifactory) {
-        // Use published artifacts from JFrog
-        implementation("com.genesys.cloud:core:${projectVersion}")
-        implementation("com.genesys.cloud:chatintegration:${projectVersion}")
-        implementation("com.genesys.cloud:ui:${projectVersion}")
+        def groupId = useMavenCentral ? "cloud.genesys" : "com.genesys.cloud"
+        implementation("${groupId}:core:${projectVersion}")
+        implementation("${groupId}:chatintegration:${projectVersion}")
+        implementation("${groupId}:ui:${projectVersion}")
     } else {
         // Local development: use source code from SDK modules
         implementation project(':core')

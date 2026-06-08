@@ -10,7 +10,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://genesysdx.jfrog.io/artifactory/genesys-cloud-android.prod/" }
+        if (!providers.gradleProperty('useMavenCentral').getOrElse('false').toBoolean()) {
+            maven { url "https://genesysdx.jfrog.io/artifactory/genesys-cloud-android.prod/" }
+        }
     }
 }
 rootProject.name = "GCMessengerSDKSample"
