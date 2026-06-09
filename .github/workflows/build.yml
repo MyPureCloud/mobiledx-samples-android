@@ -15,7 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-jfrog:
+    name: Build (JFrog)
     runs-on: ubuntu-latest
 
     steps:
@@ -36,5 +37,30 @@ jobs:
       run: |
         cd GCMessengerSDKSample
         ./gradlew build --build-cache --parallel --no-watch-fs
+      env:
+        GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"
+
+  build-maven-central:
+    name: Build (Maven Central)
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 1  # Shallow clone
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+
+    - name: Build and test
+      run: |
+        cd GCMessengerSDKSample
+        ./gradlew build --build-cache --parallel --no-watch-fs -PuseMavenCentral=true
       env:
         GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"
