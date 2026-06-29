@@ -244,7 +244,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    chatController?.endChat(false)
+                    // Skip endChat when popping non-chat fragments (e.g. OKTA re-auth).
+                    if (isChatFragmentVisible()) {
+                        chatController?.endChat(false)
+                    }
                     reconnectingChatSnackBar?.takeIf { it.isShown }?.dismiss()
                     handleBackStackCount()
                     if (!supportFragmentManager.isStateSaved) {
@@ -256,6 +259,9 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
             }
         )
     }
+
+    private fun isChatFragmentVisible(): Boolean =
+        supportFragmentManager.findFragmentById(R.id.content_main)?.tag == CONVERSATION_FRAGMENT_TAG
     //endregion
 
     //region - menu

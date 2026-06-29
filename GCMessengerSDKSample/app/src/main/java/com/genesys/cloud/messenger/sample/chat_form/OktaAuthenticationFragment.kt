@@ -1,9 +1,9 @@
 package com.genesys.cloud.messenger.sample.chat_form
 
 import android.net.Uri
-import android.view.View
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -63,12 +63,17 @@ class OktaAuthenticationFragment : WebFragment() {
 
     private fun authCodeReceived(authCode: String) {
         viewModel.setAuthCode(authCode, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
-        activity?.onBackPressedDispatcher?.onBackPressed()
+        dismissSelf()
     }
 
     private fun idTokenReceived(idToken: String) {
         viewModel.setIdToken(idToken)
-        activity?.onBackPressedDispatcher?.onBackPressed()
+        dismissSelf()
+    }
+
+    // Pop directly to avoid MainActivity's back callback ending the chat mid re-auth.
+    private fun dismissSelf() {
+        parentFragmentManager.popBackStack()
     }
 
     private fun signoutSuccessful() {
