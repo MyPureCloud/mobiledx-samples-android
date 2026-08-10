@@ -13,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
         DataKeys.CustomAttributes,
         DataKeys.TokenStoreKey,
         DataKeys.Logging,
+        DataKeys.AuthCode,
         DataKeys.ImplicitFlow,
         DataKeys.SessionExpirationNoticeInterval,})
 
@@ -22,6 +23,7 @@ public @interface DataKeys {
     String DeploymentId = "deploymentId";
     String Logging = "logging";
     String CustomAttributes = "customAttributes";
+    String AuthCode = "auth_code";
     String ImplicitFlow = "implicit_flow";
     String SessionExpirationNoticeInterval = "sessionExpirationNoticeInterval";
 }

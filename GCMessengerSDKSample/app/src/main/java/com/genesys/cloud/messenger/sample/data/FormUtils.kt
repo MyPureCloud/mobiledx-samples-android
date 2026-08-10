@@ -2,6 +2,7 @@ package com.genesys.cloud.messenger.sample.data
 
 import android.util.Log
 import com.genesys.cloud.integration.messenger.MessengerAccount
+import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.data.defs.DataKeys
 import com.genesys.cloud.messenger.sample.chat_form.ChatFormFragment
 import com.google.gson.Gson
@@ -16,6 +17,9 @@ fun JsonObject.toMessengerAccount(): MessengerAccount {
     ).apply {
         logging = get(DataKeys.Logging)?.asBoolean ?: false
         customAttributes = getString(DataKeys.CustomAttributes).toMap() ?: emptyMap()
+        getString(DataKeys.AuthCode)?.let {
+            setAuthenticationInfo(it, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
+        }
         getString(DataKeys.SessionExpirationNoticeInterval)?.toLongOrNull()?.takeIf { it > 0 }?.let {
             sessionExpirationNoticeInterval = it
         }
