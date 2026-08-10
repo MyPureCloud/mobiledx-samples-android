@@ -390,7 +390,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                             Log.d(TAG, "account.setAuthenticationInfo(${authCode.take(3)})")
                             account.setAuthenticationInfo(
                                 authCode,
-                                viewModel.redirectUri, viewModel.codeVerifier
+                                BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER
                             )
                         }
                         viewModel.isAuthenticated = true

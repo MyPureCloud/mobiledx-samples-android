@@ -148,6 +148,9 @@ class ChatFormFragment : Fragment() {
                 accountRawJson[DataKeys.Logging]?.let {
                     binding.loggingSwitch.isEnabled = it.asBoolean
                 }
+                accountRawJson[DataKeys.AuthCode]?.let {
+                    viewModel.setAuthCode(it.asString)
+                }
                 accountRawJson[DataKeys.ImplicitFlow]?.let {
                     binding.implicitSwitch.isEnabled = it.asBoolean
                 }
@@ -253,6 +256,11 @@ class ChatFormFragment : Fragment() {
 
         accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
         accountData.addProperty(DataKeys.ImplicitFlow, binding.implicitSwitch.isEnabled)
+        if (viewModel.hasAuthCode) {
+            viewModel.authCode.value?.let {
+                accountData.addProperty(DataKeys.AuthCode, it)
+            }
+        }
 
         val sessionExpirationNoticeIntervalValue = binding.sessionExpirationNoticeIntervalEditText.text.toString()
         if (sessionExpirationNoticeIntervalValue.isNotEmpty()) {

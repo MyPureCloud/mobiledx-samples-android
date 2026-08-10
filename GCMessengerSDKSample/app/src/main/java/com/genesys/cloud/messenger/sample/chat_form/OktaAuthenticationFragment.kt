@@ -62,7 +62,7 @@ class OktaAuthenticationFragment : WebFragment() {
     }
 
     private fun authCodeReceived(authCode: String) {
-        viewModel.setAuthCode(authCode, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
+        viewModel.setAuthCode(authCode)
         dismissSelf()
     }
 

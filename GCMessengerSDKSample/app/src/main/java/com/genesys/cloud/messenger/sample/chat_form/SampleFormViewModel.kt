@@ -20,8 +20,6 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _uiState: MutableLiveData<SampleUIState> = MutableLiveData()
     val uiState: LiveData<SampleUIState> = _uiState
 
-    var redirectUri: String = ""
-    var codeVerifier: String? = null
     private val _authCode: MutableLiveData<String> = MutableLiveData()
     val authCode: LiveData<String> = _authCode
 
@@ -40,10 +38,10 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     private val _idToken = MutableStateFlow<String?>(null)
     val idToken: StateFlow<String?> = _idToken.asStateFlow()
 
-    private val _nonce = MutableStateFlow<String>(UUID.randomUUID().toString())
+    private val _nonce = MutableStateFlow(UUID.randomUUID().toString())
     val nonce = _nonce.asStateFlow()
 
-    private val _isReauthorizationInProgress = MutableStateFlow<Boolean>(false)
+    private val _isReauthorizationInProgress = MutableStateFlow(false)
     val isReauthorizationInProgress = _isReauthorizationInProgress.asStateFlow()
 
     private val _isReLoginInProgress = MutableStateFlow(false)
@@ -72,11 +70,9 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         processAccountData(accountData, testAvailability = true, implicitEnabled = isImplicitFlowEnabled)
     }
 
-    fun setAuthCode(authCode: String, redirectUri: String, codeVerifier: String?){
+    fun setAuthCode(authCode: String){
         Log.d(TAG, "setAuthCode(${authCode.take(3)})")
         _authCode.value = authCode
-        this.redirectUri = redirectUri
-        this.codeVerifier = codeVerifier
     }
 
     fun setIdToken(newIdToken: String) {
@@ -98,8 +94,6 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
     fun clearAuthCode(){
         Log.d(TAG, "clearAuthCode()")
         _authCode.value = ""
-        this.redirectUri = ""
-        this.codeVerifier = null
     }
 
     fun clearIdToken() {
