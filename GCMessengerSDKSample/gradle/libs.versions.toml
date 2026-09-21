@@ -1,0 +1,172 @@
+# Keep entries within each section (grouped by the "# ..." headings) sorted alphabetically.
+
+[versions]
+# Android SDK levels
+compileSdk = "36"
+minSdk = "21"
+targetSdk = "36"
+
+# Kotlin / Coroutines
+coroutines = "1.10.2"
+kotlin = "2.3.20"
+
+# Serialization
+gson = "2.8.9"
+gson-sample = "2.9.1"
+
+# AndroidX
+activity-ktx = "1.9.3"
+annotation = "1.9.1"
+appcompat = "1.7.0"
+arch-core-testing = "2.0.0"
+cardview = "1.0.0"
+core-ktx = "1.9.0"
+fragment-ktx = "1.8.5"
+legacy-support-v4 = "1.0.0"
+lifecycle-extensions = "2.0.0"
+lifecycle-livedata-ktx = "2.5.1"
+lifecycle-viewmodel-compose = "2.9.4"
+lifecycle-viewmodel-ktx = "2.5.1"
+navigation = "2.5.3"
+recyclerview = "1.3.2"
+uiautomator = "2.3.0"
+
+# Material / layout
+constraintlayout = "2.1.4"
+constraintlayout-ui = "1.1.3"
+flexbox = "3.0.0"
+material = "1.6.1"
+material-compose = "1.12.0"
+roundedimageview = "2.3.0"
+
+# Compose
+compose = "1.9.5"
+compose-bom = "2025.11.01"
+compose-material3 = "1.4.0"
+
+# Firebase
+firebase-analytics-ktx = "22.5.0"
+firebase-crashlytics-ktx = "19.4.4"
+firebase-messaging = "24.1.2"
+
+# Transport & Mobile Tracking SDK
+tracking = "1.0.0"
+transport = "2.15.0"
+
+# Testing
+awaitility = "4.2.0"
+espresso = "3.6.1"
+espresso-contrib = "3.1.0"
+espresso-sample = "3.5.0"
+junit = "4.13.2"
+junit-ui = "4.12"
+mockk = "1.13.13"
+test-core-ktx = "1.6.1"
+test-ext-junit = "1.2.1"
+test-ext-junit-114 = "1.1.4"
+test-ext-junit-115 = "1.1.5"
+test-ext-junit-ktx-ui = "1.2.1"
+test-rules = "1.6.1"
+test-rules-ui = "1.1.1"
+
+# Build tooling / security pins (consumed by shared.gradle)
+jacoco = "0.8.13"
+protobuf = "3.25.9"
+xerces = "2.12.2"
+
+# Gradle plugins
+agp = "9.0.1"
+artifactory = "6.0.4"
+detekt = "1.23.7"
+firebase-crashlytics-gradle = "3.0.7"
+google-services = "4.4.4"
+kover = "0.9.8"
+nexus-publish = "2.0.0"
+
+[libraries]
+# Kotlin
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+
+# Coroutines
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
+# Gson (2.8.9 used by SDK modules, 2.9.1 by the sample app)
+gson-sample = { module = "com.google.code.gson:gson", version.ref = "gson-sample" }
+gson-sdk = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+# AndroidX
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity-ktx" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "arch-core-testing" }
+androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment-ktx" }
+androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacy-support-v4" }
+androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycle-extensions" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle-livedata-ktx" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-viewmodel-compose" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle-viewmodel-ktx" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+
+# Material / layout
+constraintlayout-app = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+constraintlayout-ui = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout-ui" }
+flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
+material-base = { module = "com.google.android.material:material", version.ref = "material" }
+material-compose = { module = "com.google.android.material:material", version.ref = "material-compose" }
+roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
+
+# Compose (versions managed by compose-bom where no version is set)
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+compose-ui-core = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-toolingpreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+
+# Firebase
+firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics-ktx" }
+firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics-ktx" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
+
+# Transport & Mobile Tracking SDK
+messenger-tracking = { module = "cloud.genesys:messenger-tracking-android", version.ref = "tracking" }
+messenger-transport = { module = "cloud.genesys:messenger-transport-mobile-sdk-android", version.ref = "transport" }
+
+# Testing
+awaitility-kotlin = { module = "org.awaitility:awaitility-kotlin", version.ref = "awaitility" }
+espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso-contrib" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+espresso-sample = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-sample" }
+junit-common = { module = "junit:junit", version.ref = "junit" }
+junit-ui = { module = "junit:junit", version.ref = "junit-ui" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+mockk-core = { module = "io.mockk:mockk", version.ref = "mockk" }
+test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "test-core-ktx" }
+test-junit-core = { module = "androidx.test.ext:junit", version.ref = "test-ext-junit" }
+test-junit-ktx-legacy = { module = "androidx.test.ext:junit-ktx", version.ref = "test-ext-junit-115" }
+test-junit-ktx-ui = { module = "androidx.test.ext:junit-ktx", version.ref = "test-ext-junit-ktx-ui" }
+test-junit-sample = { module = "androidx.test.ext:junit", version.ref = "test-ext-junit-114" }
+test-junit-tester = { module = "androidx.test.ext:junit", version.ref = "test-ext-junit-115" }
+test-rules-tester = { module = "androidx.test:rules", version.ref = "test-rules" }
+test-rules-ui = { module = "androidx.test:rules", version.ref = "test-rules-ui" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+artifactory = { id = "com.jfrog.artifactory", version.ref = "artifactory" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
