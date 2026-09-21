@@ -1,5 +1,6 @@
 package com.genesys.cloud.messenger.sample.data
 
+import android.content.Context
 import android.util.Log
 import com.genesys.cloud.integration.messenger.MessengerAccount
 import com.genesys.cloud.messenger.sample.BuildConfig
@@ -10,19 +11,33 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 
-fun JsonObject.toMessengerAccount(): MessengerAccount {
-    return MessengerAccount(
-        deploymentId = getString(DataKeys.DeploymentId) ?: "",
-        domain = getString(DataKeys.Domain) ?: ""
-    ).apply {
-        logging = get(DataKeys.Logging)?.asBoolean ?: false
+private const val DEFAULT_SESSION_EXPIRATION_SECONDS = 300L
+
+/**
+ * Resolves the [MessengerAccount] backing this raw account form data via [SampleAccountHolder], so
+ * chat, availability and push actions reuse the same account instance tracking was initiated on
+ * (see [SampleAccountHolder]) instead of building a new one for every action.
+ */
+fun JsonObject.toMessengerAccount(context: Context): MessengerAccount {
+    val deploymentId = getString(DataKeys.DeploymentId) ?: ""
+    val domain = getString(DataKeys.Domain) ?: ""
+    val authCode = getString(DataKeys.AuthCode)
+
+    // authenticationInfo has a private setter and can't be cleared; force a fresh instance when
+    // the form drops auth but the cached one has it.
+    if (authCode == null && SampleAccountHolder.account?.authenticationInfo != null) {
+        SampleAccountHolder.clear()
+    }
+
+    return SampleAccountHolder.getOrUpdate(deploymentId, domain, context) {
+        logging = get(DataKeys.Logging)?.asBoolean ?: true
         customAttributes = getString(DataKeys.CustomAttributes).toMap() ?: emptyMap()
-        getString(DataKeys.AuthCode)?.let {
+        authCode?.let {
             setAuthenticationInfo(it, BuildConfig.SIGN_IN_REDIRECT_URI, BuildConfig.CODE_VERIFIER)
         }
-        getString(DataKeys.SessionExpirationNoticeInterval)?.toLongOrNull()?.takeIf { it > 0 }?.let {
-            sessionExpirationNoticeInterval = it
-        }
+        sessionExpirationNoticeInterval =
+            getString(DataKeys.SessionExpirationNoticeInterval)?.toLongOrNull()?.takeIf { it > 0 }
+                ?: DEFAULT_SESSION_EXPIRATION_SECONDS
     }
 }
 

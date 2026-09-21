@@ -1,5 +1,6 @@
 package com.genesys.cloud.messenger.sample.chat_form
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.genesys.cloud.integration.messenger.MessengerAccount
+import com.genesys.cloud.integration.messenger.tracking.DeviceCategory
+import com.genesys.cloud.integration.messenger.tracking.TrackingConfig
 import com.genesys.cloud.messenger.sample.BuildConfig
 import com.genesys.cloud.messenger.sample.R
+import com.genesys.cloud.messenger.sample.tracking.TrackingFragment
+import com.genesys.cloud.messenger.sample.data.SampleAccountHolder
 import com.genesys.cloud.messenger.sample.data.defs.DataKeys
 import com.genesys.cloud.messenger.sample.data.repositories.JsonSampleRepository
 import com.genesys.cloud.messenger.sample.data.toMap
@@ -61,6 +66,9 @@ class ChatFormFragment : Fragment() {
         }
         binding.pushButton.setOnClickListener {
             onPushClicked()
+        }
+        binding.trackingButton.setOnClickListener {
+            onTrackingClicked()
         }
         binding.versionTextView.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
         binding.deploymentIdEditText.addTextChangedListener(
@@ -128,6 +136,46 @@ class ChatFormFragment : Fragment() {
         createAccountData()?.let { accountData -> viewModel.changePushEnablement(accountData) }
     }
 
+    /**
+     * Resolves the shared [MessengerAccount] (see [SampleAccountHolder]) for the entered
+     * deployment/domain, initiates the tracker on it only if one isn't already running, and
+     * navigates to [TrackingFragment] where journey events can be sent.
+     */
+    private fun onTrackingClicked() {
+        val deploymentId = binding.deploymentIdEditText.text.toString().trim()
+        val domain = binding.domainNameEditText.text.toString().trim()
+        if (deploymentId.isEmpty()) {
+            binding.deploymentIdEditText.presentError(getString(R.string.required_error))
+            return
+        }
+        if (domain.isEmpty()) {
+            binding.domainNameEditText.presentError(getString(R.string.required_error))
+            return
+        }
+
+        val account = SampleAccountHolder.getOrUpdate(deploymentId, domain, requireContext()) {
+            logging = binding.loggingSwitch.isChecked
+        }
+        if (account.tracking == null) {
+            account.initiateTracking(
+                TrackingConfig(
+                    appName = getString(R.string.app_name),
+                    appNamespace = requireContext().packageName,
+                    appVersion = BuildConfig.VERSION_NAME,
+                    appBuildNumber = BuildConfig.VERSION_CODE.toString(),
+                    deviceCategory = DeviceCategory.MOBILE,
+                    deviceType = Build.MODEL,
+                    osFamily = "Android",
+                    osVersion = Build.VERSION.RELEASE,
+                    isMobile = true,
+                    manufacturer = Build.MANUFACTURER,
+                )
+            )
+        }
+
+        openFragment.invoke(TrackingFragment(), TrackingFragment.TAG)
+    }
+
     private fun observeSavedAccount() {
         viewModel.uiState.observe(viewLifecycleOwner) { sampleData ->
 
@@ -146,7 +194,7 @@ class ChatFormFragment : Fragment() {
                 binding.sessionExpirationNoticeIntervalEditText.setText(accountRawJson[DataKeys.SessionExpirationNoticeInterval]?.asString)
 
                 accountRawJson[DataKeys.Logging]?.let {
-                    binding.loggingSwitch.isEnabled = it.asBoolean
+                    binding.loggingSwitch.isChecked = it.asBoolean
                 }
                 accountRawJson[DataKeys.AuthCode]?.let {
                     viewModel.setAuthCode(it.asString)
@@ -254,7 +302,7 @@ class ChatFormFragment : Fragment() {
             }
         }
 
-        accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isEnabled)
+        accountData.addProperty(DataKeys.Logging, binding.loggingSwitch.isChecked)
         accountData.addProperty(DataKeys.ImplicitFlow, binding.implicitSwitch.isEnabled)
         if (viewModel.hasAuthCode) {
             viewModel.authCode.value?.let {

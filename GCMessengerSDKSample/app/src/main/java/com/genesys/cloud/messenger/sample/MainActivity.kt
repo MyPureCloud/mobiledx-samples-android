@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
             uiState.account?.let { accountRawJson ->
 
-                val messengerAccount = accountRawJson.toMessengerAccount()
+                val messengerAccount = accountRawJson.toMessengerAccount(applicationContext)
 
                 if (uiState.startChat) {
                     prepareAndCreateChat(messengerAccount)
@@ -362,6 +362,15 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
 
     private fun createChatFormFragment(): ChatFormFragment {
         return ChatFormFragment()
+    }
+
+    /**
+     * Starts a Messaging session on the same [MessengerAccount] that has tracking initiated, so the
+     * journey context (customerCookieId + app sessionId) is carried into the session. Guest vs.
+     * authenticated is decided by the current auth state, exactly like the chat form path.
+     */
+    internal fun startChatOnTrackingAccount(account: MessengerAccount) {
+        prepareAndCreateChat(account)
     }
 
     private fun prepareAndCreateChat(account: AccountInfo, chatStartError: (() -> Unit)? = null) {
