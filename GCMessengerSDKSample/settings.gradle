@@ -14,13 +14,6 @@ dependencyResolutionManagement {
             maven { url "https://genesysdx.jfrog.io/artifactory/genesys-cloud-android.prod/" }
         }
     }
-    // Standalone sample-app build: reuse the SDK's version catalog.
-    // (When built as part of the root project, the catalog is auto-detected.)
-    versionCatalogs {
-        libs {
-            from(files("../gradle/libs.versions.toml"))
-        }
-    }
 }
 rootProject.name = "GCMessengerSDKSample"
 include ':app'
