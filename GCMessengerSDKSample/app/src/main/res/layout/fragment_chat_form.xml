@@ -63,6 +63,7 @@
                 android:id="@+id/loggingSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:enabled="true"
                 android:padding="6sp"
                 android:text="@string/quick_start_account_form_logging"
@@ -154,6 +155,22 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/start_chat"
                 android:text="@string/start_chat"
+                />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorSecondary"
+                />
+
+            <Button
+                android:id="@+id/tracking_button"
+                style="@style/SubmitButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/tracking"
+                android:text="@string/tracking"
                 />
         </LinearLayout>
     </LinearLayout>

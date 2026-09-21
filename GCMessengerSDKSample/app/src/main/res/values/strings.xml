@@ -54,4 +54,35 @@
     <string name="enable_push_failed_message">Permission for Push notifications rejected.</string>
     <string name="notifications_disabled_indicator_message">Notifications are disabled</string>
     <string name="settings">Settings</string>
+
+    <!-- Mobile Tracking -->
+    <string name="tracking">Tracking</string>
+    <string name="tracking_title">Mobile Tracking</string>
+    <string name="tracking_apply_setters">Apply Setters</string>
+    <string name="tracking_screen_viewed">Screen Viewed</string>
+    <string name="tracking_search_performed">Search Performed</string>
+    <string name="tracking_custom_event">Custom Event</string>
+    <string name="tracking_set_traits">Set Traits</string>
+    <string name="tracking_get_session_id">Get Session Id</string>
+    <string name="tracking_start_chat">Start Chat (this account)</string>
+    <string name="tracking_clear">Clear Tracking</string>
+    <string name="tracking_setters_label">Setters (key=value per line)</string>
+    <string name="tracking_setters_hint">screenName=HomeScreen\neventName=add_to_cart\nsearchQuery=shoes\nexternalId=\nattr.color=red\nisMobile=true</string>
+    <string name="tracking_traits_label">Traits (key=value per line)</string>
+    <string name="tracking_traits_hint">email=user@example.com\ncellPhone=+15551234567</string>
+    <string name="tracking_info_content_description">Field usage info</string>
+    <string name="tracking_template_content_description">Insert field template</string>
+    <string name="tracking_setters_info_title">Setters fields</string>
+    <string name="tracking_setters_info_body">One key=value pair per line (\';\' also works as a separator). Available keys:\n\nscreenName, searchQuery, eventName, attr.&lt;name&gt;=value\n\u2192 Used immediately by whichever event button you tap (Screen Viewed / Search Performed / Custom Event). No need to tap Apply Setters first.\n\nexternalId, appName, appNamespace, appVersion, appBuildNumber, deviceCategory, deviceType, osFamily, osVersion, isMobile, screenHeight, screenWidth, screenDensity, fingerprint, manufacturer, carrier, bluetoothEnabled, cellularEnabled, wifiEnabled\n\u2192 Only applied to the tracker after you tap \"Apply Setters\"; until then, whatever was set before stays in effect.</string>
+    <string name="tracking_traits_info_title">Traits fields</string>
+    <string name="tracking_traits_info_body">One key=value pair per line (\';\' also works as a separator). Available keys:\n\nemail, cellPhone, homePhone, otherPhone, workPhone, salutation, jobTitle, givenName, middleName, familyName\n\nThese are used immediately as part of whichever event button you tap (Screen Viewed / Search Performed / Custom Event). They are only stored on the tracker for future events after you tap \"Set Traits\".</string>
+    <string name="tracking_setters_applied">Setters applied to the tracker.</string>
+    <string name="tracking_traits_set">Traits set.</string>
+    <string name="tracking_traits_empty">No traits to set. Enter key=value pairs first.</string>
+    <string name="tracking_event_sent">Event queued: %1$s</string>
+    <string name="tracking_session_id">Session id: %1$s</string>
+    <string name="tracking_session_id_none">No session id yet. Send an event first.</string>
+    <string name="tracking_cleared">Tracking cleared and cookie rotated.</string>
+    <string name="tracking_chat_starting">Starting chat on the tracking account…</string>
+    <string name="tracking_not_available">Tracking is not available.</string>
 </resources>

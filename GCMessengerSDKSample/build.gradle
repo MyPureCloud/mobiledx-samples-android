@@ -1,17 +1,18 @@
 buildscript {
-    dependencies {
-        classpath("com.android.tools.build:gradle:9.0.1")
-
-        def googleServicesFile = new File(project.projectDir, "app/google-services.json")
-        if (googleServicesFile.exists()) {
-            classpath("com.google.gms:google-services:4.4.4")
-            classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.7")
+    // Google Services / Crashlytics are only needed when google-services.json is present.
+    // Versions come from the SDK version catalog so this standalone build can't drift.
+    def libs = project.extensions.getByType(org.gradle.api.artifacts.VersionCatalogsExtension).named("libs")
+    def googleServicesFile = new File(project.projectDir, "app/google-services.json")
+    if (googleServicesFile.exists()) {
+        dependencies {
+            classpath("com.google.gms:google-services:${libs.findVersion('google-services').get().requiredVersion}")
+            classpath("com.google.firebase:firebase-crashlytics-gradle:${libs.findVersion('firebase-crashlytics-gradle').get().requiredVersion}")
         }
     }
 }
 
 plugins {
-    id("com.android.application") version "9.0.1" apply false
-    id("com.android.library") version "9.0.1" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.compose) apply false
 }
-

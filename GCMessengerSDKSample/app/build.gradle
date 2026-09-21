@@ -15,11 +15,13 @@ plugins {
     id("com.android.application")
 }
 
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+
 def googleServicesFile = new File(project.projectDir, "google-services.json")
 def isGoogleServicesFileExists = googleServicesFile.exists()
 
 // project version section
-def projectVersion = rootProject.findProperty('versionParam') ?: '2.4.0'
+def projectVersion = rootProject.findProperty('versionParam') ?: '2.5.0'
 def useArtifactory = rootProject.findProperty('useArtifactory')?.toBoolean() ?: (rootProject.name != 'mobile-messenger-android-sdk')
 def useMavenCentral = rootProject.findProperty('useMavenCentral')?.toBoolean() ?: false
 def injectedVersionCode = project.findProperty("versionCode")?.toString()?.toInteger()
@@ -34,12 +36,12 @@ if (isGoogleServicesFileExists) {
 
 android {
     namespace = "com.genesys.cloud.messenger.sample"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId = "com.genesys.cloud.messenger.sample"
-        minSdk = 21
-        targetSdk = 36
+        minSdk = libs.versions.minSdk.get().toInteger()
+        targetSdk = libs.versions.targetSdk.get().toInteger()
         versionCode = injectedVersionCode ?: 1
         versionName = projectVersion
 
@@ -78,6 +80,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
     lint {
         checkReleaseBuilds = true
@@ -119,40 +122,51 @@ dependencies {
     }
 
     //region android
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.activity:activity-ktx:1.9.3")
-    implementation("androidx.fragment:fragment-ktx:1.8.5")
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.material.base
+    implementation libs.constraintlayout.app
+    implementation libs.androidx.activity.ktx
+    implementation libs.androidx.fragment.ktx
+    //endregion
+
+    //region Compose
+    implementation platform('androidx.compose:compose-bom:2025.11.01') // latest version with minSdk 21 support
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.material:material-icons-core'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
     //endregion
 
     //region lifecycle
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.viewmodel.ktx
     //endregion
 
     //region navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
     //endregion
 
     //region Gson
-    implementation("com.google.code.gson:gson:2.9.1")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation libs.gson.sample
+    implementation libs.androidx.legacy.support.v4
     //endregion
 
     //region Firebase
     if (isGoogleServicesFileExists) {
-        implementation("com.google.firebase:firebase-crashlytics-ktx:19.4.4")
-        implementation("com.google.firebase:firebase-analytics-ktx:22.5.0")
+        implementation libs.firebase.crashlytics.ktx
+        implementation libs.firebase.analytics.ktx
     }
-    implementation 'com.google.firebase:firebase-messaging:24.1.2'
+    implementation libs.firebase.messaging
     //endregion
 
     //region Tests
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    testImplementation libs.junit.common
+    testImplementation libs.mockk.core
+    androidTestImplementation libs.test.junit.sample
+    androidTestImplementation libs.espresso.sample
     //endregion
 }
