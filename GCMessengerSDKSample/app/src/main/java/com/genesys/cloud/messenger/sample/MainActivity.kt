@@ -147,8 +147,10 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
                 } else if (uiState.enablePush) {
+                    viewModel.clearPushEnablement()
                     enablePushNotifications(messengerAccount)
                 } else if (uiState.disablePush) {
+                    viewModel.clearPushEnablement()
                     disablePushNotifications(messengerAccount)
                 }
             }
