@@ -1,0 +1,20 @@
+import java.io.File
+
+buildscript {
+    // Google Services / Crashlytics are only needed when google-services.json is present.
+    // Versions come from the SDK version catalog so this standalone build can't drift.
+    val libs = project.extensions.getByType(org.gradle.api.artifacts.VersionCatalogsExtension::class.java).named("libs")
+    val googleServicesFile = File(project.projectDir, "app/google-services.json")
+    if (googleServicesFile.exists()) {
+        dependencies {
+            classpath("com.google.gms:google-services:${libs.findVersion("google-services").get().requiredVersion}")
+            classpath("com.google.firebase:firebase-crashlytics-gradle:${libs.findVersion("firebase-crashlytics-gradle").get().requiredVersion}")
+        }
+    }
+}
+
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.compose) apply false
+}

@@ -168,6 +168,19 @@ class SampleFormViewModel(private val sampleRepository: SampleRepository) : View
         )
     }
 
+    /**
+     * Consumes the push enablement request so a later [SampleUIState] emission (e.g. returning
+     * from the Okta screen) doesn't re-run the registration that was already handled.
+     */
+    fun clearPushEnablement() {
+        _uiState.value?.takeIf { it.enablePush || it.disablePush }?.let { currentState ->
+            _uiState.value = currentState.copy(
+                enablePush = false,
+                disablePush = false
+            )
+        }
+    }
+
     companion object{
         private const val TAG = "SampleFormViewModel"
     }
