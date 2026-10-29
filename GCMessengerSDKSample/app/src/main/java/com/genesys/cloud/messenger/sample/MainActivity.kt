@@ -143,6 +143,7 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 val messengerAccount = accountRawJson.toMessengerAccount(applicationContext)
 
                 if (uiState.startChat) {
+                    viewModel.clearStartChat()
                     prepareAndCreateChat(messengerAccount)
                 } else if (uiState.testAvailability) {
                     checkAvailability(messengerAccount)
@@ -740,7 +741,6 @@ class MainActivity : AppCompatActivity(), ChatEventListener {
                 waitingVisibility(false)
                 updateMenuVisibility()
                 reconnectingChatSnackBar?.dismiss()
-                viewModel.clearStartChat()
             }
 
             StateEvent.ChatWindowDetached -> {
