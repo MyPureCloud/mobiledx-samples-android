@@ -10,9 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        if (!providers.gradleProperty("useMavenCentral").getOrElse("false").toBoolean()) {
-            maven { url = uri("https://genesysdx.jfrog.io/artifactory/genesys-cloud-android.prod/") }
-        }
     }
     versionCatalogs {
         // sample-app/app/build.gradle.kts references "sampleLibs" so the same build file works

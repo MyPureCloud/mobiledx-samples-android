@@ -139,4 +139,33 @@ class SampleFormViewModelTest {
     }
 
     // endregion
+
+    // region Start Chat Tests
+
+    @Test
+    fun clearStartChat_whenAccountDataReloaded_keepsStartChatConsumed() = runTest {
+        //given
+        subject.startChat(accountData)
+        subject.clearStartChat()
+
+        //when
+        subject.loadSavedAccount()
+
+        //then
+        assertFalse(subject.uiState.value!!.startChat)
+    }
+
+    @Test
+    fun loadSavedAccount_whenStartChatNotConsumed_replaysStartChat() = runTest {
+        //given
+        subject.startChat(accountData)
+
+        //when
+        subject.loadSavedAccount()
+
+        //then
+        assertTrue(subject.uiState.value!!.startChat)
+    }
+
+    // endregion
 }

@@ -19,9 +19,8 @@ val googleServicesFile = File(project.projectDir, "google-services.json")
 val isGoogleServicesFileExists = googleServicesFile.exists()
 
 // project version section
-val projectVersion = (rootProject.findProperty("versionParam") ?: "2.6.0").toString()
+val projectVersion = (rootProject.findProperty("versionParam") ?: "3.0.0").toString()
 val useArtifactory = (rootProject.findProperty("useArtifactory") as? String)?.toBoolean() ?: (rootProject.name != "mobile-messenger-android-sdk")
-val useMavenCentral = (rootProject.findProperty("useMavenCentral") as? String)?.toBoolean() ?: false
 val injectedVersionCode = project.findProperty("versionCode")?.toString()?.toInt()
 // project version section
 
@@ -106,14 +105,9 @@ dependencies {
 
     //region Genesys
     if (useArtifactory) {
-        val depGroupId = if (useMavenCentral) "cloud.genesys" else "com.genesys.cloud"
-        implementation("$depGroupId:core:$projectVersion")
-        implementation("$depGroupId:chatintegration:$projectVersion")
-        implementation("$depGroupId:ui:$projectVersion")
+        implementation("cloud.genesys:ui:$projectVersion")
     } else {
-        // Local development: use source code from SDK modules
-        implementation(project(":core"))
-        implementation(project(":chatintegration"))
+        // Local development: use source code from ui module
         implementation(project(":ui"))
     }
 
@@ -127,7 +121,7 @@ dependencies {
     //endregion
 
     //region Compose
-    implementation(platform("androidx.compose:compose-bom:2025.11.01")) // latest version with minSdk 21 support
+    implementation(platform("androidx.compose:compose-bom:2025.11.01")) // pinned for minSdk 21; not re-evaluated for minSdk 24, may be able to bump
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")

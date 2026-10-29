@@ -3,7 +3,7 @@
 [versions]
 # Android SDK levels
 compileSdk = "36"
-minSdk = "21"
+minSdk = "24"
 targetSdk = "36"
 
 # Kotlin / Coroutines
