@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ChatController</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/genesys-theme.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    Genesys Messenger Mobile SDK
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+3.0.0        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":ui/release">Android</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":ui/release"
+                                       data-filter=":ui/release"/>
+                                <span class="checkbox--icon"></span>
+                                Android
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+                <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link"
+                   href="https://developer.genesys.cloud/commdigital/digital/webmessaging/mobile-messaging/messenger-mobile-sdk/android/"></a>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    Genesys Messenger Mobile SDK
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="Genesys Messenger Mobile SDK::com.genesys.cloud.ui.structure.controller/ChatController///PointingToDeclaration//-2132373412">
+  <div class="breadcrumbs"><a href="../../../index.html">Genesys Messenger Mobile SDK</a><span class="delimiter">/</span><a href="../index.html">com.genesys.cloud.ui.structure.controller</a><span class="delimiter">/</span><span class="current">ChatController</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Chat</span><wbr></wbr><span><span>Controller</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">ChatController</a> : <a href="../../com.genesys.cloud.ui.structure.handlers/-confined-chat-handler/index.html">ConfinedChatHandler</a></div><p class="paragraph">The primary entry point for integrating the Genesys Cloud chat experience into a host application.</p><p class="paragraph"><code class="lang-kotlin">ChatController</code> manages the lifecycle of a chat session, including starting, ending, reconnecting, and presenting the chat UI. The host application creates an instance from a configured <a href="../../com.genesys.cloud.integration.messenger/-messenger-account/index.html">MessengerAccount</a> using <a href="-builder/index.html">Builder</a>, and registers a <a href="../-chat-event-listener/index.html">ChatEventListener</a> to receive lifecycle callbacks.</p><p class="paragraph">Prerequisites:</p><ul><li><p class="paragraph">A valid <a href="../../com.genesys.cloud.integration.messenger/-messenger-account/index.html">MessengerAccount</a> configured with a deployment ID and domain.</p></li><li><p class="paragraph">A <a href="../-chat-event-listener/index.html">ChatEventListener</a> passed to <a href="-builder/chat-event-listener.html">Builder.chatEventListener</a> before calling <a href="-builder/build.html">Builder.build</a>.</p></li></ul><p class="paragraph">Usage:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val account = MessengerAccount(<br>    deploymentId = &quot;your-deployment-id&quot;,<br>    domain = &quot;your-domain.com&quot;<br>).apply {<br>    logging = true<br>    sessionExpirationNoticeInterval = 300<br>}<br><br>val chatController = ChatController.Builder(context)<br>    .chatEventListener(this)<br>    .build(account, chatLoadedListener)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><p class="paragraph">Important: <a href="-builder/build.html">Builder.build</a> initiates the chat session and the chat UI <a href="https://developer.android.com/reference/kotlin/androidx/fragment/app/Fragment.html">Fragment</a> is delivered via <span data-unresolved-link="com.genesys.cloud.ui.structure.controller/ChatLoadedListener/onComplete/#com.genesys.cloud.ui.structure.controller.ChatLoadResponse/PointingToDeclaration/">ChatLoadedListener.onComplete</span>. Ensure the account is fully configured before calling it.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="579247446%2FClasslikes%2F-2132373412" anchor-label="Builder" id="579247446%2FClasslikes%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-builder/index.html"><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="579247446%2FClasslikes%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="-builder/index.html">Builder</a></div><div class="brief "><p class="paragraph">Builder for creating and configuring a <a href="index.html">ChatController</a> instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="411858056%2FProperties%2F-2132373412" anchor-label="chatEventListener" id="411858056%2FProperties%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="chat-event-listener.html"><span>chat</span><wbr></wbr><span>Event</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="411858056%2FProperties%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="chat-event-listener.html">chatEventListener</a><span class="token operator">: </span><a href="../-chat-event-listener/index.html">ChatEventListener</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The listener that receives state changes, errors, and chat elements, or <code class="lang-kotlin">null</code> if none is registered.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1959507252%2FProperties%2F-2132373412" anchor-label="isActive" id="-1959507252%2FProperties%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-active.html"><span>is</span><wbr></wbr><span><span>Active</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1959507252%2FProperties%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="is-active.html">isActive</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Chat in progress</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1931097106%2FProperties%2F-2132373412" anchor-label="isLiveChat" id="-1931097106%2FProperties%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-live-chat.html"><span>is</span><wbr></wbr><span>Live</span><wbr></wbr><span><span>Chat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1931097106%2FProperties%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="is-live-chat.html">isLiveChat</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Chat with agent</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="136267904%2FProperties%2F-2132373412" anchor-label="wasDestructed" id="136267904%2FProperties%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="was-destructed.html"><span>was</span><wbr></wbr><span><span>Destructed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="136267904%2FProperties%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="was-destructed.html">wasDestructed</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Indicates whether this controller has already been destroyed.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-426630322%2FFunctions%2F-2132373412" anchor-label="clearConversation" id="-426630322%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-conversation.html"><span>clear</span><wbr></wbr><span><span>Conversation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-426630322%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="clear-conversation.html"><span class="token function">clearConversation</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Clears the current conversation history from the session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1775447354%2FFunctions%2F-2132373412" anchor-label="destruct" id="-1775447354%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="destruct.html"><span><span>destruct</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1775447354%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-synchronized/index.html"><span class="token annotation builtin">Synchronized</span></a></div></div><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="destruct.html"><span class="token function">destruct</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Destroys this controller and releases all associated resources.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1114206576%2FFunctions%2F-2132373412" anchor-label="endChat" id="-1114206576%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="end-chat.html"><span>end</span><wbr></wbr><span><span>Chat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1114206576%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="end-chat.html"><span class="token function">endChat</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">forceClose<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Ends the current chat session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1110699131%2FFunctions%2F-2132373412" anchor-label="hasOpenChats" id="-1110699131%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-open-chats.html"><span>has</span><wbr></wbr><span>Open</span><wbr></wbr><span><span>Chats</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1110699131%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="has-open-chats.html"><span class="token function">hasOpenChats</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if ChatController has open chats</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-93526657%2FFunctions%2F-2132373412" anchor-label="isEnabled" id="-93526657%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-enabled.html"><span>is</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-93526657%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="is-enabled.html"><span class="token function">isEnabled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">default<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">data<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns <code class="lang-kotlin">name</code> enalability value if recognized.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1345815839%2FFunctions%2F-2132373412" anchor-label="logoutFromAuthenticatedSession" id="-1345815839%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="logout-from-authenticated-session.html"><span>logout</span><wbr></wbr><span>From</span><wbr></wbr><span>Authenticated</span><wbr></wbr><span><span>Session</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1345815839%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="logout-from-authenticated-session.html"><span class="token function">logoutFromAuthenticatedSession</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Logs out from the current authenticated session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="451595412%2FFunctions%2F-2132373412" anchor-label="reauthorizeImplicitFlow" id="451595412%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reauthorize-implicit-flow.html"><span>reauthorize</span><wbr></wbr><span>Implicit</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="451595412%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reauthorize-implicit-flow.html"><span class="token function">reauthorizeImplicitFlow</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">idToken<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">nonce<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Reauthorizes the implicit authentication flow with a new token after expiration.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1293856561%2FFunctions%2F-2132373412" anchor-label="reconnectChat" id="-1293856561%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reconnect-chat.html"><span>reconnect</span><wbr></wbr><span><span>Chat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1293856561%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="reconnect-chat.html"><span class="token function">reconnectChat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Attempts to reconnect a disconnected chat session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-344658169%2FFunctions%2F-2132373412" anchor-label="restoreChat" id="-344658169%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="restore-chat.html"><span>restore</span><wbr></wbr><span><span>Chat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-344658169%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="restore-chat.html"><span class="token function">restoreChat</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fragment<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/fragment/app/Fragment.html">Fragment</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">account<span class="token operator">: </span><a href="../../com.genesys.cloud.integration.core/-account-info/index.html">AccountInfo</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Start new chat or Continue an open chat. Chat fragment can be provided by the app - as in case of restoring activity</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2058076798%2FFunctions%2F-2132373412" anchor-label="startChat" id="-2058076798%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="start-chat.html"><span>start</span><wbr></wbr><span><span>Chat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2058076798%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="start-chat.html"><span class="token function">startChat</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">accountInfo<span class="token operator">: </span><a href="../../com.genesys.cloud.integration.core/-account-info/index.html">AccountInfo</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Starts new chat with provided account. Configured as restorable, won't end on UI removal.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2122367493%2FFunctions%2F-2132373412" anchor-label="terminateChat" id="2122367493%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="terminate-chat.html"><span>terminate</span><wbr></wbr><span><span>Chat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2122367493%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="terminate-chat.html"><span class="token function">terminateChat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Terminates the active chat session and releases the underlying chat handler immediately.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-113055611%2FFunctions%2F-2132373412" anchor-label="updateCustomAttributes" id="-113055611%2FFunctions%2F-2132373412" data-filterable-set=":ui/release"></a>
+          <div class="table-row table-row_content" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-custom-attributes.html"><span>update</span><wbr></wbr><span>Custom</span><wbr></wbr><span><span>Attributes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-113055611%2FFunctions%2F-2132373412"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="update-custom-attributes.html"><span class="token function">updateCustomAttributes</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">customAttributes<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the custom attributes associated with the current chat session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>Copyright © 2026 Genesys. All rights reserved.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

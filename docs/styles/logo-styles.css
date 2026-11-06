@@ -1,0 +1,14 @@
+/*
+ * Replaces Dokka's default logo-styles.css (same file name) so the header shows the Genesys mark.
+ * The logo box matches the 104:175 aspect ratio of assets/logo-icon.svg.
+ */
+:root {
+    --dokka-logo-image-url: url('../images/logo-icon.svg');
+    --dokka-logo-height: 28px;
+    --dokka-logo-width: 17px;
+}
+
+/* Dokka's default background-size assumes a square logo, so scale to fit instead. */
+.library-name--link:before {
+    background-size: contain;
+}

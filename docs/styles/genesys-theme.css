@@ -1,0 +1,84 @@
+/*
+ * Genesys theme for the Dokka HTML output.
+ * Colors match the iOS SDK DocC theme (GenesysCloud.docc/theme-settings.json) and the Genesys Developer Center.
+ */
+:root {
+    --genesys-orange: #FF451A;
+    --genesys-navy: #152550;
+    --genesys-navy-shade-70: #0B1228;
+    --genesys-navy-shade-50: #0D1630;
+    --genesys-navy-tint-80: #E8E9ED;
+    --genesys-azure: #2243A2;
+    --genesys-azure-hover: #2F55C4;
+    --genesys-patina: #18CAA8;
+    --genesys-arctic: #B1CADA;
+    --genesys-arctic-muted: #D6E1E9;
+    --genesys-nimbus: #F9F8F5;
+    --genesys-nimbus-shade: #F1EFEA;
+
+    --genesys-link-color: var(--genesys-azure);
+
+    /* ui-kit.min.css variables */
+    --color-key-blue: var(--genesys-azure);
+    --color-key-blue-hover: var(--genesys-azure-hover);
+    --color-key-blue-50: rgba(34, 67, 162, 0.5);
+    --color-background-nav: var(--genesys-navy);
+    --color-background-nav-dt: var(--genesys-navy);
+    --color-background-page: var(--genesys-nimbus);
+    --color-background-page-dt: var(--genesys-navy-shade-70);
+    --color-background-footer: var(--genesys-nimbus-shade);
+    --color-background-footer-dt: var(--genesys-navy-shade-50);
+    --color-text: var(--genesys-navy);
+    --color-text-dt: var(--genesys-nimbus);
+    --color-text-light: rgba(21, 37, 80, 0.7);
+    --color-text-light-dt: rgba(249, 248, 245, 0.7);
+    --color-background-inline-code: var(--genesys-navy-tint-80);
+    --color-background-code-block: var(--genesys-navy-tint-80);
+
+    /* style.css variables */
+    --default-font-color: var(--genesys-navy);
+    --background-color: var(--genesys-nimbus);
+    --hover-link-color: var(--genesys-azure);
+    --border-color: rgba(21, 37, 80, 0.2);
+    --active-tab-border-color: var(--genesys-orange);
+    --active-section-color: var(--genesys-orange);
+    --sidemenu-section-active-color: var(--genesys-orange);
+}
+
+.theme-dark {
+    --genesys-link-color: var(--genesys-patina);
+
+    --color-background-inline-code: var(--genesys-navy-shade-50);
+    --color-background-code-block: var(--genesys-navy-shade-50);
+
+    --default-font-color: var(--genesys-nimbus);
+    --background-color: var(--genesys-navy-shade-70);
+    --color-dark: var(--genesys-navy);
+    --border-color: rgba(177, 202, 218, 0.2);
+    --active-tab-border-color: var(--genesys-orange);
+    --active-section-color: var(--genesys-orange);
+    --sidemenu-section-active-color: var(--genesys-orange);
+}
+
+/* Orange keyline under the top bar, like the iOS docs */
+.navigation {
+    box-shadow: inset 0 -2px 0 var(--genesys-orange);
+}
+
+.main-content a:not([data-name]) {
+    color: var(--genesys-link-color);
+}
+
+.main-content a:not([data-name]):hover {
+    border-bottom-color: var(--genesys-link-color);
+}
+
+/* "Android" source set tags (Dokka hardcodes a green for JVM-like platforms) */
+.filter-section .platform-tag.jvm-like[data-active],
+.platform-tags .platform-tag.jvm-like {
+    --platform-tag-color: var(--genesys-patina);
+}
+
+.sidebar {
+    border-right-color: var(--border-color);
+}

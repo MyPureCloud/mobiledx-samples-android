@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Genesys Messenger Mobile SDK</title>
+    <link href="images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="scripts/sourceset_dependencies.js" async="async"></script>
+<link href="styles/style.css" rel="Stylesheet">
+<link href="styles/main.css" rel="Stylesheet">
+<link href="styles/prism.css" rel="Stylesheet">
+<link href="styles/logo-styles.css" rel="Stylesheet">
+<link href="ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="ui-kit/ui-kit.min.js" defer="defer"></script>
+<link href="images/logo-icon.svg">
+<link href="styles/logo-styles.css" rel="Stylesheet">
+<link href="styles/genesys-theme.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="index.html" tabindex="1">
+                    Genesys Messenger Mobile SDK
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+3.0.0        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":ui/release">Android</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":ui/release"
+                                       data-filter=":ui/release"/>
+                                <span class="checkbox--icon"></span>
+                                Android
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+                <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link"
+                   href="https://developer.genesys.cloud/commdigital/digital/webmessaging/mobile-messaging/messenger-mobile-sdk/android/"></a>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    Genesys Messenger Mobile SDK
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" id="content" pageIds="Genesys Messenger Mobile SDK::////PointingToDeclaration//-2132373412">
+  <div class="breadcrumbs"></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Genesys</span></span> <span><span>Messenger</span></span> <span><span>Mobile</span></span> <span><span>SDK</span></span></h1>
+    <div class="platform-hinted UnderCoverText" data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":ui/release"><p class="paragraph">Add a native, fully featured mobile messenger solution to your Android app, powered by Genesys Cloud.</p><h2 class="">Overview</h2><p class="paragraph">This API documentation extends our main documentation source on the <a href="https://developer.genesys.cloud/commdigital/digital/webmessaging/mobile-messaging/messenger-mobile-sdk/">Genesys Developer Center</a>. Use Genesys Developer Center to find our <a href="https://developer.genesys.cloud/commdigital/digital/webmessaging/mobile-messaging/messenger-mobile-sdk/changelog">Changelog</a> and detailed feature flow explanations.</p><h2 class="">Getting Started</h2><p class="paragraph">Follow the <a href="https://developer.genesys.cloud/commdigital/digital/webmessaging/mobile-messaging/messenger-mobile-sdk/android/">Messenger Mobile SDK for Android guide</a> on the Genesys Developer Center for installation, deployment configuration, authentication setup, and end-to-end examples.</p><h2 class="">Topics</h2><h3 class="">Essentials</h3><p class="paragraph">The primary types for starting, presenting, and observing a chat session.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger/-messenger-account/index.html">MessengerAccount</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller/-chat-controller/index.html">ChatController</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller/-chat-loaded-listener/index.html">ChatLoadedListener</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller/-chat-load-response/index.html">ChatLoadResponse</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller/-chat-event-listener/index.html">ChatEventListener</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.fragments/-n-r-conversation-fragment/index.html">NRConversationFragment</a></p></li></ul><h3 class="">Availability</h3><p class="paragraph">Check whether chat is available for a deployment before starting a session.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller/-chat-availability/index.html">ChatAvailability</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.utils/-availability-result/index.html">AvailabilityResult</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.core/-unavailable-event/index.html">UnavailableEvent</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.core/-unavailable-reason/index.html">UnavailableReason</a></p></li></ul><h3 class="">Authentication</h3><p class="paragraph">Configure OpenID authenticated chat and check whether a deployment requires authorization.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.auth/-authentication-info/index.html">AuthenticationInfo</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller.auth/-authentication-status/index.html">AuthenticationStatus</a></p></li></ul><h3 class="">Chat Elements</h3><p class="paragraph">Chat elements are delivered through <a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.handlers/-chat-element-received-listener/on-chat-element-received.html">ChatElementReceivedListener.onChatElementReceived</a>. The received <a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-chat-element/index.html">ChatElement</a> can be cast to one of its subtypes for type-specific data.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.handlers/-chat-element-received-listener/index.html">ChatElementReceivedListener</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-chat-element/index.html">ChatElement</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-content-chat-element/index.html">ContentChatElement</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-incoming-chat-element/index.html">IncomingChatElement</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-incoming-attachment-element/index.html">IncomingAttachmentElement</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-quick-reply-chat-element/index.html">QuickReplyChatElement</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.core.model/-quick-reply-option/index.html">QuickReplyOption</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-carousel-chat-element/index.html">CarouselChatElement</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/-time-slot-picker-chat-element/index.html">TimeSlotPickerChatElement</a></p></li></ul><h3 class="">Attachments</h3><p class="paragraph">File attachments sent and received in the conversation.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.attachment/-base-file/index.html">BaseFile</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.attachment/-downloadable-file/index.html">DownloadableFile</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.attachment/-download-status/index.html">DownloadStatus</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.attachment/-attachment-fetcher-error/index.html">AttachmentFetcherError</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.attachment/-file-type/index.html">FileType</a></p></li></ul><h3 class="">Push Notifications</h3><p class="paragraph">Register and remove the device for push notifications.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller.pushnotifications/-chat-push-notification-integration/index.html">ChatPushNotificationIntegration</a></p></li></ul><h3 class="">Session</h3><p class="paragraph">Observe the chat session lifecycle through <a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller/-chat-event-listener/on-chat-state-changed.html">ChatEventListener.onChatStateChanged</a>.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.core/-state-event/index.html">StateEvent</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger/-state-event-data/index.html">StateEventData</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.core/-ended-reason/index.html">EndedReason</a></p></li></ul><h3 class="">Errors</h3><p class="paragraph">Handle failures surfaced by the SDK through <a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.core.model/-error-listener/on-error.html">ChatEventListener.onError</a>.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.core.utils/-n-r-error/index.html">NRError</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.core/-error-event/index.html">ErrorEvent</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.core.model/-error-listener/index.html">ErrorListener</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger/-internal-error/index.html">InternalError</a></p></li></ul><h3 class="">Tracking</h3><p class="paragraph">Send app events to Genesys Cloud through the Mobile Tracking SDK.</p><ul><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger/-messenger-account/initiate-tracking.html">MessengerAccount.initiateTracking</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.tracking/-messenger-tracking/index.html">MessengerTracking</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.tracking/-tracking-config/index.html">TrackingConfig</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.tracking/-tracking-traits/index.html">TrackingTraits</a></p></li><li><p class="paragraph"><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.tracking/-device-category/index.html">DeviceCategory</a></p></li></ul></div></div>
+  </div>
+  <h2 class="">Packages</h2>
+  <div class="table"><a data-name="-1302738376%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.core.model" id="-1302738376%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.core.model/index.html">com.genesys.cloud.core.model</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1302738376%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-1302738376%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.core.model" id="-1302738376%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Message models and delivery statuses shared across the SDK.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="1383957952%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.core.utils" id="1383957952%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.core.utils/index.html">com.genesys.cloud.core.utils</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1383957952%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="1383957952%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.core.utils" id="1383957952%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Results, callbacks, events, and error types used across the SDK.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-1491609641%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.core" id="-1491609641%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.core/index.html">com.genesys.cloud.integration.core</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1491609641%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-1491609641%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.core" id="-1491609641%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Account, chat state, error, availability, and outgoing message types.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="1105321119%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.core.configuration" id="1105321119%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.core.configuration/index.html">com.genesys.cloud.integration.core.configuration</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1105321119%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="1105321119%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.core.configuration" id="1105321119%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Feature enablement checks.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-253261857%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger" id="-253261857%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger/index.html">com.genesys.cloud.integration.messenger</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-253261857%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-253261857%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger" id="-253261857%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Genesys Cloud Messenger account configuration and chat state data.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-628048298%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger.attachment" id="-628048298%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.attachment/index.html">com.genesys.cloud.integration.messenger.attachment</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-628048298%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-628048298%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger.attachment" id="-628048298%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">File attachment models and download status.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-603777189%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger.auth" id="-603777189%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.auth/index.html">com.genesys.cloud.integration.messenger.auth</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-603777189%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-603777189%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger.auth" id="-603777189%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">OpenID authentication credentials.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="944784170%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger.tracking" id="944784170%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.messenger.tracking/index.html">com.genesys.cloud.integration.messenger.tracking</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="944784170%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="944784170%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.messenger.tracking" id="944784170%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Mobile Tracking SDK integration for sending app events.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-1870571267%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.utils" id="-1870571267%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.integration.utils/index.html">com.genesys.cloud.integration.utils</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1870571267%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-1870571267%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.integration.utils" id="-1870571267%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Chat availability result.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="1585617831%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.fragments" id="1585617831%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.fragments/index.html">com.genesys.cloud.ui.fragments</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1585617831%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="1585617831%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.fragments" id="1585617831%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Fragments that display the chat conversation.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-1095188617%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.controller" id="-1095188617%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller/index.html">com.genesys.cloud.ui.structure.controller</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1095188617%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-1095188617%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.controller" id="-1095188617%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Chat controller, chat loading, availability checks, and chat event listener.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-423829821%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.controller.auth" id="-423829821%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller.auth/index.html">com.genesys.cloud.ui.structure.controller.auth</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-423829821%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-423829821%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.controller.auth" id="-423829821%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Authentication state checks for a Messenger deployment.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="-1285767721%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.controller.pushnotifications" id="-1285767721%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.controller.pushnotifications/index.html">com.genesys.cloud.ui.structure.controller.pushnotifications</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1285767721%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="-1285767721%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.controller.pushnotifications" id="-1285767721%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Push notification registration.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="610204498%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.elements" id="610204498%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.elements/index.html">com.genesys.cloud.ui.structure.elements</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="610204498%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="610204498%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.elements" id="610204498%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Chat elements delivered to the host application.</p>
+          </span></div>
+      </div>
+    </div>
+<a data-name="809763396%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.handlers" id="809763396%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":ui/release" data-filterable-set=":ui/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="-genesys -messenger -mobile -s-d-k/com.genesys.cloud.ui.structure.handlers/index.html">com.genesys.cloud.ui.structure.handlers</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="809763396%2FPackages%2F-2132373412"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">Android</div>
+            </div>
+          </div>
+        </div>
+        <div><span class="brief-comment"><a data-name="809763396%2FPackages%2F-2132373412" anchor-label="com.genesys.cloud.ui.structure.handlers" id="809763396%2FPackages%2F-2132373412" data-filterable-set=":ui/release"></a>
+            <p class="paragraph">Chat element listener and chat handler interfaces.</p>
+          </span></div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>Copyright © 2026 Genesys. All rights reserved.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
